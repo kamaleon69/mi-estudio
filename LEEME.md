@@ -90,7 +90,7 @@ En la pantalla principal tienes tres pestañas:
 
 **Al abrir la app:** con la extensión, si la última sincronización es de hace más de 1 hora, se actualiza sola (se puede desactivar en Ajustes → 🧩). Sin extensión, verás un aviso si tus tareas son de hace más de un día.
 
-Solo se muestran las tareas con fecha **desde el 1 de septiembre de 2026**, o desde la fecha que pongas en Ajustes → Tus plataformas.
+Solo se muestran las tareas con fecha **desde el 1 de septiembre de 2026**, o desde la fecha que elijas. Puedes cambiarla en el propio panel **↻ Actualizar** (campo **📅 Sincronizar desde**, con el botón **Sept. 2026** para volver al valor por defecto) o en Ajustes → Tus plataformas.
 
 En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (verás «Leyendo tareas 12/32…»). En Classroom lee las pestañas «Assignat», «Sense entregar» y «Fet».
 
@@ -99,6 +99,11 @@ En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (ve
 ## 4. Electude
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. En el ordenador se abre en una ventana lateral para usarlo junto a la app.
+
+**📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
+- **Con la extensión (lo más rápido):** estando en la pestaña de Electude, pulsa el icono 🧩 de «Mi Estudio · Sincronizar». La captura llega sola al asistente.
+- **En el ordenador, desde la app:** el navegador te pide elegir la pestaña o ventana de Electude.
+- **En el móvil:** haz una captura de pantalla del enunciado y elígela cuando la app te lo pida.
 
 ## 5. Pasar tus tareas al móvil (QR)
 

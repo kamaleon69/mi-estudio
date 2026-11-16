@@ -194,6 +194,8 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <h3 style="margin:8px 0 4px">Electude</h3>
       <p class="meta small" id="elecUrlTxt"></p>
       <a class="btn primary" id="elecOpen" target="_blank" rel="noopener" style="font-size:17px;padding:13px 26px;margin-top:8px">Abrir Electude ↗</a>
+      <div style="margin-top:14px"><button class="btn" id="elecAsk" type="button" style="font-size:16px;padding:12px 20px">📸 Preguntar a la IA por la pantalla de Electude</button></div>
+      <p class="meta small" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
     </div>
   </section>
 
@@ -393,6 +395,12 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <div class="dlg-h"><h3>↻ Actualizar tareas</h3><button class="btn small" id="updClose" type="button">✕</button></div>
   <div class="dlg-b">
     <div id="updStatus"></div>
+    <div class="row" style="align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <label for="updFrom" class="small" style="font-weight:600">📅 Sincronizar desde</label>
+      <input type="date" id="updFrom" style="flex:1;min-width:140px">
+      <button class="btn small" id="updFromDef" type="button" title="Volver a septiembre de 2026">Sept. 2026</button>
+    </div>
+    <div class="small meta" id="updFromInfo" style="margin-top:4px"></div>
     <div id="updProg" class="small" style="min-height:22px;margin:10px 0 4px"></div>
     <button class="btn primary" id="updSync" type="button" style="width:100%;font-size:16px;padding:12px">⚡ Sincronizar</button>
   </div>
@@ -664,6 +672,8 @@ function renderUpd(){
     return `<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span><span class="badge b-${k}">${n}</span> ${ok ? d.tasks.length + ' tareas' : 'sin sincronizar'}</span><span class="small" style="color:${old ? 'var(--warn)' : 'var(--ok)'}">${ok ? syncAgo(d.at) : '—'}</span></div>`;
   }).join('');
   $('#updStatus').innerHTML = rows;
+  $('#updFrom').value = cfg.syncFrom || '2026-09-01'; $('#updFrom').disabled = extBusy;
+  renderFromInfo();
   const b = $('#updSync');
   b.disabled = extBusy; b.innerHTML = extBusy ? '<span class="spin"></span> Sincronizando…' : '⚡ Sincronizar';
 }
@@ -673,7 +683,22 @@ $('#syncBtn').onclick = () => {
   $('#updDlg').showModal();
 };
 $('#updClose').onclick = () => $('#updDlg').close();
+function renderFromInfo(){
+  const d = new Date((cfg.syncFrom || '2026-09-01') + 'T00:00:00');
+  $('#updFromInfo').textContent = 'Se leerán las tareas a partir del ' + d.toLocaleDateString('es-ES', {day: 'numeric', month: 'long', year: 'numeric'}) + '.';
+}
+function setSyncFrom(v, quiet){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v || '')) v = '2026-09-01';
+  if(v === cfg.syncFrom) return;
+  cfg.syncFrom = v; saveCfg();
+  $('#updFrom').value = v; if($('#pFrom')) $('#pFrom').value = v;
+  renderFromInfo(); renderAll();
+  if(!quiet) toast('📅 Se sincronizará desde el ' + new Date(v + 'T00:00:00').toLocaleDateString('es-ES'));
+}
+$('#updFrom').onchange = e => setSyncFrom(e.target.value);
+$('#updFromDef').onclick = () => { if(cfg.syncFrom === '2026-09-01') toast('Ya está en septiembre de 2026'); setSyncFrom('2026-09-01'); };
 $('#updSync').onclick = () => {
+  setSyncFrom($('#updFrom').value, true);
   if(extSync()){ renderUpd(); return; }
   // sin extensión: explicar en el propio panel cómo conseguirla
   $('#updProg').innerHTML = isTouch() && !(isGecko() && platform() === 'android')
@@ -991,9 +1016,29 @@ function renderStudy(){
 }
 
 /* ---------- Electude ---------- */
+const ELEC_Q = 'Este es un enunciado de Electude. Dime cuál es la opción correcta (o la respuesta) y explícame brevemente por qué, para que lo entienda.';
+async function askElectude(){
+  if(isTouch() || !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
+    toast(extVersion ? 'Elige una captura del enunciado (o pulsa el icono 🧩 de la extensión estando en Electude)' : 'Elige una captura o foto del enunciado'); photoFor = '__elec'; $('#photoIn').click(); return;
+  }
+  try{
+    toast('Elige la pestaña o ventana de Electude');
+    const st = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false, preferCurrentTab: false});
+    const v = document.createElement('video'); v.srcObject = st; v.muted = true; await v.play(); await new Promise(r => setTimeout(r, 400));
+    const k = Math.min(1, 1600 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas'); c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); st.getTracks().forEach(t => t.stop());
+    const url = c.toDataURL('image/jpeg', 0.85);
+    askWithImage(url);
+  }catch(e){ if(e.name !== 'NotAllowedError') toast('No se pudo capturar la pantalla', 'err'); }
+}
+function askWithImage(url){
+  openAI({provider: bestProvider(), att: [{mime: 'image/jpeg', data: url.split(',')[1], url, label: 'Electude'}], text: ELEC_Q});
+  if(hasKey(cfg.aiProvider)) setTimeout(() => aiSend(), 150); else toast('✅ Captura lista: pulsa ➤ para enviarla');
+}
 function renderElec(){
   $('#elecOpen').href = cfg.electudeUrl;
   $('#elecUrlTxt').textContent = cfg.electudeUrl.replace(/^https:\/\//, '');
+  $('#elecAsk').onclick = askElectude;
 }
 
 /* ---------- Ajustes ---------- */
@@ -1314,7 +1359,9 @@ function shrinkImage(file, max = 1600){
 let photoFor = null;
 $('#photoIn').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if(!f) return;
-  try{ const att = await shrinkImage(f); openAI({att: [att], provider: photoFor || cfg.aiProvider}); toast('✅ Foto añadida'); }catch(err){ toast('No se pudo leer la imagen', 'err'); }
+  try{ const att = await shrinkImage(f);
+    if(photoFor === '__elec'){ photoFor = null; askWithImage(att.url || ('data:' + att.mime + ';base64,' + att.data)); return; }
+    openAI({att: [att], provider: photoFor || cfg.aiProvider}); toast('✅ Foto añadida'); }catch(err){ toast('No se pudo leer la imagen', 'err'); }
 };
 
 /* ======================================================================
@@ -1477,6 +1524,8 @@ window.addEventListener('message', e => {
   const m = e.data;
   if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
   if(m.type === 'MS_EXT_START') extSync();
+  if(m.type === 'MS_EXT_IMAGE' && typeof m.dataUrl === 'string' && /^data:image\/(jpeg|png);base64,/.test(m.dataUrl)){ $$('dialog[open]').forEach(d => { if(d.id !== 'ai') d.close(); }); askWithImage(m.dataUrl); }
+  if(m.type === 'MS_EXT_CAPERR') toast(m.text || 'Abre Electude con el enunciado y vuelve a probar', 'err');
   if(m.type === 'MS_EXT_PROGRESS'){ msg('<span class="spin"></span> ' + esc(m.text), m.login ? 'err' : 'info'); if($('#updProg')) $('#updProg').innerHTML = '<span class="spin"></span> ' + esc(m.text); if(m.login) toast(m.text, 'err'); }
   if(m.type === 'MS_EXT_RESULT'){
     const r = m.result || {};
