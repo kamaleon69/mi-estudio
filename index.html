@@ -280,7 +280,13 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <label>Clave de API de Gemini (aistudio.google.com · tiene nivel gratuito)</label>
       <input id="gKey" type="password" placeholder="AIza…" autocomplete="off">
       <label>Modelo de Gemini</label>
-      <input id="gModel" placeholder="gemini-3.5-flash">
+      <select id="gModel">
+        <option value="gemini-3.5-flash-lite">Rápido · gemini-3.5-flash-lite (recomendado, ~1 s)</option>
+        <option value="gemini-flash-lite-latest">Rápido · gemini-flash-lite-latest</option>
+        <option value="gemini-3.8-flash">Más potente · gemini-3.8-flash (puede tardar más de 30 s)</option>
+        <option value="gemini-3.5-flash">Más potente · gemini-3.5-flash (puede tardar más de 1 min)</option>
+      </select>
+      <p class="meta small">Si el modelo elegido tarda más de 15 s o está saturado, la app pasa sola a uno rápido.</p>
       <label>Cómo quieres que te ayude (instrucciones para la IA)</label>
       <textarea id="aiSys" style="min-height:90px"></textarea>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="aiSave">Guardar</button><span id="aiSaved" class="meta small"></span></div>
@@ -420,11 +426,14 @@ const DEFAULT_SYS = 'Eres un tutor para un estudiante de Formación Profesional.
   'Explica el razonamiento paso a paso para que el estudiante entienda la materia, no solo el resultado. ' +
   'Si te envían una imagen o un texto seleccionado, primero di brevemente qué ves y después ayuda con ello.';
 let cfg = Object.assign({moodleUrl:'https://moodle4.net.fje.edu', classroomUrl:'https://classroom.google.com', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://clotfje.electude.eu/srestore',
-  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
+  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash-lite', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
 const saveCfg = () => store.set('cfg', cfg);
 // La conexión directa (usuario/contraseña/token de Moodle, Client ID de Google) se ha retirado: se borran restos guardados.
 if(cfg.moodleToken || cfg.googleClientId || cfg.moodleUser){ cfg.moodleToken = ''; cfg.moodleUser = ''; cfg.googleClientId = ''; store.set('cfg', cfg); }
 try{ sessionStorage.removeItem('me_g'); }catch(e){}
+// Los modelos «flash» normales tardan muchísimo con claves gratuitas: se pasa al rápido
+if(!cfg.geminiModel || /^gemini-(3\.5|3\.6|3\.7|3\.8|2\.5)-flash$|^gemini-flash-latest$/.test(cfg.geminiModel) && !cfg.geminiModelChosen){ cfg.geminiModel = 'gemini-3.5-flash-lite'; store.set('cfg', cfg); }
+const GEMINI_FAST = ['gemini-3.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-3.1-flash-lite'];
 let data = store.get('cache', {moodle:{tasks:[], courses:[]}, classroom:{tasks:[], courses:[]}, at:0});
 data.electude = data.electude || {tasks: [], courses: []};
 let manual = store.get('manual', []);
@@ -926,7 +935,7 @@ function renderMsgs(){
           <div class="bub-actions"><button data-keysave="${i}">Guardar y enviar</button></div>
         </div></div>`
     : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
-        <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${md(m.text)}</div>
+        <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${!m.text && ai.busy && i === ai.msgs.length - 1 ? `<span class="meta"><span class="spin"></span> Pensando… ${Math.round((Date.now() - (m.t0 || Date.now())) / 1000)} s${m.switched ? '<br><i>' + esc(m.switched) + '</i>' : ''}</span>` : md(m.text)}</div>
         ${(!m.note || m.copyable) && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
   $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; toast('✅ Respuesta copiada'); }catch(e){ toast('No se pudo copiar', 'err'); } });
   $$('#aiMsgs [data-ext]').forEach(b => b.onclick = () => { const m = ai.msgs[+b.dataset.ext]; ai.msgs.splice(+b.dataset.ext, 1); aiExternal(m.provider, m.payload.full, m.payload.images); });
@@ -934,7 +943,7 @@ function renderMsgs(){
   $$('#aiMsgs [data-keysave]').forEach(b => b.onclick = () => {
     const i = +b.dataset.keysave, v = $('#keyIn' + i).value.trim();
     if(!/^AIza[0-9A-Za-z_\-]{20,}$/.test(v)){ toast('Esa clave no parece de Gemini (empieza por AIza…)', 'err'); return; }
-    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); renderAICfg();
+    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); renderAICfg(); renderAIBtn();
     ai.msgs.splice(i, 1); toast('✅ Clave guardada: enviando a Gemini');
     aiRun('gemini');
   });
@@ -1008,19 +1017,40 @@ async function* claudeStream(){
     if(ev.type === 'error') throw new Error((ev.error && ev.error.message) || 'Error de Claude');
   }
 }
-async function* geminiStream(){
+async function* geminiOne(model, contents, firstTimeout){
+  const ac = new AbortController(); let timer = setTimeout(() => ac.abort(), firstTimeout);
+  try{
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {method: 'POST', signal: ac.signal,
+      headers: {'content-type': 'application/json', 'x-goog-api-key': cfg.geminiKey},
+      body: JSON.stringify({systemInstruction: {parts: [{text: sysPrompt()}]}, contents})});
+    if(!r.ok){ const e = await apiError(r); e.status = r.status; throw e; }
+    for await (const ev of sse(r)){
+      if(ev.error) throw new Error(ev.error.message);
+      const parts = (ev.candidates && ev.candidates[0] && ev.candidates[0].content && ev.candidates[0].content.parts) || [];
+      for(const pt of parts) if(pt.text && !pt.thought){ if(timer){ clearTimeout(timer); timer = 0; } yield pt.text; }
+    }
+  }catch(e){ if(e.name === 'AbortError'){ const t = new Error('tardó demasiado'); t.slow = true; throw t; } throw e; }
+  finally{ if(timer) clearTimeout(timer); }
+}
+async function* geminiStream(out){
   const contents = buildTurns().map(t => ({role: t.role === 'user' ? 'user' : 'model', parts: [
     ...t.images.map(im => ({inline_data: {mime_type: im.mime, data: im.data}})), {text: t.text || '(imagen)'}]}));
-  const model = (cfg.geminiModel || 'gemini-3.5-flash').replace(/^models\//, '');
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {method: 'POST',
-    headers: {'content-type': 'application/json', 'x-goog-api-key': cfg.geminiKey},
-    body: JSON.stringify({systemInstruction: {parts: [{text: sysPrompt()}]}, contents})});
-  if(!r.ok) throw await apiError(r);
-  for await (const ev of sse(r)){
-    if(ev.error) throw new Error(ev.error.message);
-    const parts = (ev.candidates && ev.candidates[0] && ev.candidates[0].content && ev.candidates[0].content.parts) || [];
-    for(const pt of parts) if(pt.text && !pt.thought) yield pt.text;
+  const chosen = (cfg.geminiModel || GEMINI_FAST[0]).replace(/^models\//, '');
+  const chain = [chosen, ...GEMINI_FAST.filter(m => m !== chosen)];
+  let lastErr = null;
+  for(let i = 0; i < chain.length; i++){
+    let got = false;
+    try{
+      for await (const chunk of geminiOne(chain[i], contents, i === 0 ? 15000 : 20000)){ got = true; if(out) out.model = chain[i]; yield chunk; }
+      if(got) return;
+    }catch(e){
+      if(got) throw e;                       // ya había empezado a responder: no cambiar a mitad
+      const retriable = e.slow || [404, 429, 500, 503].includes(e.status) || /demand|overloaded|unavailable|no longer available/i.test(e.message);
+      lastErr = e; if(!retriable) throw e;
+      if(i + 1 < chain.length && out){ out.switched = `${chain[i]} ${e.slow ? 'tardaba demasiado' : 'estaba saturado'}: respondo con ${chain[i + 1]}`; }
+    }
   }
+  throw lastErr || new Error('Ningún modelo de Gemini respondió');
 }
 
 async function aiSend(){
@@ -1044,11 +1074,12 @@ async function aiSend(){
   return aiRun(p);
 }
 async function aiRun(p){
-  const out = {role: 'assistant', provider: p, text: ''}; ai.msgs.push(out);
+  const out = {role: 'assistant', provider: p, text: '', t0: Date.now()}; ai.msgs.push(out);
   ai.busy = true; renderAI();
+  const tick = setInterval(() => { if(!out.text) renderMsgs(); }, 1000);
   let raf = 0;
   try{
-    for await (const chunk of (p === 'claude' ? claudeStream() : geminiStream())){
+    for await (const chunk of (p === 'claude' ? claudeStream() : geminiStream(out))){
       out.text += chunk;
       if(!raf) raf = requestAnimationFrame(() => { raf = 0; renderMsgs(); });
     }
@@ -1061,6 +1092,8 @@ async function aiRun(p){
     out.text = (out.text ? out.text + '\n\n' : '') + '⚠️ ' + m;
     toast('No se pudo obtener respuesta', 'err');
   }
+  clearInterval(tick);
+  if(out.switched && !out.error) out.text = '_(' + out.switched + ')_\n\n' + out.text;
   ai.busy = false; renderAI();
 }
 
@@ -1209,10 +1242,12 @@ async function lensSend(p){
       x: window.scrollX, y: window.scrollY, width: innerWidth, height: innerHeight, windowWidth: innerWidth, windowHeight: innerHeight,
       ignoreElements: el => ['lens', 'ai', 'dock', 'lensBusy'].includes(el.id), onclone: fixCloneDialogs});
     const s = canvas.width / innerWidth;
-    const c = document.createElement('canvas'); c.width = Math.round(r.w * s); c.height = Math.round(r.h * s);
-    c.getContext('2d').drawImage(canvas, r.x * s, r.y * s, r.w * s, r.h * s, 0, 0, c.width, c.height);
-    const url = c.toDataURL('image/png');
-    att = Object.assign(att, {mime: 'image/png', data: url.split(',')[1], url});
+    const k = Math.min(1, 1600 / Math.max(r.w * s, r.h * s));
+    const c = document.createElement('canvas'); c.width = Math.round(r.w * s * k); c.height = Math.round(r.h * s * k);
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+    g.drawImage(canvas, r.x * s, r.y * s, r.w * s, r.h * s, 0, 0, c.width, c.height);
+    const url = c.toDataURL('image/jpeg', 0.85);
+    att = Object.assign(att, {mime: 'image/jpeg', data: url.split(',')[1], url});
   }catch(e){ console.warn('Lens: captura de imagen no disponible, se envía solo el texto', e); }
   $('#lensBusy').style.display = 'none';
   if(!att.url && !att.text){ msg('No se pudo capturar esa zona.', 'err'); return; }
@@ -1221,9 +1256,11 @@ async function lensSend(p){
 }
 
 /* --- botones --- */
-$('#aiBtn').onclick = () => openAI({provider: 'claude'});
+const bestProvider = () => hasKey(cfg.aiProvider) ? cfg.aiProvider : hasKey('gemini') ? 'gemini' : hasKey('claude') ? 'claude' : cfg.aiProvider;
+function renderAIBtn(){ const p = bestProvider(), b = $('#aiBtn'); if(!b) return; b.querySelector('.ic').textContent = p === 'gemini' ? '✦' : '✳'; b.querySelector('.lbl').textContent = AI_NAME[p]; b.style.background = p === 'gemini' ? '#4b7bec' : '#d97757'; }
+$('#aiBtn').onclick = () => openAI({provider: bestProvider()});
 $('#lensBtn').onclick = () => lensStart(false);
-$('#dlgAI').onclick = () => openAI({ctx: taskContext()});
+$('#dlgAI').onclick = () => openAI({ctx: taskContext(), provider: bestProvider()});
 $('#dlgLens').onclick = () => lensStart(false);
 $('#aiLens').onclick = () => lensStart(true);
 $('#aiPhoto').onclick = () => { photoFor = null; $('#photoIn').click(); };
@@ -1240,13 +1277,13 @@ $('#aiInput').addEventListener('input', e => { e.target.style.height = 'auto'; e
 $('#ai').addEventListener('click', e => { if(e.target === $('#ai')) $('#ai').close(); });
 $('#aiSave').onclick = () => {
   cfg.claudeKey = $('#cKey').value.trim(); cfg.claudeModel = $('#cModel').value;
-  cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value.trim() || 'gemini-3.5-flash';
+  cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value || 'gemini-3.5-flash-lite'; cfg.geminiModelChosen = true;
   cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg();
-  $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000); toast('✅ Ajustes de IA guardados');
+  $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000); toast('✅ Ajustes de IA guardados'); renderAIBtn();
 };
-function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
+function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
 
-function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); }
+function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); renderAIBtn(); }
 
 /* ---------- aviso al abrir cualquier enlace externo ---------- */
 document.addEventListener('click', e => {

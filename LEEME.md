@@ -81,7 +81,7 @@ Repítelo cuando vuelvas a sincronizar en el ordenador. El enlace no lleva contr
 
 Escribe tu pregunta y pulsa **➤**. Tu mensaje se queda en el chat:
 
-- **Con una clave de API**, la respuesta llega dentro de la app. La de **Gemini es gratis**: dentro del chat pulsa **🔑 Chatear aquí**, abre https://aistudio.google.com/apikey con tu Gmail personal, pulsa *Create API key*, pégala y pulsa **Guardar y enviar**. La de Claude se crea en https://console.anthropic.com/settings/keys y se paga por uso, aparte de Claude Pro. Ambas se pueden poner también en **Ajustes → Asistentes IA**.
+- **Con una clave de API**, la respuesta llega dentro de la app. La de **Gemini es gratis**: dentro del chat pulsa **🔑 Chatear aquí**, abre https://aistudio.google.com/apikey con tu Gmail personal, pulsa *Create API key*, pégala y pulsa **Guardar y enviar**. La de Claude se crea en https://console.anthropic.com/settings/keys y se paga por uso, aparte de Claude Pro. Ambas se pueden poner también en **Ajustes → Asistentes IA**. Por defecto Gemini usa el modelo **rápido** (`gemini-3.5-flash-lite`, responde en 1 o 2 segundos). Los modelos «más potentes» pueden tardar más de un minuto con la clave gratuita. Si el elegido tarda más de 15 s o está saturado, la app pasa sola al rápido.
 - **Sin clave**, pulsa **↗ Enviar con mi cuenta**. Se abre la app o la web de Claude con tu pregunta ya escrita, o Gemini con la pregunta copiada para pegarla. Si hay una imagen, se copia para pegarla allí. El menú «Compartir» solo aparece si el móvil no deja copiar la imagen.
 
 ## 7. Compartir con compañeros
