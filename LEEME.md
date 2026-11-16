@@ -22,24 +22,36 @@ Abre la web y pulsa el botón azul **⬇ Añadir** de arriba. Te dará los pasos
 En **Ajustes → 🔗 Tus plataformas** pon la dirección de cada web y pulsa **Guardar**. La app **no pide usuario, contraseña ni token**: entras en cada plataforma como siempre.
 
 - **Moodle:** `https://moodle4.net.fje.edu` (copia la barra de direcciones hasta antes de `/my`).
-- **Classroom:** `https://classroom.google.com`. Si tienes varias cuentas de Google, copia hasta el `/u/1` o `/u/2` de tu cuenta **@fje.edu**, por ejemplo `https://classroom.google.com/u/2`, para que los enlaces abran directamente con la cuenta del centro.
+- **Classroom:** `https://classroom.google.com` y, en **Tu correo del centro**, tu cuenta del instituto (por ejemplo `447173.clot@fje.edu`). Así Classroom se abre **siempre con la cuenta del instituto**, aunque tu Gmail personal sea la principal del navegador.
+- **Leer tareas desde:** por defecto el **1 de septiembre de 2026**. Las tareas con fecha anterior no se traen. Las que no tienen fecha se muestran siempre.
 - **Electude:** `https://clotfje.electude.eu/srestore`.
 
 Comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.
 
-## 3. Sincronizar con 1 clic: extensión para Chrome/Edge (recomendado en el ordenador)
+## 3. Sincronizar con 1 clic: extensión (recomendado)
 
-Con la extensión, **↻ Actualizar** trae Moodle y Classroom solo: abre una ventanita unos segundos, lee tus tareas con tu sesión, la cierra y lo muestra en la app. Si la sesión ha caducado, inicias sesión en esa ventanita y continúa sola.
-
-**Instalar (una vez, 2 minutos):**
-
-1. En la app, ve a **Ajustes → 🧩 Sincronizar con 1 clic** y pulsa **⬇ Descargar la extensión**. Descomprime el zip en una carpeta que no vayas a borrar (por ejemplo `Documentos\mi-estudio-extension`).
-2. Abre `chrome://extensions` (en Edge, `edge://extensions`).
-3. Activa **Modo de desarrollador**.
-4. Pulsa **Cargar descomprimida** y elige la carpeta.
-5. Recarga Mi Estudio. Verás «✅ Extensión instalada» y desde entonces solo tienes que pulsar **↻ Actualizar**. También puedes pulsar el icono de Mi Estudio en la barra de extensiones.
+Con la extensión, pulsa **↻ Actualizar**: verás cuánto hace de la última sincronización de cada plataforma y un único botón, **⚡ Sincronizar**. Al pulsarlo se abre una ventanita con Moodle y Classroom unos segundos, se leen tus tareas con tu sesión y se muestran en la app. Si la sesión ha caducado, inicias sesión en esa ventanita y continúa sola.
 
 La extensión solo tiene permiso para `moodle4.net.fje.edu`, `classroom.google.com` y la web de Mi Estudio. No guarda ni envía contraseñas.
+
+**Chrome / Edge:**
+
+1. En la app, ve a **Ajustes → 🧩 Sincronizar con 1 clic → ⬇ Descargar**. Descomprime el zip en una carpeta que no vayas a borrar.
+2. Abre `chrome://extensions` (en Edge, `edge://extensions`) y activa **Modo de desarrollador**.
+3. Pulsa **Cargar descomprimida** y elige la carpeta. Después recarga Mi Estudio.
+4. Para actualizarla a una versión nueva, sustituye los archivos de la carpeta y pulsa ↻ en la tarjeta de la extensión.
+
+**Zen / Firefox** (solo instalan extensiones firmadas por Mozilla; la firma es gratis):
+
+1. Descarga `mi-estudio-extension-firefox.zip` desde Ajustes, abriendo la app en Zen. No lo descomprimas.
+2. Entra en https://addons.mozilla.org/developers/addon/submit/distribution, elige **On your own** (no se publica) y sube el zip. En unos minutos podrás descargar el **.xpi firmado**.
+3. En Zen, abre `about:addons` → ⚙ → **Instalar complemento desde archivo** → el .xpi, y acepta los permisos.
+4. Para probarla sin firmar (se borra al cerrar el navegador): `about:debugging#/runtime/this-firefox` → **Cargar complemento temporal** → `manifest.json`.
+
+## 3a. Sin ordenador: sincronizar desde el móvil
+
+- **Android:** instala **Firefox** desde Google Play y la extensión firmada (.xpi). Para instalarla: en Firefox, ve a Ajustes → Acerca de Firefox y toca el logo 5 veces; vuelve a Ajustes → **Instalar complemento desde archivo**. Después, **↻ Actualizar → ⚡ Sincronizar** funciona igual que en el ordenador, pero en una pestaña.
+- **iPhone/iPad:** Safari no admite extensiones propias. Usa el **marcador de Safari**: en Ajustes → 📱 Sincronizar el móvil → «¿No tienes ordenador?», toca **Copiar código del marcador** y sigue los 4 pasos.
 
 ## 3b. Alternativa sin extensión: el marcador ⚡
 
