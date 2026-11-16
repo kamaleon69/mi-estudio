@@ -65,6 +65,16 @@ ul.mods a{color:var(--accent);text-decoration:none}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite;vertical-align:-2px}
 @keyframes s{to{transform:rotate(360deg)}}
 .small{font-size:13px}
+details.help{margin-top:12px;border:1px solid var(--line);border-radius:10px;padding:0;background:var(--bg)}
+details.help>summary{list-style:none;cursor:pointer;padding:9px 12px;font-size:14px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:8px}
+details.help>summary::-webkit-details-marker{display:none}
+details.help>summary .i{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px Georgia,serif;align-items:center;justify-content:center;flex:none}
+details.help[open]>summary{border-bottom:1px solid var(--line)}
+details.help .hb{padding:6px 14px 12px;font-size:14px}
+details.help ol{padding-left:20px;margin:6px 0}details.help li{margin:5px 0}
+details.help a{color:var(--accent)}
+details.help code{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:13px;overflow-wrap:anywhere}
+details.help .tip{background:var(--card);border-left:3px solid var(--warn);padding:6px 10px;border-radius:6px;margin-top:8px;font-size:13px}
 .check{display:flex;gap:8px;align-items:flex-start}.check input{width:auto;margin-top:3px}
 /* ---- Asistente IA y Lens ---- */
 #dock{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:20}
@@ -181,6 +191,17 @@ ul.mods a{color:var(--accent);text-decoration:none}
         </details>
       </div>
       <div class="row" style="margin-top:8px"><button class="btn small" id="mLogout" hidden>Desconectar Moodle</button></div>
+      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><ol>
+        <li>Abre tu Moodle en el navegador y copia la dirección de la página de inicio (por ejemplo <code>https://campus.tucentro.es</code>). Pégala arriba, sin <code>/login</code> ni nada detrás.</li>
+        <li>Escribe el <b>mismo usuario y contraseña</b> con los que entras a Moodle y pulsa <b>Conectar Moodle</b>.</li>
+        <li>Si sale ✅ Conectado, ve a <b>Pendientes</b> y pulsa <b>↻ Actualizar</b>.</li>
+      </ol>
+      <p><b>¿Entras a Moodle con el botón de Google o de tu centro?</b> Entonces usuario/contraseña no sirve:</p>
+      <ol>
+        <li>Entra en tu Moodle y abre <a id="mKeysLink" href="#" target="_blank" rel="noopener">Preferencias → Claves de seguridad</a>.</li>
+        <li>Copia la clave de <b>Moodle mobile web service</b> y pégala en «Token manual».</li>
+      </ol>
+      <div class="tip">Para comprobar que tu centro lo permite: si puedes entrar con la <a href="https://download.moodle.org/mobile/" target="_blank" rel="noopener">app oficial de Moodle</a>, esta app también funciona.</div></div></details>
     </div>
 
     <div class="card">
@@ -190,13 +211,31 @@ ul.mods a{color:var(--accent);text-decoration:none}
       <p class="meta small">Se crea gratis en Google Cloud (ver instrucciones en el README). Al pulsar «Actualizar» te pedirá iniciar sesión con tu cuenta del centro.</p>
       <div class="row"><button class="btn primary" id="gSave">Guardar y conectar</button><button class="btn small" id="gOut">Cerrar sesión de Google</button></div>
       <div id="gStatus" class="meta" style="margin-top:6px"></div>
+      <div id="gLocalWarn"></div>
+      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><p><b>Si te han pasado un enlace de un compañero</b>, el Client ID ya está puesto: pulsa <b>Guardar y conectar</b> y entra con tu cuenta del centro. Si sale «acceso denegado», pide a quien te pasó el enlace que te añada como usuario de prueba.</p>
+      <p><b>Si lo configuras tú</b> (una sola vez, unos 10 minutos, gratis):</p>
+      <ol>
+        <li><a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">Crea un proyecto en Google Cloud</a> (con tu Gmail personal; llámalo «Mi Estudio»).</li>
+        <li><a href="https://console.cloud.google.com/apis/library/classroom.googleapis.com" target="_blank" rel="noopener">Activa la Google Classroom API</a> pulsando «Habilitar».</li>
+        <li><a href="https://console.cloud.google.com/auth/branding" target="_blank" rel="noopener">Configura la pantalla de consentimiento</a>: nombre «Mi Estudio», tipo de usuario <b>Externo</b> y tu correo de contacto.</li>
+        <li><a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Añade los usuarios de prueba</a>: tu correo del centro y el de los compañeros que la vayan a usar (máximo 100).</li>
+        <li><a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener">Crea el ID de cliente</a>: tipo <b>Aplicación web</b> y, en «Orígenes de JavaScript autorizados», añade:<br><code class="js-origin"></code> <button class="btn small" id="copyOrigin" type="button">Copiar</button></li>
+        <li>Copia el ID de cliente (termina en <code>.apps.googleusercontent.com</code>), pégalo arriba y pulsa <b>Guardar y conectar</b>.</li>
+      </ol>
+      <div class="tip">Google avisará de que la app «no está verificada»: es normal, porque la app es tuya. Pulsa <i>Continuar</i>. Si sale «Acceso bloqueado por tu administrador», es tu centro el que lo impide y hay que pedírselo al coordinador TIC.</div></div></details>
     </div>
 
     <div class="card">
       <strong>Electude</strong>
       <label>Dirección de Electude</label>
-      <input id="eUrl" placeholder="https://www.electude.com">
+      <input id="eUrl" placeholder="https://clotfje.electude.eu/srestore">
       <div class="row" style="margin-top:8px"><button class="btn" id="eUrlSave">Guardar</button></div>
+      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><ol>
+        <li>Entra en Electude desde el botón <a class="js-elec" href="#" target="_blank" rel="noopener">Abrir Electude ↗</a> con tu usuario y contraseña de siempre.</li>
+        <li>Electude no permite que otras apps lean tus tareas. Apúntalas en la pestaña <b>Electude</b> (título y fecha) y saldrán en <b>Pendientes</b> junto al resto.</li>
+        <li>Cuando termines una, márcala con <b>✓ Hecha</b>.</li>
+      </ol>
+      <div class="tip">Si tu centro usa otra dirección de Electude, cámbiala arriba y pulsa Guardar.</div></div></details>
     </div>
 
     <div class="card">
@@ -214,13 +253,30 @@ ul.mods a{color:var(--accent);text-decoration:none}
       <label>Cómo quieres que te ayude (instrucciones para la IA)</label>
       <textarea id="aiSys" style="min-height:90px"></textarea>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="aiSave">Guardar</button><span id="aiSaved" class="meta small"></span></div>
+      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><p><b>Opción 1: con tu cuenta normal (sin claves).</b> No hay que configurar nada:</p>
+      <ol>
+        <li>Inicia sesión en <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> o en <a href="https://gemini.google.com" target="_blank" rel="noopener">Gemini</a> en este navegador. En el móvil, instala la app de <a href="https://play.google.com/store/apps/details?id=com.anthropic.claude" target="_blank" rel="noopener">Claude</a> o la de <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.bard" target="_blank" rel="noopener">Gemini</a>.</li>
+        <li>Usa ✳ o 🔍 y pulsa enviar (↗). Se abrirá Claude o Gemini con tu pregunta. Si hay imagen, pégala con Ctrl+V (en el móvil va directa por «Compartir»).</li>
+      </ol>
+      <p><b>Opción 2: chat dentro de la app (con clave de API).</b></p>
+      <ol>
+        <li><b>Gemini, gratis:</b> entra en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio → API keys</a> con tu Gmail personal, pulsa <i>Create API key</i>, cópiala y pégala arriba.</li>
+        <li><b>Claude, de pago por uso:</b> entra en <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Claude Console → API keys</a>, añade saldo en <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener">Billing</a>, crea una clave y pégala arriba. Es aparte de la suscripción Claude Pro.</li>
+        <li>Pulsa <b>Guardar</b>.</li>
+      </ol>
+      <div class="tip">Las claves se guardan solo en este dispositivo y no viajan en el enlace para compañeros. No se las pases a nadie: quien la tenga gasta a tu nombre.</div></div></details>
     </div>
 
     <div class="card">
       <strong>Compartir con compañeros</strong>
       <p class="meta small">Genera un enlace que ya trae la dirección de Moodle, la de Electude y la configuración de Classroom. <b>No incluye tus sesiones, tokens, claves ni tareas</b>: cada compañero ve la app vacía hasta que inicia sesión con sus propias cuentas.</p>
       <div class="row"><button class="btn primary" id="shareLink">🔗 Copiar enlace para compañeros</button><span id="shareOut" class="meta small"></span></div>
-      <p class="meta small" style="margin-top:8px">Para Classroom, cada compañero debe estar añadido como «usuario de prueba» en tu proyecto de Google Cloud (hasta 100 personas).</p>
+      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><ol>
+        <li>Conecta primero tu Moodle y tu Classroom (así el enlace lleva la dirección y el Client ID correctos).</li>
+        <li>Pulsa <b>Copiar enlace para compañeros</b> y envíaselo por WhatsApp, correo, etc.</li>
+        <li>Para Classroom, añade el correo del centro de cada compañero en <a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google Cloud → Audiencia → Usuarios de prueba</a> (hasta 100).</li>
+        <li>Tu compañero abre el enlace, va a <b>Ajustes</b> e inicia sesión con <b>sus</b> cuentas. No verá nada tuyo.</li>
+      </ol></div></details>
     </div>
 
     <div class="card">
@@ -291,7 +347,7 @@ const SRC = {moodle:'Moodle', classroom:'Classroom', electude:'Electude'};
 const DEFAULT_SYS = 'Eres un tutor para un estudiante de Formación Profesional. Responde siempre en español, de forma clara y ordenada. ' +
   'Explica el razonamiento paso a paso para que el estudiante entienda la materia, no solo el resultado. ' +
   'Si te envían una imagen o un texto seleccionado, primero di brevemente qué ves y después ayuda con ello.';
-let cfg = Object.assign({moodleUrl:'', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://www.electude.com',
+let cfg = Object.assign({moodleUrl:'', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://clotfje.electude.eu/srestore',
   claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
 const saveCfg = () => store.set('cfg', cfg);
 let data = store.get('cache', {moodle:{tasks:[], courses:[]}, classroom:{tasks:[], courses:[]}, at:0});
@@ -452,7 +508,7 @@ async function sync(interactive = false){
   $('#syncBtn').innerHTML = '<span class="spin"></span>'; msg('');
   const errs = [];
   if(cfg.moodleUrl && cfg.moodleToken){ try{ await loadMoodle(); }catch(e){ errs.push('Moodle: ' + esc(e.message)); } }
-  if(cfg.googleClientId){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length) errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
+  if(cfg.googleClientId && !isLocalFile()){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length) errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
   data.at = Date.now(); store.set('cache', data);
   if(errs.length) msg(errs.join('<br>'), 'err');
   if(!cfg.moodleToken && !cfg.googleClientId) msg('Empieza en <b>Ajustes</b>: conecta Moodle y pon tu Client ID de Google para Classroom.', 'info');
@@ -659,7 +715,18 @@ $('#eAdd').onclick = () => {
 };
 
 /* ---------- Ajustes ---------- */
+const WEB_URL = 'https://kamaleon69.github.io/mi-estudio/';
+const isLocalFile = () => location.protocol === 'file:' || location.origin === 'null';
+function renderHelp(){
+  $$('.js-origin').forEach(e => e.textContent = isLocalFile() ? new URL(WEB_URL).origin : location.origin);
+  const w = $('#gLocalWarn');
+  if(w) w.innerHTML = isLocalFile() ? `<div class="msg err">Estás usando la app desde un archivo de tu ordenador: aquí Google no deja iniciar sesión en Classroom. Ábrela desde la web: <a href="${WEB_URL}" target="_blank" rel="noopener">${WEB_URL}</a></div>` : '';
+  $$('.js-elec').forEach(e => e.href = cfg.electudeUrl);
+  const k = $('#mKeysLink'); if(k){ k.href = cfg.moodleUrl ? mBase() + '/user/managetoken.php' : '#'; k.onclick = e => { if(!cfg.moodleUrl){ e.preventDefault(); $('#mUrl').focus(); } }; }
+}
+$('#copyOrigin').onclick = async e => { try{ await navigator.clipboard.writeText(location.origin); e.target.textContent = 'Copiado ✓'; }catch(err){} };
 function renderCfg(){
+  renderHelp();
   $('#mUrl').value = cfg.moodleUrl; $('#gCid').value = cfg.googleClientId; $('#eUrl').value = cfg.electudeUrl;
   const mOn = !!cfg.moodleToken;
   $('#mLoginBox').hidden = mOn; $('#mLogout').hidden = !mOn;
@@ -680,9 +747,9 @@ $('#mLogin').onclick = async () => {
 };
 $('#mTokSave').onclick = () => { cfg.moodleUrl = $('#mUrl').value.trim().replace(/^(?!https?:\/\/)/, 'https://'); cfg.moodleToken = $('#mTok').value.trim(); cfg.moodleUser = ''; saveCfg(); renderCfg(); sync(false); };
 $('#mLogout').onclick = () => { cfg.moodleToken = ''; cfg.moodleUser = ''; saveCfg(); data.moodle = {tasks: [], courses: []}; store.set('cache', data); renderAll(); };
-$('#gSave').onclick = () => { cfg.googleClientId = $('#gCid').value.trim(); saveCfg(); renderCfg(); if(cfg.googleClientId) sync(true); };
+$('#gSave').onclick = () => { cfg.googleClientId = $('#gCid').value.trim(); saveCfg(); renderCfg(); if(isLocalFile()){ $('#gLocalWarn').scrollIntoView({block:'center'}); return; } if(cfg.googleClientId) sync(true); };
 $('#gOut').onclick = () => { if(gToken && window.google) google.accounts.oauth2.revoke(gToken, () => {}); gToken = null; sessionStorage.removeItem('me_g'); data.classroom = {tasks: [], courses: []}; store.set('cache', data); renderAll(); };
-$('#eUrlSave').onclick = () => { cfg.electudeUrl = $('#eUrl').value.trim() || 'https://www.electude.com'; saveCfg(); renderAll(); };
+$('#eUrlSave').onclick = () => { cfg.electudeUrl = $('#eUrl').value.trim() || 'https://clotfje.electude.eu/srestore'; saveCfg(); renderAll(); };
 $('#wipe').onclick = () => { if(!confirm('¿Borrar tokens, borradores y tareas guardadas en este dispositivo?')) return; Object.keys(localStorage).filter(k => k.startsWith('me_')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); location.reload(); };
 
 /* ======================================================================
@@ -1041,12 +1108,26 @@ function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = c
 
 function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); }
 
+/* ---------- Electude en ventana lateral (PC) ----------
+   Electude no permite abrirse dentro de otra web, así que en el PC se abre
+   en una ventana pegada a la derecha para trabajar con las dos a la vez. */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href]');
+  if(!a || isTouch() || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  let u; try{ u = new URL(a.href); }catch(_){ return; }
+  if(!/(^|\.)electude\./i.test(u.hostname)) return;
+  e.preventDefault();
+  const W = screen.availWidth, H = screen.availHeight, w = Math.max(700, Math.round(W * 0.6));
+  const win = window.open(a.href, 'electude', `popup,width=${w},height=${H},left=${(screen.availLeft || 0) + W - w},top=${screen.availTop || 0}`);
+  if(win) win.focus(); else window.open(a.href, '_blank', 'noopener');
+});
+
 /* ---------- compartir ---------- */
 $('#shareLink').onclick = async () => {
   const qp = new URLSearchParams();
   if(cfg.moodleUrl) qp.set('moodle', cfg.moodleUrl);
   if(cfg.googleClientId) qp.set('gcid', cfg.googleClientId);
-  if(cfg.electudeUrl && cfg.electudeUrl !== 'https://www.electude.com') qp.set('electude', cfg.electudeUrl);
+  if(cfg.electudeUrl && cfg.electudeUrl !== 'https://clotfje.electude.eu/srestore') qp.set('electude', cfg.electudeUrl);
   const link = location.origin + location.pathname + (qp.toString() ? '?' + qp : '');
   try{
     if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'App para tener Moodle, Classroom y Electude juntos:', url: link}); $('#shareOut').textContent = ''; }
