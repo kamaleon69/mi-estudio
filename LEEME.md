@@ -66,21 +66,20 @@ En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (ve
 - El botón **Abrir Electude** abre `https://clotfje.electude.eu/srestore`. En el PC se abre en una ventana lateral para usarlo junto a la app.
 - Electude no deja que otras apps lean tus tareas. Apúntalas en la pestaña **Electude** con título y fecha, y aparecerán en «Pendientes» junto al resto.
 
-## 5. Sincronizar el móvil (con un QR)
+## 5. Pasar tus tareas al móvil (QR)
 
-En el móvil **no hace falta el marcador**:
+El móvil recibe las tareas desde el ordenador. No hay que configurar nada en el teléfono.
 
-1. En el **ordenador**, sincroniza Moodle y Classroom con el marcador (paso 3).
-2. En **Ajustes → 📱 Sincronizar el móvil**, pulsa **📱 Mostrar QR**.
-3. En el **móvil**, abre la **cámara**, apunta al QR y toca el enlace. Se abre Mi Estudio con todas tus tareas.
+1. En el **ordenador**, después de sincronizar con el marcador, pulsa **📱 Al móvil** (arriba, junto a «Actualizar»), o el botón **📱 Pasar al móvil** del mensaje verde.
+2. En el **móvil**: 📷 abre la **cámara**, 🎯 apunta al QR y 👆 toca el enlace. Se abre Mi Estudio con todas tus tareas.
 
-- **iPhone con la app instalada:** la cámara abre Safari, no la app. En Safari pulsa **📋 Copiar para la app instalada**, abre la app y pulsa **📋 Pegar sincronización**.
-- **Android:** la app instalada comparte los datos con Chrome, así que no hace falta nada más.
-- **Si no puedes escanear:** usa **💬 Enviar por WhatsApp** (envíatelo a ti mismo) o **🔗 Copiar enlace**, y abre el enlace en el móvil.
+- **Android:** listo, también si tienes la app instalada.
+- **iPhone con la app instalada** (icono en la pantalla): la cámara abre Safari y la app guarda sus datos aparte. En Safari toca **📋 Copiar para la app**, abre la app desde su icono y toca **📋 Cargar las tareas copiadas**.
+- **Sin cámara a mano:** en la ventana del QR pulsa **💬 Enviar por WhatsApp** (te lo mandas a ti mismo) y abre el enlace en el móvil.
 
-Repítelo cuando vuelvas a sincronizar en el ordenador. El enlace no lleva contraseñas ni claves, pero sí tu lista de tareas: envíatelo solo a ti.
+Repítelo cada vez que sincronices en el ordenador. Si tienes muchas tareas, el QR lleva solo las pendientes y las sin presentar; las entregadas con nota pasan por WhatsApp.
 
-*(Avanzado: también puedes usar el marcador directamente en el móvil; las instrucciones están en la ⓘ del marcador.)*
+**Pasar la app a un compañero:** en **Ajustes → Compartir con compañeros**, pulsa **📱 Mostrar QR** y que lo escanee. Le llega la app vacía, sin tus datos.
 
 ## 6. Asistente IA y Lens
 
