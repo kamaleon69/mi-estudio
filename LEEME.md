@@ -33,7 +33,22 @@ En la app, ve a **Ajustes → Moodle**:
 
 La app usa el mismo acceso que la app oficial de Moodle, que ya me has dicho que en tu centro funciona.
 
-**Si entras a Moodle con "Iniciar sesión con Google"**, el usuario y la contraseña no funcionarán. Entra en la web de Moodle, ve a *Preferencias → Claves de seguridad*, copia la clave de **Moodle mobile web service** y pégala en «Token manual».
+**Si sale «Inicio de sesión no válido»**, prueba el usuario **sin** el dominio (por ejemplo `447173.clot` en lugar de `447173.clot@fje.edu`). Escríbelo exactamente igual que en la app oficial de Moodle.
+
+**Si entras a Moodle con el botón de Google o Microsoft, o el usuario y la contraseña siguen sin funcionar**, usa el método de la app oficial de Moodle:
+
+1. En **Ajustes → Moodle**, escribe la dirección de tu Moodle y pulsa **🔐 Entrar con mi cuenta del centro**.
+2. Pulsa **📋 Copiar enlace**.
+3. Abre una **ventana privada**: Ctrl+Shift+P en Firefox o Zen, Ctrl+Shift+N en Chrome o Edge. Pega el enlace y pulsa Enter.
+   Tiene que ser privada: Moodle solo entrega el token si **acabas** de iniciar sesión. Si ya tenías la sesión abierta, sale el error *«Plugin no habilitat o configurat»*.
+4. Inicia sesión en Moodle como siempre.
+5. Al terminar verás una página de error cuya dirección empieza por `moodlemobile://token=…`. Es normal. Si sale un aviso para «abrir Moodle», pulsa Cancelar.
+6. Copia esa dirección entera desde la barra de direcciones (Ctrl+A, Ctrl+C), pégala en la app y pulsa **Conectar**.
+   En Chrome a veces no se ve esa dirección; si te pasa, haz este paso en Firefox, Zen o Edge.
+
+Otra opción, si tu centro la tiene activada: en Moodle, ve a *Preferencias → Claves de seguridad*, copia la clave de **Moodle mobile web service** y pégala en «Token manual». En el Moodle de Jesuïtes Educació esta página aparece vacía, así que allí usa el método anterior.
+
+> El token es como una contraseña para la app: no se lo pases a nadie. Si alguna vez quieres anularlo, cierra la sesión de Moodle en todos los dispositivos o cambia tu contraseña.
 
 ## 3. Conectar Google Classroom (≈10 min, solo una vez)
 
