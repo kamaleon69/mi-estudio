@@ -205,6 +205,21 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   </section>
 
   <section id="cfg">
+    <div class="card" id="extCard" style="border-color:var(--ok)">
+      <strong>🧩 Sincronizar con 1 clic (extensión para Chrome / Edge)</strong>
+      <div id="extBox"></div>
+      <details class="help" id="extHelp"><summary><span class="i">i</span> Cómo instalarla (2 minutos, solo en el ordenador)</summary><div class="hb">
+        <ol>
+          <li>Pulsa <a href="mi-estudio-extension.zip" download>⬇ Descargar la extensión</a> y <b>descomprime</b> el zip en una carpeta que no vayas a borrar (por ejemplo <i>Documentos\mi-estudio-extension</i>).</li>
+          <li>Abre una pestaña nueva y escribe <code>chrome://extensions</code> (en Edge: <code>edge://extensions</code>). <button class="btn small" id="copyExtUrl" type="button">Copiar</button></li>
+          <li>Activa <b>«Modo de desarrollador»</b> (arriba a la derecha; en Edge, en el menú de la izquierda).</li>
+          <li>Pulsa <b>«Cargar descomprimida»</b> y elige la carpeta del paso 1.</li>
+          <li>Vuelve aquí y <b>recarga la página</b>. Verás «✅ Extensión instalada». Desde entonces, <b>↻ Actualizar</b> lo hace todo solo.</li>
+        </ol>
+        <div class="tip">La extensión solo puede acceder a tu Moodle, a Classroom y a esta web. Abre una ventanita con Moodle y Classroom unos segundos, lee tus tareas con tu sesión (como el marcador) y la cierra. No guarda ni envía contraseñas. Si la sesión ha caducado, inicia sesión en esa ventanita y continúa sola.</div>
+      </div></details>
+    </div>
+
     <div class="card" style="border-color:#7b3fe4">
       <strong>📱 Sincronizar el móvil</strong>
       <div id="mobSyncBox"></div>
@@ -368,7 +383,8 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <div class="dlg-h"><h3>↻ Actualizar tareas</h3><button class="btn small" id="updClose" type="button">✕</button></div>
   <div class="dlg-b">
     <div id="updStatus"></div>
-    <p class="small">Las tareas se traen con el marcador <b>⚡ Sincronizar Mi Estudio</b>: abre la plataforma, inicia sesión si hace falta y pulsa el marcador.</p>
+    <div id="updExt"></div>
+    <p class="small"><b>Sin extensión</b>, se hace en dos pasos: 1) abre la plataforma con el botón de abajo y 2) <b>en esa página, pulsa el marcador «⚡ Sincronizar Mi Estudio» de tu barra de marcadores</b> (la de debajo de la dirección; si no la ves, pulsa Ctrl + Shift + B).</p>
     <div class="row" style="flex-direction:column;align-items:stretch;gap:8px">
       <a class="btn primary js-moodle" id="updMoodle" href="#" target="_blank" rel="noopener">⚡ Abrir Moodle para sincronizar ↗</a>
       <a class="btn primary js-classroom" id="updClass" href="#" target="_blank" rel="noopener">⚡ Abrir Classroom → Pendents ↗</a>
@@ -638,6 +654,7 @@ function syncAgo(ts){
   return 'hace ' + Math.round(h / 24) + ' días';
 }
 $('#syncBtn').onclick = () => {
+  if(!isTouch() && extSync()) return;
   renderAll();
   const rows = [['moodle', 'Moodle'], ['classroom', 'Classroom']].map(([k, n]) => {
     const d = data[k] || {}, ok = d.via === 'marcador';
@@ -645,6 +662,8 @@ $('#syncBtn').onclick = () => {
     return `<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span><span class="badge b-${k}">${n}</span> ${ok ? d.tasks.length + ' tareas' : 'sin sincronizar'}</span><span class="small" style="color:${old ? 'var(--warn)' : 'var(--ok)'}">${ok ? syncAgo(d.at) : '—'}</span></div>`;
   }).join('') + `<div class="row" style="justify-content:space-between;padding:6px 0"><span><span class="badge b-electude">Electude</span> ${manual.filter(t => !t.done).length} apuntadas</span><span class="small meta">manual</span></div>`;
   $('#updStatus').innerHTML = rows;
+  $('#updExt').innerHTML = isTouch() ? '<div class="msg info small">En el móvil, trae las tareas desde el ordenador con <b>📱 Al móvil</b> (QR), o toca «Pegar» abajo.</div>' : '<div class="msg info small"><b>¿Quieres que «Actualizar» lo haga todo con 1 clic?</b> Instala la extensión gratuita (2 minutos): <a href="#" id="updGoExt">ver cómo</a>.</div>';
+  const ge = $('#updGoExt'); if(ge) ge.onclick = e => { e.preventDefault(); $('#updDlg').close(); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'cfg')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'cfg')); $('#extCard').scrollIntoView({block: 'start'}); };
   $('#updDlg').showModal();
   toast('✅ Lista recargada');
 };
@@ -1340,7 +1359,7 @@ $('#aiSave').onclick = () => {
 };
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
 
-function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); renderAIBtn(); renderPhoneBits(); const pr = $('#pasteRow'); if(pr) pr.hidden = !isTouch() || !hasMarkerData(); }
+function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); renderAIBtn(); renderPhoneBits(); renderExt(); const pr = $('#pasteRow'); if(pr) pr.hidden = !isTouch() || !hasMarkerData(); }
 
 /* ---------- aviso al abrir cualquier enlace externo ---------- */
 document.addEventListener('click', e => {
@@ -1367,13 +1386,50 @@ document.addEventListener('click', e => {
   if(win){ win.focus(); toast('Electude abierto en una ventana lateral'); } else window.open(a.href, '_blank', 'noopener');
 });
 
+/* ---------- extensión «Mi Estudio · Sincronizar» (1 clic en el ordenador) ---------- */
+let extVersion = null, extBusy = false, extNotes = [];
+window.addEventListener('message', e => {
+  if(e.source !== window || !e.data || typeof e.data.type !== 'string') return;
+  const m = e.data;
+  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } } }
+  if(m.type === 'MS_EXT_START') extSync();
+  if(m.type === 'MS_EXT_PROGRESS'){ msg('<span class="spin"></span> ' + esc(m.text), m.login ? 'err' : 'info'); if(m.login) toast(m.text, 'err'); }
+  if(m.type === 'MS_EXT_RESULT'){
+    const r = m.result || {};
+    if(r.error){ extNotes.push('⚠️ ' + (r.src ? SRC[r.src] + ': ' : '') + r.error.replace(/^Mi Estudio: /, '')); }
+    else if(importData(r)){ extNotes.push(syncNote.replace(/ <button[\s\S]*$/, '')); renderAll(); }
+  }
+  if(m.type === 'MS_EXT_DONE'){
+    extBusy = false; $('#syncBtn').textContent = '↻ Actualizar';
+    const ok = extNotes.some(n => n.startsWith('✅'));
+    stickyMsg = true;
+    msg(extNotes.join('<br>') + (ok && !isTouch() ? ' <button class="btn small primary" type="button" onclick="showQR()">📱 Pasar al móvil</button>' : ''), ok ? 'ok' : 'err');
+    toast(ok ? '✅ Sincronización terminada' : 'No se pudo sincronizar', ok ? 'ok' : 'err');
+    extNotes = [];
+  }
+});
+window.postMessage({type: 'MS_EXT_PING'}, '*');
+function extSync(){
+  if(!extVersion) return false;
+  if(extBusy){ toast('Ya se está sincronizando…', 'err'); return true; }
+  extBusy = true; extNotes = [];
+  $('#syncBtn').innerHTML = '<span class="spin"></span> Sincronizando';
+  msg('<span class="spin"></span> Sincronizando Moodle y Classroom… se abrirá una ventanita unos segundos.', 'info');
+  toast('⚡ Sincronizando…');
+  window.postMessage({type: 'MS_EXT_SYNC', what: ['moodle', 'classroom'], moodleUrl: cfg.moodleUrl, classroomBase: classroomBase()}, '*');
+  return true;
+}
+
 /* ---------- marcador de sincronización ----------
    __msSync se ejecuta DENTRO de Moodle / Classroom / Electude (bookmarklet).
    Debe ser autónoma: no usa nada de fuera de la función. */
 function __msSync(APP){
   (async () => {
     const enc = d => btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const RET = APP === '__RETURN__';
+    const say = m => { if(RET) window.__msResult = {error: m}; else alert(m); };
     const go = d => {
+      if(RET){ window.__msResult = d; return; }
       const u = APP + '#sync=' + enc(d);
       if(!matchMedia('(pointer:coarse)').matches){ const w = window.open(u, 'miestudio'); if(!w) location.href = u; return; }
       /* Móvil: panel para elegir entre la app del navegador y la app instalada */
@@ -1468,7 +1524,7 @@ function __msSync(APP){
         const waitFor = async (re) => { for(let i = 0; i < 30; i++){ if(re.test(location.pathname)) { await sleep(1800); return true; } await sleep(200); } return false; };
         const tab = re => [...document.querySelectorAll('a[href]')].find(x => re.test(x.getAttribute('href')));
         if(!/\/a\/(not-turned-in|missing|turned-in)\//.test(location.pathname)){
-          const t = tab(/\/a\/not-turned-in\//); if(!t){ alert('Mi Estudio: abre Classroom → «Pendientes» (menú de la izquierda) y pulsa el marcador allí.'); return; }
+          const t = tab(/\/a\/not-turned-in\//); if(!t){ say('Mi Estudio: abre Classroom → «Pendientes» (menú de la izquierda) y pulsa el marcador allí.'); return; }
           t.click(); await waitFor(/not-turned-in/);
         }
         const all = [];
@@ -1486,10 +1542,10 @@ function __msSync(APP){
       }
       /* ---------- ELECTUDE ---------- */
       if(/(^|\.)electude\./.test(h)){
-        alert('Mi Estudio: la sincronización de Electude todavía no está disponible.'); return;
+        say('Mi Estudio: la sincronización de Electude todavía no está disponible.'); return;
       }
-      alert('Mi Estudio: abre Moodle, Classroom o Electude (con tu sesión iniciada) y pulsa este marcador allí.');
-    }catch(e){ const b = document.getElementById('__msProg'); if(b) b.remove(); alert('Mi Estudio: no se pudo sincronizar (' + e.message + ')'); }
+      say('Mi Estudio: abre Moodle, Classroom o Electude (con tu sesión iniciada) y pulsa este marcador allí.');
+    }catch(e){ const b = document.getElementById('__msProg'); if(b) b.remove(); say('Mi Estudio: no se pudo sincronizar (' + e.message + ')'); }
   })();
 }
 const appUrl = () => isLocalFile() ? WEB_URL : location.origin + location.pathname;
@@ -1509,7 +1565,10 @@ function importSync(){
   let d;
   try{ let b = m[1].replace(/-/g, '+').replace(/_/g, '/'); while(b.length % 4) b += '='; d = JSON.parse(decodeURIComponent(escape(atob(b)))); }
   catch(e){ msg('No se pudo leer la sincronización.', 'err'); return false; }
-  if(!['moodle', 'classroom', 'electude'].includes(d.src) || !Array.isArray(d.tasks)) return false;
+  return importData(d);
+}
+function importData(d){
+  if(!d || !['moodle', 'classroom', 'electude'].includes(d.src) || !Array.isArray(d.tasks)) return false;
   const clean = v => typeof v === 'string' ? v.slice(0, 500) : v;
   const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
   data[d.src] = {via: 'marcador', at: d.at || Date.now(),
@@ -1525,6 +1584,15 @@ function importSync(){
   return true;
 }
 window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
+
+function renderExt(){
+  const box = $('#extBox'), card = $('#extCard'); if(!box) return;
+  if(isTouch()){ card.hidden = true; return; }
+  card.hidden = false;
+  if(extVersion){ box.innerHTML = `<div class="msg ok">✅ Extensión instalada (v${esc(extVersion)}). Pulsa <b>↻ Actualizar</b> arriba para sincronizar Moodle y Classroom con un clic.</div><div class="row"><button class="btn primary" id="extSyncNow" type="button">⚡ Sincronizar ahora</button></div>`; $('#extSyncNow').onclick = () => extSync(); $('#extHelp').open = false; }
+  else { box.innerHTML = `<p class="meta small">Con ella, <b>↻ Actualizar</b> trae Moodle y Classroom solo, sin marcadores. Recomendado en el ordenador.</p><div class="row"><a class="btn primary" href="mi-estudio-extension.zip" download id="extDl">⬇ Descargar la extensión</a></div>`; $('#extHelp').open = true; $('#extDl').onclick = () => toast('⬇ Descargando: descomprímela y sigue los pasos'); }
+}
+$('#copyExtUrl').onclick = async () => { try{ await navigator.clipboard.writeText(/Edg\//.test(navigator.userAgent) ? 'edge://extensions' : 'chrome://extensions'); toast('✅ Copiado: pégalo en una pestaña nueva'); }catch(e){ toast('Escríbelo a mano en una pestaña nueva', 'err'); } };
 
 /* ---------- instalar (PWA) ---------- */
 let installEvt = null;

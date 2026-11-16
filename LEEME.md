@@ -27,7 +27,22 @@ En **Ajustes → 🔗 Tus plataformas** pon la dirección de cada web y pulsa **
 
 Comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.
 
-## 3. Conectar Moodle y Classroom (marcador ⚡)
+## 3. Sincronizar con 1 clic: extensión para Chrome/Edge (recomendado en el ordenador)
+
+Con la extensión, **↻ Actualizar** trae Moodle y Classroom solo: abre una ventanita unos segundos, lee tus tareas con tu sesión, la cierra y lo muestra en la app. Si la sesión ha caducado, inicias sesión en esa ventanita y continúa sola.
+
+**Instalar (una vez, 2 minutos):**
+
+1. En la app, ve a **Ajustes → 🧩 Sincronizar con 1 clic** y pulsa **⬇ Descargar la extensión**. Descomprime el zip en una carpeta que no vayas a borrar (por ejemplo `Documentos\mi-estudio-extension`).
+2. Abre `chrome://extensions` (en Edge, `edge://extensions`).
+3. Activa **Modo de desarrollador**.
+4. Pulsa **Cargar descomprimida** y elige la carpeta.
+5. Recarga Mi Estudio. Verás «✅ Extensión instalada» y desde entonces solo tienes que pulsar **↻ Actualizar**. También puedes pulsar el icono de Mi Estudio en la barra de extensiones.
+
+La extensión solo tiene permiso para `moodle4.net.fje.edu`, `classroom.google.com` y la web de Mi Estudio. No guarda ni envía contraseñas.
+
+## 3b. Alternativa sin extensión: el marcador ⚡
+
 
 La app usa un **marcador**: lee tus tareas con la sesión que ya tienes abierta en el navegador. No pide ni guarda contraseñas.
 
