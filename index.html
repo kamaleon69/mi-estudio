@@ -1260,7 +1260,7 @@ function __msSync(APP){
         }
         if(/missing/.test(location.pathname)){ missing = read(true); const t = tab(/\/a\/not-turned-in\//); if(t){ t.click(); await waitFor(/not-turned-in/); pending = read(false); } }
         else { pending = read(false); const t = tab(/\/a\/missing\//); if(t){ t.click(); await waitFor(/missing/); missing = read(true); } }
-        const seen = new Set(), tasks = [...missing, ...pending].filter(t => !seen.has(t.id) && seen.add(t.id));
+        const seen = new Set(), tasks = [...missing, ...pending].filter(t => !seen.has(t.id) && seen.add(t.id)).map(t => Object.assign(t, {late: !!t.due && t.due < Date.now()}));
         const courses = [...document.querySelectorAll('a[href]')].filter(x => new RegExp('^' + u + '/c/[^/]+$').test(x.getAttribute('href'))).map(x => ({id: x.getAttribute('href').split('/c/')[1], name: (x.textContent || '').trim().replace(/^[A-Z]\s*/, ''), url: 'https://classroom.google.com' + x.getAttribute('href')})).filter((c, i, arr) => c.name && arr.findIndex(z => z.id === c.id) === i);
         return go({src: 'classroom', at: Date.now(), tasks, courses});
       }
@@ -1292,7 +1292,7 @@ function importSync(){
   const clean = v => typeof v === 'string' ? v.slice(0, 500) : v;
   const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
   data[d.src] = {via: 'marcador', at: d.at || Date.now(),
-    tasks: d.tasks.slice(0, 200).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', late: !!t.late})),
+    tasks: d.tasks.slice(0, 200).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', late: !!t.late && typeof t.due === 'number' && t.due < Date.now()})),
     courses: (d.courses || []).slice(0, 100).map(c => ({id: clean(String(c.id)), name: clean(c.name), url: okUrl(c.url)}))};
   if(d.src === 'moodle' && okUrl(d.site) && !cfg.moodleUrl){ cfg.moodleUrl = d.site; saveCfg(); }
   data.at = Date.now(); store.set('cache', data);
