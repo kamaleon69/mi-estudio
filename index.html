@@ -217,6 +217,13 @@ ul.mods a{color:var(--accent);text-decoration:none}
     </div>
 
     <div class="card">
+      <strong>Compartir con compañeros</strong>
+      <p class="meta small">Genera un enlace que ya trae la dirección de Moodle, la de Electude y la configuración de Classroom. <b>No incluye tus sesiones, tokens, claves ni tareas</b>: cada compañero ve la app vacía hasta que inicia sesión con sus propias cuentas.</p>
+      <div class="row"><button class="btn primary" id="shareLink">🔗 Copiar enlace para compañeros</button><span id="shareOut" class="meta small"></span></div>
+      <p class="meta small" style="margin-top:8px">Para Classroom, cada compañero debe estar añadido como «usuario de prueba» en tu proyecto de Google Cloud (hasta 100 personas).</p>
+    </div>
+
+    <div class="card">
       <strong>Datos</strong>
       <p class="meta small">Todo (tokens, borradores y tareas de Electude) se guarda solo en este navegador.</p>
       <button class="btn small" id="wipe">Borrar todos los datos de este dispositivo</button>
@@ -1033,6 +1040,28 @@ $('#aiSave').onclick = () => {
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
 
 function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); }
+
+/* ---------- compartir ---------- */
+$('#shareLink').onclick = async () => {
+  const qp = new URLSearchParams();
+  if(cfg.moodleUrl) qp.set('moodle', cfg.moodleUrl);
+  if(cfg.googleClientId) qp.set('gcid', cfg.googleClientId);
+  if(cfg.electudeUrl && cfg.electudeUrl !== 'https://www.electude.com') qp.set('electude', cfg.electudeUrl);
+  const link = location.origin + location.pathname + (qp.toString() ? '?' + qp : '');
+  try{
+    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'App para tener Moodle, Classroom y Electude juntos:', url: link}); $('#shareOut').textContent = ''; }
+    else { await navigator.clipboard.writeText(link); $('#shareOut').textContent = 'Enlace copiado ✓'; }
+  }catch(e){ if(e.name !== 'AbortError') $('#shareOut').textContent = link; }
+};
+(function applySharedConfig(){
+  const qp = new URLSearchParams(location.search); let changed = false;
+  const take = (k, key, ok) => { const v = (qp.get(k) || '').trim(); if(v && ok(v) && !cfg[key]){ cfg[key] = v; changed = true; } };
+  take('moodle', 'moodleUrl', v => /^https:\/\//.test(v));
+  take('gcid', 'googleClientId', v => /\.apps\.googleusercontent\.com$/.test(v));
+  if(qp.get('electude') && /^https:\/\//.test(qp.get('electude'))){ cfg.electudeUrl = qp.get('electude'); changed = true; }
+  if(changed){ saveCfg(); msg('Configuración del centro cargada. Ve a <b>Ajustes</b> e inicia sesión con <b>tus</b> cuentas.', 'info'); }
+  if(qp.toString()) history.replaceState(null, '', location.pathname);
+})();
 
 /* ---------- arranque ---------- */
 renderAll();
