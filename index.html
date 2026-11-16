@@ -132,6 +132,9 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #lensBar button.cl{background:#d97757}#lensBar button.ge{background:#4b7bec}
 #lensBar button:disabled{opacity:.4;cursor:default}
 @media (max-width:520px){#syncInfo{display:none}#hdrInstall .lbl{display:none}#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#1c2430;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;max-width:92vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:#b3261e}
 #lensBusy{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:50;color:#fff;font-weight:600}
 </style>
 </head>
@@ -152,6 +155,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <div id="globalMsg"></div>
 
   <section id="pend" class="on">
+    <div class="row" id="pasteRow" style="justify-content:flex-end;margin:-4px 0 8px"><button class="btn small" id="pasteBtn" type="button">📋 Pegar sincronización</button></div>
     <div class="chips" id="filters">
       <button class="chip on" data-f="all">Todo</button>
       <button class="chip" data-f="moodle">Moodle</button>
@@ -182,9 +186,11 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <section id="cfg">
     <div class="card" style="border-color:var(--accent)">
       <strong>⚡ Conectar Moodle y Classroom (marcador)</strong>
-      <p class="meta small">Es la forma que funciona en Jesuïtes Educació. El marcador lee tus tareas <b>con la sesión que ya tienes abierta</b> en Moodle y Classroom y las trae aquí. No usa contraseñas.</p>
+      <p class="meta small">El marcador lee tus tareas <b>con la sesión que ya tienes abierta</b> en Moodle y Classroom y las trae aquí. No pide ni guarda contraseñas. Antes, revisa las direcciones en <b>🔗 Tus plataformas</b>.</p>
       <div class="row" style="margin:10px 0"><a class="btn primary" id="bmLink" href="#" title="Arrástrame a la barra de marcadores">⚡ Sincronizar Mi Estudio</a><span class="meta small">← arrástralo a tu barra de marcadores</span></div>
       <div id="bmStatus" class="meta small"></div>
+      <div class="row" style="margin-top:6px"><button class="btn small" id="bmCopy2" type="button">📋 Copiar código del marcador</button><button class="btn small" id="pasteBtn2" type="button">📋 Pegar sincronización</button></div>
+      <p class="meta small" style="margin-top:4px">En el móvil: copia el código para crear el marcador (ver ⓘ), y usa «Pegar sincronización» en la app instalada.</p>
       <details class="help" id="bmHelp"><summary><span class="i">i</span> Cómo conectarte (paso a paso)</summary><div class="hb">
         <p><b>1. Guarda el marcador (solo la primera vez)</b></p>
         <ol>
@@ -193,24 +199,36 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
         </ol>
         <p><b>2. Moodle</b></p>
         <ol>
-          <li>Abre <a href="https://moodle4.net.fje.edu/my/" target="_blank" rel="noopener">moodle4.net.fje.edu</a> y entra con tu cuenta de Microsoft del centro, como siempre.</li>
+          <li>Abre <a class="js-moodle" href="#" target="_blank" rel="noopener">tu Moodle</a> y entra como siempre (en Jesuïtes Educació, con tu cuenta de Microsoft del centro).</li>
           <li>En el «Tauler de control», pulsa el marcador <b>⚡ Sincronizar Mi Estudio</b>.</li>
           <li>Se abre Mi Estudio con el mensaje verde «Moodle sincronizado».</li>
         </ol>
         <p><b>3. Classroom</b></p>
         <ol>
-          <li>Abre <a href="https://classroom.google.com/a/not-turned-in/all" target="_blank" rel="noopener">Classroom → Pendents</a> con tu cuenta <b>@fje.edu</b>. Si sale tu Gmail personal, pulsa tu foto (arriba a la derecha) y elige la cuenta del centro.</li>
+          <li>Abre <a class="js-classroom" href="#" target="_blank" rel="noopener">Classroom → Pendents</a> con tu cuenta del centro (<b>@fje.edu</b>). Si sale tu Gmail personal, pulsa tu foto (arriba a la derecha) y elige la cuenta del centro.</li>
           <li>En «Pendents», pulsa el marcador. La página cambiará sola a «Sense entregar» y volverá: está leyendo también las vencidas. Espera unos segundos.</li>
           <li>Se abre Mi Estudio con «Classroom sincronizado».</li>
         </ol>
         <p><b>4. Para actualizar</b>, repite el paso 2 o el 3 cuando quieras (por ejemplo, una vez al día).</p>
         <div class="tip">El marcador no envía tu contraseña ni tu sesión a ningún sitio: lee la lista en tu navegador y la guarda solo en este dispositivo. Para <b>entregar</b>, usa el botón «Abrir en Moodle/Classroom» de cada tarea.</div>
-        <p class="small" style="margin-top:10px"><b>En el móvil</b>, lo más fácil es sincronizar en el PC y usar <b>📲 Pasar a otro dispositivo</b>. Si quieres el marcador también en el móvil: <button class="btn small" type="button" id="bmCopy">Copiar código</button></p>
+        <p style="margin-top:12px"><b>📱 5. Sincronizar en el móvil</b> (app en el navegador o instalada)</p>
+        <p class="small"><b>a) Guarda el marcador en el navegador del móvil</b> (solo la primera vez): <button class="btn small" type="button" id="bmCopy">Copiar código del marcador</button></p>
         <ul class="small">
-          <li><b>Android (Chrome):</b> guarda cualquier página como marcador (☆), edítalo, llámalo <i>Sincronizar</i> y pega el código como dirección. Para usarlo, en Moodle o Classroom escribe «Sincronizar» en la barra de direcciones y toca el marcador.</li>
-          <li><b>iPhone/iPad (Safari):</b> Compartir → Añadir marcador, llámalo <i>Sincronizar</i>. Luego en Marcadores → Editar, ábrelo y pega el código como dirección. Para usarlo, en Moodle o Classroom abre Marcadores y tócalo.</li>
-          <li>Classroom tiene que estar abierto en el <b>navegador</b> (<code>classroom.google.com</code>), no en la app de Classroom.</li>
+          <li><b>Android (Chrome):</b> abre cualquier web, pulsa ⋮ → ☆ para guardarla, luego ⋮ → Marcadores → mantén pulsado el nuevo → <b>Editar</b>. Ponle de nombre <i>Sincronizar</i> y en la dirección <b>pega el código</b>.</li>
+          <li><b>iPhone/iPad (Safari):</b> en cualquier web, Compartir (□↑) → <b>Añadir marcador</b>, nombre <i>Sincronizar</i>. Después abre Marcadores (📖) → <b>Editar</b> → toca el marcador y en la dirección <b>pega el código</b>.</li>
         </ul>
+        <p class="small"><b>b) Úsalo:</b> abre <a class="js-moodle" href="#" target="_blank" rel="noopener">Moodle</a> o <a class="js-classroom" href="#" target="_blank" rel="noopener">Classroom → Pendents</a> <b>en el navegador</b> (no en la app de Classroom) y lanza el marcador:</p>
+        <ul class="small">
+          <li>Android: escribe <i>Sincronizar</i> en la barra de direcciones y toca el resultado con la ☆.</li>
+          <li>iPhone: toca 📖 Marcadores → <i>Sincronizar</i>.</li>
+        </ul>
+        <p class="small"><b>c) Abajo aparece un panel azul:</b></p>
+        <ul class="small">
+          <li>Si usas la app <b>en el navegador</b>: pulsa <b>🌐 Abrir en el navegador</b>.</li>
+          <li>Si usas la app <b>instalada</b>: pulsa <b>📋 Copiar para la app instalada</b>, abre Mi Estudio y pulsa <b>📋 Pegar sincronización</b> (arriba en Pendientes). En el iPhone, toca «Pegar» si te lo pregunta.</li>
+        </ul>
+        <div class="tip">En Android la app instalada comparte los datos con Chrome, así que «Abrir en el navegador» también sirve. En el iPhone la app instalada tiene sus propios datos: usa «Copiar» y «Pegar». Si Classroom se abre en su app, mantén pulsado el enlace y elige «Abrir en el navegador». Si no ves la lista de Pendents, activa «Versión para ordenador» en el menú del navegador.</div>
+        <p class="small" style="margin-top:8px"><b>Más fácil todavía:</b> sincroniza en el PC y usa <b>📲 Pasar a otro dispositivo</b>.</p>
       </div></details>
     </div>
 
@@ -241,97 +259,23 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       </div></details>
     </div>
 
-    <details class="card" id="advConn">
-      <summary style="cursor:pointer"><strong>🔧 Conexión directa (avanzado)</strong> <span class="meta small">— solo si tu centro lo permite. En Jesuïtes Educació está bloqueada: usa el marcador ⚡.</span></summary>
-      <p class="meta small">Con la conexión directa podrías entregar desde la app, pero tu centro la tiene desactivada en Moodle («Plugin no habilitat») y pendiente de aprobación en Classroom. Si algún día la activan, se configura aquí.</p>
-    <div class="card" style="background:var(--bg)">
-      <strong>Moodle</strong>
-      <label>Dirección de tu Moodle</label>
-      <input id="mUrl" placeholder="https://campus.tucentro.es" autocomplete="url">
-      <div id="mStatus" class="meta" style="margin-top:6px"></div>
-      <div id="mLoginBox">
-        <label>Usuario</label><input id="mUser" autocomplete="username">
-        <label>Contraseña</label><input id="mPass" type="password" autocomplete="current-password">
-        <p class="meta small">La contraseña no se guarda: solo se usa una vez para conseguir el token de la app móvil de Moodle, que se guarda en este dispositivo.</p>
-        <div class="row"><button class="btn primary" id="mLogin">Conectar Moodle</button></div>
-        <div class="card" style="margin-top:12px;background:var(--bg)">
-          <strong class="small">¿Entras a Moodle con el botón de Google o Microsoft?</strong>
-          <p class="meta small">Usa este método, el mismo que la app oficial de Moodle:</p>
-          <button class="btn primary" id="mSso" type="button">🔐 Entrar con mi cuenta del centro</button>
-          <div id="mSsoStep" hidden>
-            <ol class="small" style="padding-left:18px">
-              <li>Copia este enlace: <button class="btn small" id="mSsoCopy" type="button">📋 Copiar enlace</button><br><code id="mSsoLink" style="font-size:11px"></code></li>
-              <li>Abre una <b>ventana privada</b> (Ctrl+Shift+P en Firefox/Zen, Ctrl+Shift+N en Chrome/Edge), pega el enlace y pulsa Enter. Tiene que ser privada: Moodle solo da el token si <b>acabas</b> de iniciar sesión.</li>
-              <li>Inicia sesión en Moodle como siempre.</li>
-              <li>Al terminar, verás una <b>página de error</b> cuya dirección empieza por <code>moodlemobile://token=</code>. Es normal.</li>
-              <li>Haz clic en la barra de direcciones de esa pestaña, copia la dirección entera (Ctrl+A, Ctrl+C) y pégala aquí:</li>
-            </ol>
-            <input id="mSsoUrl" placeholder="moodlemobile://token=…" autocomplete="off">
-            <div class="row" style="margin-top:8px"><button class="btn primary" id="mSsoDone" type="button">Conectar</button></div>
-            <p class="meta small">Si sale un aviso para «abrir Moodle», pulsa Cancelar y copia la dirección. En Chrome a veces no se ve: usa Firefox, Zen o Edge para este paso.<br>Si aparece «Plugin no habilitat o configurat», es que la ventana no era privada o ya tenías la sesión iniciada: ciérrala y repite el paso 2.</p>
-          </div>
-        </div>
-        <details style="margin-top:10px"><summary class="small">Otra opción: pegar un token manual</summary>
-          <p class="meta small">Si tu centro usa inicio de sesión externo, usuario/contraseña no funcionará. En la web de Moodle ve a <em>Preferencias → Claves de seguridad</em> y copia la clave de «Moodle mobile web service».</p>
-          <label>Token manual</label><input id="mTok"><div class="row" style="margin-top:8px"><button class="btn" id="mTokSave">Guardar token</button></div>
-        </details>
-      </div>
-      <div class="row" style="margin-top:8px"><button class="btn small" id="mLogout" hidden>Desconectar Moodle</button></div>
-      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><ol>
-        <li>Abre tu Moodle en el navegador y copia la dirección de la página de inicio (por ejemplo <code>https://campus.tucentro.es</code>). Pégala arriba, sin <code>/login</code> ni nada detrás.</li>
-        <li>Escribe el <b>mismo usuario y contraseña</b> con los que entras a Moodle y pulsa <b>Conectar Moodle</b>.</li>
-        <li>Si sale ✅ Conectado, ve a <b>Pendientes</b> y pulsa <b>↻ Actualizar</b>.</li>
-      </ol>
-      <p><b>Si sale «Inicio de sesión no válido»:</b> prueba el usuario <b>sin</b> el dominio (por ejemplo <code>447173.clot</code> en lugar de <code>447173.clot@fje.edu</code>), escrito igual que en la app oficial de Moodle.</p>
-      <p><b>Si entras a Moodle con el botón de Google o Microsoft, o el usuario y la contraseña siguen sin funcionar:</b></p>
-      <ol>
-        <li>Escribe arriba la dirección de tu Moodle y pulsa <b>🔐 Entrar con mi cuenta del centro</b>.</li>
-        <li>Pulsa <b>📋 Copiar enlace</b>.</li>
-        <li>Abre una <b>ventana privada</b> (Ctrl+Shift+P en Firefox o Zen, Ctrl+Shift+N en Chrome o Edge), pega el enlace y pulsa Enter.</li>
-        <li>Inicia sesión en Moodle como siempre.</li>
-        <li>Verás una página de error cuya dirección empieza por <code>moodlemobile://token=…</code>. Es normal. Si sale un aviso para «abrir Moodle», pulsa <i>Cancelar</i>.</li>
-        <li>Copia esa dirección entera desde la barra de direcciones (Ctrl+A, Ctrl+C), pégala en la app y pulsa <b>Conectar</b>.</li>
-      </ol>
-      <div class="tip">Tiene que ser una ventana <b>privada</b>: Moodle solo entrega el token si acabas de iniciar sesión. Si ves «Plugin no habilitat o configurat», cierra la ventana y repite desde el paso 3. Si en Chrome no se ve la dirección <code>moodlemobile://</code>, haz ese paso en Firefox, Zen o Edge.</div>
-      <p style="margin-top:10px"><b>Otra opción</b>, si tu centro la tiene activada: copia la clave de «Moodle mobile web service» desde <a id="mKeysLink" href="#" target="_blank" rel="noopener">Preferencias → Claves de seguridad</a> y pégala en «Token manual». En el Moodle de Jesuïtes Educació esta página sale vacía, así que usa el método anterior.</p>
-      <div class="tip">El token funciona como una contraseña de la app: no se lo pases a nadie.</div>
-      <div class="tip">Para comprobar que tu centro lo permite: si puedes entrar con la <a href="https://download.moodle.org/mobile/" target="_blank" rel="noopener">app oficial de Moodle</a>, esta app también funciona.</div></div></details>
-    </div>
-
-    <div class="card" style="background:var(--bg)">
-      <strong>Google Classroom</strong>
-      <label>Google OAuth Client ID</label>
-      <input id="gCid" placeholder="123456-abc.apps.googleusercontent.com">
-      <p class="meta small">Se crea gratis en Google Cloud (ver instrucciones en el README). Al pulsar «Actualizar» te pedirá iniciar sesión con tu cuenta del centro.</p>
-      <div class="row"><button class="btn primary" id="gSave">Guardar y conectar</button><button class="btn small" id="gOut">Cerrar sesión de Google</button></div>
-      <div id="gStatus" class="meta" style="margin-top:6px"></div>
-      <div id="gLocalWarn"></div>
-      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><p><b>Si te han pasado un enlace de un compañero</b>, el Client ID ya está puesto: pulsa <b>Guardar y conectar</b> y entra con tu cuenta del centro. Si sale «acceso denegado», pide a quien te pasó el enlace que te añada como usuario de prueba.</p>
-      <p><b>Si lo configuras tú</b> (una sola vez, unos 10 minutos, gratis):</p>
-      <ol>
-        <li><a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">Crea un proyecto en Google Cloud</a> (con tu Gmail personal; llámalo «Mi Estudio»).</li>
-        <li><a href="https://console.cloud.google.com/apis/library/classroom.googleapis.com" target="_blank" rel="noopener">Activa la Google Classroom API</a> pulsando «Habilitar».</li>
-        <li><a href="https://console.cloud.google.com/auth/branding" target="_blank" rel="noopener">Configura la pantalla de consentimiento</a>: nombre «Mi Estudio», tipo de usuario <b>Externo</b> y tu correo de contacto.</li>
-        <li><a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Añade los usuarios de prueba</a>: tu correo del centro y el de los compañeros que la vayan a usar (máximo 100).</li>
-        <li><a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener">Crea el ID de cliente</a>: tipo <b>Aplicación web</b> y, en «Orígenes de JavaScript autorizados», añade:<br><code class="js-origin"></code> <button class="btn small" id="copyOrigin" type="button">Copiar</button></li>
-        <li>Copia el ID de cliente (termina en <code>.apps.googleusercontent.com</code>), pégalo arriba y pulsa <b>Guardar y conectar</b>.</li>
-      </ol>
-      <div class="tip">Google avisará de que la app «no está verificada»: es normal, porque la app es tuya. Pulsa <i>Continuar</i>. Si sale «Acceso bloqueado por tu administrador», es tu centro el que lo impide y hay que pedírselo al coordinador TIC.</div></div></details>
-    </div>
-
-    </details>
-
     <div class="card">
-      <strong>Electude</strong>
-      <label>Dirección de Electude</label>
-      <input id="eUrl" placeholder="https://clotfje.electude.eu/srestore">
-      <div class="row" style="margin-top:8px"><button class="btn" id="eUrlSave">Guardar</button></div>
-      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><ol>
-        <li>Entra en Electude desde el botón <a class="js-elec" href="#" target="_blank" rel="noopener">Abrir Electude ↗</a> con tu usuario y contraseña de siempre.</li>
-        <li>Electude no permite que otras apps lean tus tareas. Apúntalas en la pestaña <b>Electude</b> (título y fecha) y saldrán en <b>Pendientes</b> junto al resto.</li>
-        <li>Cuando termines una, márcala con <b>✓ Hecha</b>.</li>
-      </ol>
-      <div class="tip">Si tu centro usa otra dirección de Electude, cámbiala arriba y pulsa Guardar.</div></div></details>
+      <strong>🔗 Tus plataformas</strong>
+      <p class="meta small">Solo hace falta la <b>dirección</b> de cada web. La app no te pide usuario ni contraseña: entras en cada plataforma como siempre y tus tareas se traen con el marcador ⚡.</p>
+      <label for="pMoodle">Moodle</label><input id="pMoodle" placeholder="https://moodle4.net.fje.edu" autocomplete="url">
+      <label for="pClass">Classroom</label><input id="pClass" placeholder="https://classroom.google.com/u/2" autocomplete="url">
+      <label for="pElec">Electude</label><input id="pElec" placeholder="https://clotfje.electude.eu/srestore" autocomplete="url">
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="pSave" type="button">Guardar</button><span id="pSaved" class="meta small"></span></div>
+      <div class="row small" style="margin-top:8px;gap:12px"><a class="js-moodle" href="#" target="_blank" rel="noopener">Abrir Moodle ↗</a><a class="js-classroom" href="#" target="_blank" rel="noopener">Abrir Classroom ↗</a><a class="js-elec" href="#" target="_blank" rel="noopener">Abrir Electude ↗</a></div>
+      <details class="help"><summary><span class="i">i</span> Cómo encontrar cada dirección</summary><div class="hb">
+        <ol>
+          <li><b>Moodle:</b> entra en tu Moodle y copia la dirección de la barra <b>hasta antes de</b> <code>/my</code>, <code>/course</code> o <code>/login</code>. En Jesuïtes Educació es <code>https://moodle4.net.fje.edu</code>.</li>
+          <li><b>Classroom:</b> abre <a href="https://classroom.google.com" target="_blank" rel="noopener">classroom.google.com</a> con tu cuenta <b>@fje.edu</b>. Si tienes varias cuentas de Google, la dirección lleva <code>/u/1</code> o <code>/u/2</code>: cópiala hasta ahí (por ejemplo <code>https://classroom.google.com/u/2</code>). Así los enlaces se abren directamente con la cuenta del centro.</li>
+          <li><b>Electude:</b> copia la dirección de la página donde inicias sesión. En Jesuïtes El Clot es <code>https://clotfje.electude.eu/srestore</code>.</li>
+          <li>Pulsa <b>Guardar</b> y comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.</li>
+        </ol>
+        <div class="tip">Las tareas de Electude se apuntan a mano en la pestaña <b>Electude</b>. En el ordenador, Electude se abre en una ventana lateral para usarlo junto a la app.</div>
+      </div></details>
     </div>
 
     <div class="card">
@@ -349,7 +293,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <label>Cómo quieres que te ayude (instrucciones para la IA)</label>
       <textarea id="aiSys" style="min-height:90px"></textarea>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="aiSave">Guardar</button><span id="aiSaved" class="meta small"></span></div>
-      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><p><b>Opción 1: con tu cuenta normal (sin claves).</b> No hay que configurar nada:</p>
+      <details class="help"><summary><span class="i">i</span> Cómo usar el asistente</summary><div class="hb"><p><b>Opción 1: con tu cuenta normal (sin claves).</b> No hay que configurar nada:</p>
       <ol>
         <li>Inicia sesión en <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> o en <a href="https://gemini.google.com" target="_blank" rel="noopener">Gemini</a> en este navegador. En el móvil, instala la app de <a href="https://play.google.com/store/apps/details?id=com.anthropic.claude" target="_blank" rel="noopener">Claude</a> o la de <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.bard" target="_blank" rel="noopener">Gemini</a>.</li>
         <li>Usa ✳ o 🔍 y pulsa enviar (↗). Se abrirá Claude o Gemini con tu pregunta. Si hay imagen, pégala con Ctrl+V (en el móvil va directa por «Compartir»).</li>
@@ -391,6 +335,30 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <button class="fab claude" id="aiBtn" title="Asistente IA"><span class="ic">✳</span><span class="lbl">Claude</span></button>
 </div>
 
+<dialog id="updDlg" style="width:min(460px,94vw)">
+  <div class="dlg-h"><h3>↻ Actualizar tareas</h3><button class="btn small" id="updClose" type="button">✕</button></div>
+  <div class="dlg-b">
+    <div id="updStatus"></div>
+    <p class="small">Las tareas se traen con el marcador <b>⚡ Sincronizar Mi Estudio</b>: abre la plataforma, inicia sesión si hace falta y pulsa el marcador.</p>
+    <div class="row" style="flex-direction:column;align-items:stretch;gap:8px">
+      <a class="btn primary js-moodle" id="updMoodle" href="#" target="_blank" rel="noopener">⚡ Abrir Moodle para sincronizar ↗</a>
+      <a class="btn primary js-classroom" id="updClass" href="#" target="_blank" rel="noopener">⚡ Abrir Classroom → Pendents ↗</a>
+      <button class="btn" id="updPaste" type="button">📋 Pegar sincronización (app instalada)</button>
+      <button class="btn" id="updHelp" type="button">ⓘ ¿Cómo se usa el marcador?</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="pasteDlg" style="width:min(460px,94vw)">
+  <div class="dlg-h"><h3>📋 Pegar sincronización</h3><button class="btn small" id="pasteClose" type="button">✕</button></div>
+  <div class="dlg-b">
+    <p class="small">Pega aquí lo que copiaste con el marcador («Copiar para la app instalada») o el enlace de «Pasar a otro dispositivo».</p>
+    <textarea id="pasteTxt" style="min-height:110px" placeholder="https://kamaleon69.github.io/mi-estudio/#sync=…"></textarea>
+    <div id="pasteOut"></div>
+    <div class="row" style="margin-top:10px"><button class="btn primary" id="pasteGo" type="button">Importar</button></div>
+  </div>
+</dialog>
+
 <dialog id="instDlg" style="width:min(460px,94vw)">
   <div class="dlg-h"><h3 id="instTitle">Añadir Mi Estudio</h3><button class="btn small" id="instClose" type="button">✕</button></div>
   <div class="dlg-b" id="instBody"></div>
@@ -426,6 +394,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
     <button class="ge" id="lensGemini" disabled>✦ Gemini</button>
   </div>
 </dialog>
+<div id="toast" role="status" aria-live="polite"></div>
 <div id="lensBusy"><span><span class="spin"></span> Capturando…</span></div>
 
 <script>
@@ -446,9 +415,12 @@ const SRC = {moodle:'Moodle', classroom:'Classroom', electude:'Electude'};
 const DEFAULT_SYS = 'Eres un tutor para un estudiante de Formación Profesional. Responde siempre en español, de forma clara y ordenada. ' +
   'Explica el razonamiento paso a paso para que el estudiante entienda la materia, no solo el resultado. ' +
   'Si te envían una imagen o un texto seleccionado, primero di brevemente qué ves y después ayuda con ello.';
-let cfg = Object.assign({moodleUrl:'', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://clotfje.electude.eu/srestore',
+let cfg = Object.assign({moodleUrl:'https://moodle4.net.fje.edu', classroomUrl:'https://classroom.google.com', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://clotfje.electude.eu/srestore',
   claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
 const saveCfg = () => store.set('cfg', cfg);
+// La conexión directa (usuario/contraseña/token de Moodle, Client ID de Google) se ha retirado: se borran restos guardados.
+if(cfg.moodleToken || cfg.googleClientId || cfg.moodleUser){ cfg.moodleToken = ''; cfg.moodleUser = ''; cfg.googleClientId = ''; store.set('cfg', cfg); }
+try{ sessionStorage.removeItem('me_g'); }catch(e){}
 let data = store.get('cache', {moodle:{tasks:[], courses:[]}, classroom:{tasks:[], courses:[]}, at:0});
 data.electude = data.electude || {tasks: [], courses: []};
 let manual = store.get('manual', []);
@@ -456,6 +428,15 @@ let filter = 'all';
 let gToken = null, gExp = 0;
 try{ const t = JSON.parse(sessionStorage.getItem('me_g') || 'null'); if(t && t.exp > Date.now()){ gToken = t.tok; gExp = t.exp; } }catch(e){}
 
+let toastT = 0;
+function toast(text, type = 'ok'){
+  const t = $('#toast'); if(!t) return;
+  // si hay un diálogo modal abierto, el aviso tiene que ir dentro para verse
+  const open = [...document.querySelectorAll('dialog[open]')].pop();
+  (open || document.body).appendChild(t);
+  t.textContent = text; t.className = type === 'err' ? 'err on' : 'on';
+  clearTimeout(toastT); toastT = setTimeout(() => t.className = (type === 'err' ? 'err' : ''), 2600);
+}
 function msg(html, type='info', el=$('#globalMsg')){ el.innerHTML = html ? `<div class="msg ${type}">${html}</div>` : ''; }
 
 /* ---------- pestañas ---------- */
@@ -463,7 +444,7 @@ $$('nav button').forEach(b => b.onclick = () => {
   $$('nav button').forEach(x => x.classList.toggle('on', x === b));
   $$('main section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
 });
-$$('#filters .chip').forEach(c => c.onclick = () => { filter = c.dataset.f; $$('#filters .chip').forEach(x => x.classList.toggle('on', x === c)); renderPending(); });
+$$('#filters .chip').forEach(c => c.onclick = () => { filter = c.dataset.f; $$('#filters .chip').forEach(x => x.classList.toggle('on', x === c)); renderPending(); const n = allTasks().filter(t => filter === 'all' || t.src === filter).length; toast(n + ' tarea' + (n === 1 ? '' : 's') + (filter === 'all' ? '' : ' de ' + SRC[filter])); });
 
 /* ---------- Moodle ---------- */
 const mBase = () => cfg.moodleUrl.trim().replace(/\/+$/, '');
@@ -612,12 +593,34 @@ async function sync(interactive = false){
   if(cfg.googleClientId && !isLocalFile() && (data.classroom.via !== 'marcador' || gToken)){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length && data.classroom.via !== 'marcador') errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
   data.at = Date.now(); store.set('cache', data);
   if(errs.length) msg(errs.join('<br>'), 'err'); else if(syncNote){ msg(syncNote, 'ok'); syncNote = ''; }
-  if(interactive && !errs.length && !cfg.moodleToken && hasMarkerData()) msg('Para actualizar, abre Moodle o Classroom y pulsa tu marcador <b>⚡ Sincronizar Mi Estudio</b>: <a href="https://moodle4.net.fje.edu/my/" target="_blank" rel="noopener">Moodle</a> · <a href="https://classroom.google.com/a/not-turned-in/all" target="_blank" rel="noopener">Classroom</a>', 'info');
+  if(interactive && !errs.length && !cfg.moodleToken) msg(`Para actualizar, abre Moodle o Classroom y pulsa tu marcador <b>⚡ Sincronizar Mi Estudio</b>: <a href="${esc(moodleHome())}" target="_blank" rel="noopener">Moodle</a> · <a href="${esc(classroomPend())}" target="_blank" rel="noopener">Classroom</a>`, 'info');
   if(!cfg.moodleToken && !cfg.googleClientId && !hasMarkerData()) msg('👋 Para empezar ve a <b>Ajustes → ⚡ Conectar Moodle y Classroom</b> y sigue la ⓘ. Son 2 minutos.', 'info');
   syncing = false; $('#syncBtn').textContent = '↻ Actualizar';
   renderAll();
 }
-$('#syncBtn').onclick = () => sync(true);
+function syncAgo(ts){
+  if(!ts) return 'nunca';
+  const m = Math.round((Date.now() - ts) / 60000);
+  if(m < 1) return 'ahora mismo'; if(m < 60) return 'hace ' + m + ' min';
+  const h = Math.round(m / 60); if(h < 24) return 'hace ' + h + ' h';
+  return 'hace ' + Math.round(h / 24) + ' días';
+}
+$('#syncBtn').onclick = () => {
+  renderAll();
+  const rows = [['moodle', 'Moodle'], ['classroom', 'Classroom']].map(([k, n]) => {
+    const d = data[k] || {}, ok = d.via === 'marcador';
+    const old = !ok || Date.now() - (d.at || 0) > 24 * 3600e3;
+    return `<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span><span class="badge b-${k}">${n}</span> ${ok ? d.tasks.length + ' tareas' : 'sin sincronizar'}</span><span class="small" style="color:${old ? 'var(--warn)' : 'var(--ok)'}">${ok ? syncAgo(d.at) : '—'}</span></div>`;
+  }).join('') + `<div class="row" style="justify-content:space-between;padding:6px 0"><span><span class="badge b-electude">Electude</span> ${manual.filter(t => !t.done).length} apuntadas</span><span class="small meta">manual</span></div>`;
+  $('#updStatus').innerHTML = rows;
+  $('#updDlg').showModal();
+  toast('✅ Lista recargada');
+};
+$('#updClose').onclick = () => $('#updDlg').close();
+$('#updPaste').onclick = () => { $('#updDlg').close(); pasteSync(); };
+$('#updHelp').onclick = () => { $('#updDlg').close(); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'cfg')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'cfg')); $('#bmHelp').open = true; $('#bmHelp').scrollIntoView({block: 'start'}); };
+$('#updMoodle').addEventListener('click', () => toast('Abriendo Moodle… pulsa allí tu marcador ⚡'));
+$('#updClass').addEventListener('click', () => toast('Abriendo Classroom… pulsa allí tu marcador ⚡'));
 
 /* ---------- render: pendientes ---------- */
 function allTasks(){
@@ -665,7 +668,7 @@ function draftBox(t, label = 'Tu borrador (se guarda en este dispositivo)'){
 function wireDraft(t){
   const ta = $('#draft'); if(!ta) return;
   ta.oninput = () => { ta.value ? store.set('draft_' + t.id, ta.value) : store.del('draft_' + t.id); $('#draftSaved').textContent = 'Guardado'; };
-  $('#copyDraft').onclick = async () => { try{ await navigator.clipboard.writeText(ta.value); $('#draftSaved').textContent = 'Copiado ✓'; }catch(e){ ta.select(); } };
+  $('#copyDraft').onclick = async () => { try{ await navigator.clipboard.writeText(ta.value); $('#draftSaved').textContent = 'Copiado ✓'; toast('✅ Texto copiado'); }catch(e){ ta.select(); toast('Selecciona el texto y cópialo a mano', 'err'); } };
 }
 
 async function openTask(t){
@@ -685,8 +688,8 @@ async function openTask(t){
       <div class="row" style="margin-top:12px"><a class="btn primary" href="${esc(cfg.electudeUrl)}" target="_blank" rel="noopener">Abrir Electude ↗</a>
       <button class="btn" id="mDone">✓ Marcar como hecha</button><button class="btn" id="mDel">Eliminar</button></div>`;
     wireDraft(t);
-    $('#mDone').onclick = () => { manual = manual.map(x => x.id === t.id ? Object.assign(x, {done: true}) : x); store.set('manual', manual); $('#dlg').close(); renderAll(); };
-    $('#mDel').onclick = () => { manual = manual.filter(x => x.id !== t.id); store.set('manual', manual); store.del('draft_' + t.id); $('#dlg').close(); renderAll(); };
+    $('#mDone').onclick = () => { manual = manual.map(x => x.id === t.id ? Object.assign(x, {done: true}) : x); store.set('manual', manual); $('#dlg').close(); renderAll(); toast('✅ Marcada como hecha'); };
+    $('#mDel').onclick = () => { manual = manual.filter(x => x.id !== t.id); store.set('manual', manual); store.del('draft_' + t.id); $('#dlg').close(); renderAll(); toast('🗑 Tarea eliminada'); };
     return;
   }
   // Moodle
@@ -813,79 +816,42 @@ function renderElec(){
   const list = manual.slice().sort((a, b) => (a.done - b.done) || ((a.due || 9e15) - (b.due || 9e15)));
   $('#elecList').innerHTML = list.map(t => `<div class="card row"><span style="flex:1;${t.done ? 'text-decoration:line-through;opacity:.6' : ''}"><b>${esc(t.title)}</b><br><span class="meta">${t.due ? fmtDate(t.due) : 'Sin fecha'}${t.note ? ' · ' + esc(t.note) : ''}</span></span>
     <button class="btn small" data-tog="${t.id}">${t.done ? 'Reabrir' : '✓ Hecha'}</button><button class="btn small" data-del="${t.id}">✕</button></div>`).join('') || '<div class="empty">Aún no has apuntado tareas de Electude.</div>';
-  $$('#elecList [data-tog]').forEach(b => b.onclick = () => { manual = manual.map(x => x.id === b.dataset.tog ? Object.assign(x, {done: !x.done}) : x); store.set('manual', manual); renderAll(); });
-  $$('#elecList [data-del]').forEach(b => b.onclick = () => { manual = manual.filter(x => x.id !== b.dataset.del); store.set('manual', manual); renderAll(); });
+  $$('#elecList [data-tog]').forEach(b => b.onclick = () => { let done; manual = manual.map(x => x.id === b.dataset.tog ? Object.assign(x, {done: (done = !x.done)}) : x); store.set('manual', manual); renderAll(); toast(done ? '✅ Marcada como hecha' : '↩ Tarea reabierta'); });
+  $$('#elecList [data-del]').forEach(b => b.onclick = () => { manual = manual.filter(x => x.id !== b.dataset.del); store.set('manual', manual); renderAll(); toast('🗑 Tarea eliminada'); });
 }
 $('#eAdd').onclick = () => {
-  const title = $('#eTitle').value.trim(); if(!title) return $('#eTitle').focus();
+  const title = $('#eTitle').value.trim(); if(!title){ toast('Escribe un título para la tarea', 'err'); return $('#eTitle').focus(); }
   const due = $('#eDue').value ? new Date($('#eDue').value).getTime() : null;
   manual.push({id: 'e' + Date.now(), title, due, note: $('#eNote').value.trim(), done: false});
-  store.set('manual', manual); $('#eTitle').value = $('#eDue').value = $('#eNote').value = ''; renderAll();
+  store.set('manual', manual); $('#eTitle').value = $('#eDue').value = $('#eNote').value = ''; renderAll(); toast('✅ Tarea añadida a Pendientes');
 };
 
 /* ---------- Ajustes ---------- */
 const WEB_URL = 'https://kamaleon69.github.io/mi-estudio/';
 const isLocalFile = () => location.protocol === 'file:' || location.origin === 'null';
+const normUrl = v => { v = (v || '').trim().replace(/\s+/g, ''); if(v && !/^https?:\/\//i.test(v)) v = 'https://' + v; return v.replace(/^http:\/\//i, 'https://'); };
+const classroomBase = () => { const m = (cfg.classroomUrl || '').match(/^https:\/\/classroom\.google\.com(\/u\/\d+)?/i); return m ? 'https://classroom.google.com' + (m[1] || '') : 'https://classroom.google.com'; };
+const moodleHome = () => mBase() + '/my/';
+const classroomPend = () => classroomBase() + '/a/not-turned-in/all';
 function renderHelp(){
-  $$('.js-origin').forEach(e => e.textContent = isLocalFile() ? new URL(WEB_URL).origin : location.origin);
-  const w = $('#gLocalWarn');
-  if(w) w.innerHTML = isLocalFile() ? `<div class="msg err">Estás usando la app desde un archivo de tu ordenador: aquí Google no deja iniciar sesión en Classroom. Ábrela desde la web: <a href="${WEB_URL}" target="_blank" rel="noopener">${WEB_URL}</a></div>` : '';
   $$('.js-elec').forEach(e => e.href = cfg.electudeUrl);
-  const k = $('#mKeysLink'); if(k){ k.href = cfg.moodleUrl ? mBase() + '/user/managetoken.php' : '#'; k.onclick = e => { if(!cfg.moodleUrl){ e.preventDefault(); $('#mUrl').focus(); } }; }
+  $$('.js-moodle').forEach(e => e.href = cfg.moodleUrl ? moodleHome() : '#');
+  $$('.js-classroom').forEach(e => e.href = classroomPend());
 }
-$('#copyOrigin').onclick = async e => { try{ await navigator.clipboard.writeText(location.origin); e.target.textContent = 'Copiado ✓'; }catch(err){} };
 function renderCfg(){
   renderHelp();
-  $('#mUrl').value = cfg.moodleUrl; $('#gCid').value = cfg.googleClientId; $('#eUrl').value = cfg.electudeUrl;
-  const mOn = !!cfg.moodleToken;
-  $('#mLoginBox').hidden = mOn; $('#mLogout').hidden = !mOn;
-  $('#mStatus').innerHTML = mOn ? `✅ Conectado${cfg.moodleUser ? ' como <b>' + esc(cfg.moodleUser) + '</b>' : ''}` : 'No conectado';
-  $('#gStatus').innerHTML = !cfg.googleClientId ? 'Sin configurar' : (gToken && Date.now() < gExp ? '✅ Sesión de Google activa' : 'Configurado · inicia sesión pulsando «Actualizar»');
+  $('#pMoodle').value = cfg.moodleUrl; $('#pClass').value = cfg.classroomUrl; $('#pElec').value = cfg.electudeUrl;
 }
-$('#mLogin').onclick = async () => {
-  cfg.moodleUrl = $('#mUrl').value.trim(); if(!/^https?:\/\//.test(cfg.moodleUrl)) cfg.moodleUrl = 'https://' + cfg.moodleUrl;
-  const body = new URLSearchParams({username: $('#mUser').value.trim(), password: $('#mPass').value, service: 'moodle_mobile_app'});
-  $('#mStatus').innerHTML = '<span class="spin"></span> Conectando…';
-  try{
-    const r = await fetch(mBase() + '/login/token.php', {method: 'POST', body});
-    const j = await r.json();
-    if(!j.token) throw new Error(j.error || 'No se recibió token');
-    cfg.moodleToken = j.token; cfg.moodleUser = $('#mUser').value.trim(); saveCfg(); $('#mPass').value = '';
-    renderCfg(); sync(false);
-  }catch(e){ $('#mStatus').innerHTML = `<span style="color:var(--danger)">Error: ${esc(e.message)}</span>`; }
+$('#pSave').onclick = () => {
+  const mo = normUrl($('#pMoodle').value).replace(/\/(my|course|login|mod|user|admin)(\/.*)?$/i, '').replace(/\/+$/, '');
+  const cl = normUrl($('#pClass').value), el = normUrl($('#pElec').value);
+  if(cl && !/^https:\/\/classroom\.google\.com/i.test(cl)){ toast('Dirección de Classroom no válida', 'err'); $('#pSaved').innerHTML = '<span style="color:var(--danger)">La dirección de Classroom debe empezar por https://classroom.google.com</span>'; return; }
+  cfg.moodleUrl = mo || 'https://moodle4.net.fje.edu';
+  cfg.classroomUrl = cl || 'https://classroom.google.com'; cfg.classroomUrl = classroomBase();
+  cfg.electudeUrl = el || 'https://clotfje.electude.eu/srestore';
+  saveCfg(); renderAll(); $('#pSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#pSaved').textContent = '', 2500); toast('✅ Direcciones guardadas');
 };
-const normMUrl = v => { v = (v || '').trim().replace(/\/+$/, ''); if(v && !/^https?:\/\//.test(v)) v = 'https://' + v; return v; };
-$('#mSso').onclick = () => {
-  cfg.moodleUrl = normMUrl($('#mUrl').value);
-  if(!cfg.moodleUrl){ $('#mStatus').innerHTML = '<span style="color:var(--danger)">Escribe primero la dirección de tu Moodle.</span>'; return $('#mUrl').focus(); }
-  saveCfg();
-  const passport = String(Math.floor(Math.random() * 1e9));
-  const link = mBase() + '/admin/tool/mobile/launch.php?service=moodle_mobile_app&passport=' + passport + '&urlscheme=moodlemobile';
-  $('#mSsoLink').textContent = link;
-  $('#mSsoStep').hidden = false;
-  $('#mSsoCopy').onclick = async e => { try{ await navigator.clipboard.writeText(link); e.target.textContent = 'Copiado ✓'; }catch(err){ getSelection().selectAllChildren($('#mSsoLink')); } };
-};
-function tokenFromLaunchUrl(v){
-  const m = (v || '').trim().match(/token=([A-Za-z0-9+/=_\-%]+)/);
-  if(!m) return null;
-  let b = decodeURIComponent(m[1]).replace(/-/g, '+').replace(/_/g, '/');
-  while(b.length % 4) b += '=';
-  let dec; try{ dec = atob(b); }catch(e){ return null; }
-  const parts = dec.split(':::');
-  return parts.length >= 2 && /^[a-f0-9]{32}$/i.test(parts[1]) ? parts[1] : null;
-}
-$('#mSsoDone').onclick = () => {
-  const tok = tokenFromLaunchUrl($('#mSsoUrl').value);
-  if(!tok){ $('#mStatus').innerHTML = '<span style="color:var(--danger)">Esa dirección no contiene un token válido. Copia la dirección completa que empieza por moodlemobile://token=</span>'; return; }
-  cfg.moodleToken = tok; cfg.moodleUser = ''; saveCfg(); $('#mSsoUrl').value = ''; $('#mSsoStep').hidden = true;
-  renderCfg(); sync(false);
-};
-$('#mTokSave').onclick = () => { cfg.moodleUrl = $('#mUrl').value.trim().replace(/^(?!https?:\/\/)/, 'https://'); cfg.moodleToken = $('#mTok').value.trim(); cfg.moodleUser = ''; saveCfg(); renderCfg(); sync(false); };
-$('#mLogout').onclick = () => { cfg.moodleToken = ''; cfg.moodleUser = ''; saveCfg(); data.moodle = {tasks: [], courses: []}; store.set('cache', data); renderAll(); };
-$('#gSave').onclick = () => { cfg.googleClientId = $('#gCid').value.trim(); saveCfg(); renderCfg(); if(isLocalFile()){ $('#gLocalWarn').scrollIntoView({block:'center'}); return; } if(cfg.googleClientId) sync(true); };
-$('#gOut').onclick = () => { if(gToken && window.google) google.accounts.oauth2.revoke(gToken, () => {}); gToken = null; sessionStorage.removeItem('me_g'); data.classroom = {tasks: [], courses: []}; store.set('cache', data); renderAll(); };
-$('#eUrlSave').onclick = () => { cfg.electudeUrl = $('#eUrl').value.trim() || 'https://clotfje.electude.eu/srestore'; saveCfg(); renderAll(); };
-$('#wipe').onclick = () => { if(!confirm('¿Borrar tokens, borradores y tareas guardadas en este dispositivo?')) return; Object.keys(localStorage).filter(k => k.startsWith('me_')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); location.reload(); };
+$('#wipe').onclick = () => { if(!confirm('¿Borrar tokens, borradores y tareas guardadas en este dispositivo?')) return; Object.keys(localStorage).filter(k => k.startsWith('me_')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); try{ sessionStorage.setItem('me_wiped', '1'); }catch(e){} location.reload(); };
 
 /* ======================================================================
    ASISTENTE IA (Claude / Gemini)
@@ -923,9 +889,9 @@ function renderAI(){
     : `Usando tu cuenta de ${AI_NAME[p]}: al enviar se abrirá ${isTouch() ? 'el menú Compartir para elegir la app de ' + AI_NAME[p] : (p === 'claude' ? 'claude.ai' : 'Gemini') + ' con tu pregunta'}. <a href="#" id="aiCfgLink">Configurar chat integrado</a>`;
   const l = $('#aiCfgLink'); if(l) l.onclick = e => { e.preventDefault(); $('#ai').close(); $('nav button[data-tab=cfg]').click(); setTimeout(() => $('#cKey').scrollIntoView({block: 'center'}), 50); };
   $('#aiCtx').innerHTML = ai.ctx ? `<span class="ctx">📌 <span>Tarea: ${esc(ai.ctx.label)}</span><button id="ctxX" title="Quitar contexto">✕</button></span>` : '';
-  if(ai.ctx) $('#ctxX').onclick = () => { ai.ctx = null; renderAI(); };
+  if(ai.ctx) $('#ctxX').onclick = () => { ai.ctx = null; renderAI(); toast('Contexto de la tarea quitado'); };
   $('#aiAtt').innerHTML = ai.att.map((a, i) => `<div class="att">${a.url ? `<img src="${a.url}" alt="">` : ''}<span class="tx">${esc(a.label || 'Imagen')}${a.text ? ' · texto' : ''}</span><button data-rm="${i}">✕</button></div>`).join('');
-  $$('#aiAtt [data-rm]').forEach(b => b.onclick = () => { ai.att.splice(+b.dataset.rm, 1); renderAI(); });
+  $$('#aiAtt [data-rm]').forEach(b => b.onclick = () => { ai.att.splice(+b.dataset.rm, 1); renderAI(); toast('Imagen quitada'); });
   $('#aiSend').disabled = ai.busy;
   $('#aiSend').textContent = hasKey(p) ? '➤' : '↗';
   $('#aiSend').title = hasKey(p) ? 'Enviar' : 'Abrir en ' + AI_NAME[p];
@@ -943,11 +909,11 @@ function renderMsgs(){
     : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
         <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${md(m.text)}</div>
         ${!m.note && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
-  $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; }catch(e){} });
+  $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; toast('✅ Respuesta copiada'); }catch(e){ toast('No se pudo copiar', 'err'); } });
   $$('#aiMsgs [data-ins]').forEach(b => b.onclick = () => {
     const t = draftTarget(); if(!t) return;
     t.value = (t.value ? t.value.replace(/\s+$/, '') + '\n\n' : '') + plain(ai.msgs[+b.dataset.ins].text);
-    t.dispatchEvent(new Event('input')); b.textContent = 'Pegado ✓';
+    t.dispatchEvent(new Event('input')); b.textContent = 'Pegado ✓'; toast('✅ Pegado en tu borrador');
   });
   box.scrollTop = box.scrollHeight;
 }
@@ -1033,7 +999,7 @@ async function aiSend(){
   if(ai.busy) return;
   const input = $('#aiInput'), p = cfg.aiProvider;
   const typed = input.value.trim();
-  if(!typed && !ai.att.length) return input.focus();
+  if(!typed && !ai.att.length){ toast('Escribe una pregunta o añade una imagen', 'err'); return input.focus(); }
   const text = typed || 'Explícame esto y ayúdame a resolverlo.';
   const images = ai.att.filter(a => a.data).map(a => ({mime: a.mime, data: a.data, url: a.url}));
   const extra = ai.att.map(a => a.text).filter(Boolean).join('\n\n');
@@ -1089,6 +1055,7 @@ async function aiExternal(p, text, images){
   }catch(e){ console.warn(e); }
   const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(shareText.slice(0, 7000)) : 'https://gemini.google.com/app';
   window.open(url, '_blank', 'noopener');
+  toast('↗ Abriendo ' + (p === 'claude' ? 'claude.ai' : 'Gemini') + ' con tu pregunta…');
   ai.att = []; $('#aiInput').value = '';
   let note = `He abierto **${p === 'claude' ? 'claude.ai' : 'Gemini'}** en otra pestaña con tu cuenta.`;
   if(p === 'claude') note += ' Tu pregunta ya está escrita.';
@@ -1117,7 +1084,7 @@ function shrinkImage(file, max = 1600){
 let photoFor = null;
 $('#photoIn').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if(!f) return;
-  try{ const att = await shrinkImage(f); openAI({att: [att], provider: photoFor || cfg.aiProvider}); }catch(err){ msg('No se pudo leer la imagen.', 'err'); }
+  try{ const att = await shrinkImage(f); openAI({att: [att], provider: photoFor || cfg.aiProvider}); toast('✅ Foto añadida'); }catch(err){ toast('No se pudo leer la imagen', 'err'); }
 };
 
 /* ======================================================================
@@ -1142,7 +1109,7 @@ function lensStart(fromAI){
   $('#lens').showModal();
   loadH2C().catch(() => {});
 }
-function lensCancel(){ $('#lens').close(); if(lensReturnToAI) openAI(); }
+function lensCancel(){ $('#lens').close(); toast('Lens cancelado'); if(lensReturnToAI) openAI(); }
 (function(){
   const L = $('#lens'), box = $('#lensSel');
   const draw = () => { Object.assign(box.style, {left: sel.x + 'px', top: sel.y + 'px', width: sel.w + 'px', height: sel.h + 'px'}); };
@@ -1213,6 +1180,7 @@ async function lensSend(p){
   $('#lensBusy').style.display = 'none';
   if(!att.url && !att.text){ msg('No se pudo capturar esa zona.', 'err'); return; }
   openAI({provider: p, att: [att]});
+  toast('✅ Zona capturada: escribe tu pregunta y envía');
 }
 
 /* --- botones --- */
@@ -1227,8 +1195,8 @@ $('#lensCancel').onclick = lensCancel;
 $('#lensClaude').onclick = () => lensSend('claude');
 $('#lensGemini').onclick = () => lensSend('gemini');
 $('#aiClose').onclick = () => $('#ai').close();
-$('#aiNew').onclick = () => { if(ai.busy) return; ai.msgs = []; ai.att = []; renderAI(); };
-$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); renderAI(); });
+$('#aiNew').onclick = () => { if(ai.busy) return toast('Espera a que termine la respuesta', 'err'); ai.msgs = []; ai.att = []; renderAI(); toast('✅ Nueva conversación'); };
+$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); renderAI(); toast('Usando ' + AI_NAME[b.dataset.p]); });
 $('#aiSend').onclick = aiSend;
 $('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch()){ e.preventDefault(); aiSend(); } });
 $('#aiInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px'; });
@@ -1237,11 +1205,22 @@ $('#aiSave').onclick = () => {
   cfg.claudeKey = $('#cKey').value.trim(); cfg.claudeModel = $('#cModel').value;
   cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value.trim() || 'gemini-3.5-flash';
   cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg();
-  $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000);
+  $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000); toast('✅ Ajustes de IA guardados');
 };
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
 
 function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); }
+
+/* ---------- aviso al abrir cualquier enlace externo ---------- */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[target=_blank][href]'); if(!a || a.dataset.noToast !== undefined) return;
+  let u; try{ u = new URL(a.href); }catch(_){ return; }
+  if(!/^https?:/.test(u.protocol) || a.getAttribute('href') === '#') return;
+  if(/(^|\.)electude\./i.test(u.hostname) && !isTouch()) return; // ya avisa la ventana lateral
+  if(a.id === 'updMoodle' || a.id === 'updClass') return;
+  const name = /moodle/i.test(u.hostname) ? 'Moodle' : /classroom\.google/i.test(u.hostname) ? 'Classroom' : /electude/i.test(u.hostname) ? 'Electude' : /drive\.google|docs\.google/i.test(u.hostname) ? 'Google Drive' : u.hostname.replace(/^www\./, '');
+  toast('↗ Abriendo ' + name + '…');
+}, true);
 
 /* ---------- Electude en ventana lateral (PC) ----------
    Electude no permite abrirse dentro de otra web, así que en el PC se abre
@@ -1254,7 +1233,7 @@ document.addEventListener('click', e => {
   e.preventDefault();
   const W = screen.availWidth, H = screen.availHeight, w = Math.max(700, Math.round(W * 0.6));
   const win = window.open(a.href, 'electude', `popup,width=${w},height=${H},left=${(screen.availLeft || 0) + W - w},top=${screen.availTop || 0}`);
-  if(win) win.focus(); else window.open(a.href, '_blank', 'noopener');
+  if(win){ win.focus(); toast('Electude abierto en una ventana lateral'); } else window.open(a.href, '_blank', 'noopener');
 });
 
 /* ---------- marcador de sincronización ----------
@@ -1263,7 +1242,26 @@ document.addEventListener('click', e => {
 function __msSync(APP){
   (async () => {
     const enc = d => btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    const go = d => { const u = APP + '#sync=' + enc(d); const w = window.open(u, 'miestudio'); if(!w) location.href = u; };
+    const go = d => {
+      const u = APP + '#sync=' + enc(d);
+      if(!matchMedia('(pointer:coarse)').matches){ const w = window.open(u, 'miestudio'); if(!w) location.href = u; return; }
+      /* Móvil: panel para elegir entre la app del navegador y la app instalada */
+      const old = document.getElementById('__msPanel'); if(old) old.remove();
+      const box = document.createElement('div'); box.id = '__msPanel';
+      box.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:2147483647;background:#1f3a5f;color:#fff;border-radius:16px;padding:16px;font:15px system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45)';
+      const title = document.createElement('div'); title.style.cssText = 'font-weight:700;margin-bottom:8px';
+      title.textContent = '⚡ Mi Estudio: ' + d.tasks.length + ' tareas de ' + ({moodle: 'Moodle', classroom: 'Classroom', electude: 'Electude'}[d.src]) + ' listas';
+      const mk = (label, bg) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'display:block;width:100%;margin:6px 0;padding:13px;border:0;border-radius:10px;font:600 15px system-ui,sans-serif;color:#fff;background:' + bg; return b; };
+      const bCopy = mk('📋 Copiar para la app instalada', '#2f6fde'), bOpen = mk('🌐 Abrir en el navegador', '#4a5260'), bClose = mk('Cerrar', 'transparent');
+      const info = document.createElement('div'); info.style.cssText = 'font-size:13px;opacity:.9;margin:4px 0';
+      bCopy.onclick = async () => {
+        try{ await navigator.clipboard.writeText(u); info.textContent = '✅ Copiado. Abre la app Mi Estudio y pulsa «📋 Pegar sincronización».'; }
+        catch(e){ const ta = document.createElement('textarea'); ta.value = u; ta.readOnly = true; ta.style.cssText = 'width:100%;height:70px;color:#000;border-radius:8px'; box.insertBefore(ta, bClose); ta.focus(); ta.select(); info.textContent = 'Mantén pulsado el texto → Copiar. Después ábrelo en la app con «📋 Pegar sincronización».'; }
+      };
+      bOpen.onclick = () => { location.href = u; };
+      bClose.onclick = () => box.remove();
+      box.append(title, bCopy, bOpen, info, bClose); document.body.appendChild(box);
+    };
     const sleep = ms => new Promise(r => setTimeout(r, ms));
     const MON = {gen:0,ene:0,jan:0,feb:1,febr:1,'març':2,marc:2,mar:2,abr:3,apr:3,maig:4,may:4,jun:5,juny:5,jul:6,ag:7,ago:7,aug:7,set:8,sep:8,sept:8,oct:9,nov:10,des:11,dic:11,dec:11};
     const parseDue = (txt) => {
@@ -1331,11 +1329,11 @@ function renderBookmarklet(){
   const a = $('#bmLink'); if(!a) return;
   if(!hasMarkerData() && !cfg.moodleToken) $('#bmHelp').open = true;
   a.href = bookmarkletCode();
-  a.onclick = e => { e.preventDefault(); $('#bmStatus').innerHTML = '<span style="color:var(--warn)">Arrástralo a la barra de marcadores (no hagas clic aquí).</span>'; };
+  a.onclick = e => { e.preventDefault(); $('#bmStatus').innerHTML = '<span style="color:var(--warn)">Arrástralo a la barra de marcadores (no hagas clic aquí).</span>'; toast(isTouch() ? 'En el móvil usa «Copiar código del marcador»' : 'Arrástralo a la barra de marcadores ↑', 'err'); };
   const parts = ['moodle', 'classroom', 'electude'].filter(k => data[k] && data[k].via === 'marcador').map(k => `${SRC[k]}: ${data[k].tasks.length} tareas · ${new Date(data[k].at).toLocaleString('es-ES', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'})}`);
   $('#bmStatus').textContent = parts.length ? 'Última sincronización — ' + parts.join(' | ') : '';
 }
-$('#bmCopy').onclick = async e => { try{ await navigator.clipboard.writeText(bookmarkletCode()); e.target.textContent = 'Copiado ✓'; }catch(err){} };
+$('#bmCopy').onclick = $('#bmCopy2').onclick = async e => { try{ await navigator.clipboard.writeText(bookmarkletCode()); e.target.textContent = 'Copiado ✓'; toast('✅ Código del marcador copiado'); }catch(err){ toast('No se pudo copiar: inténtalo de nuevo', 'err'); } };
 function importSync(){
   const m = location.hash.match(/^#sync=([A-Za-z0-9_-]+)$/); if(!m) return false;
   history.replaceState(null, '', location.pathname);
@@ -1383,7 +1381,7 @@ function installInfo(){
   return {pl, label, steps};
 }
 function openInstall(){
-  if(installEvt){ installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; renderInstall(); }); return; }
+  if(installEvt){ installEvt.prompt(); installEvt.userChoice.then(c => toast(c && c.outcome === 'accepted' ? '✅ App instalada' : 'Instalación cancelada', c && c.outcome === 'accepted' ? 'ok' : 'err')).finally(() => { installEvt = null; renderInstall(); }); return; }
   const {label, steps} = installInfo();
   $('#instTitle').textContent = label;
   $('#instBody').innerHTML = (isLocalFile() ? `<div class="msg info">Primero abre la web: <a href="${WEB_URL}" target="_blank" rel="noopener">${WEB_URL}</a></div>` : '') +
@@ -1412,18 +1410,39 @@ function renderInstall(){
   box.innerHTML = `<div class="msg info">Estás en <b>${name}</b>. ${steps}</div>`;
 }
 
+/* ---------- pegar sincronización (móvil / app instalada) ---------- */
+function applySyncText(txt){
+  const m = (txt || '').match(/#?(sync|xfer)=([A-Za-z0-9_-]{20,})/); if(!m) return false;
+  history.replaceState(null, '', location.pathname + '#' + m[1] + '=' + m[2]);
+  const ok = m[1] === 'xfer' ? importXfer() : importSync();
+  if(ok){ if(m[1] === 'sync' && syncNote){ msg(syncNote, 'ok'); } renderAll(); toast(syncNote || '✅ Sincronización importada'); }
+  return ok;
+}
+async function pasteSync(){
+  let txt = '';
+  try{ if(navigator.clipboard && navigator.clipboard.readText) txt = await navigator.clipboard.readText(); }catch(e){}
+  if(applySyncText(txt)){ $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend')); return; }
+  $('#pasteTxt').value = ''; $('#pasteOut').innerHTML = ''; $('#pasteDlg').showModal(); setTimeout(() => $('#pasteTxt').focus(), 80);
+}
+$('#pasteBtn').onclick = pasteSync; $('#pasteBtn2').onclick = pasteSync;
+$('#pasteClose').onclick = () => $('#pasteDlg').close();
+$('#pasteGo').onclick = () => {
+  if(applySyncText($('#pasteTxt').value.trim())){ $('#pasteDlg').close(); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend')); }
+  else { toast('No reconozco ese texto', 'err'); } if(!$('#pasteDlg').open) return; else $('#pasteOut').innerHTML = '<div class="msg err">No reconozco ese texto. Copia de nuevo con el marcador («📋 Copiar para la app instalada») y pégalo entero.</div>';
+};
+
 /* ---------- pasar a otro dispositivo ---------- */
 const b64u = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64u = t => { let b = t.replace(/-/g, '+').replace(/_/g, '/'); while(b.length % 4) b += '='; return JSON.parse(decodeURIComponent(escape(atob(b)))); };
 $('#xferBtn').onclick = async () => {
   const pick = k => data[k] && data[k].via === 'marcador' ? {at: data[k].at, tasks: data[k].tasks, courses: data[k].courses} : null;
-  const payload = {v: 1, at: Date.now(), cfg: {moodleUrl: cfg.moodleUrl, electudeUrl: cfg.electudeUrl, googleClientId: cfg.googleClientId},
+  const payload = {v: 1, at: Date.now(), cfg: {moodleUrl: cfg.moodleUrl, electudeUrl: cfg.electudeUrl, classroomUrl: cfg.classroomUrl},
     moodle: pick('moodle'), classroom: pick('classroom'), electude: pick('electude'), manual};
   const link = appUrl() + '#xfer=' + b64u(payload);
   try{
-    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'Mis tareas de Mi Estudio (ábrelo en tu otro dispositivo):', url: link}); $('#xferOut').textContent = 'Enviado ✓'; }
-    else { await navigator.clipboard.writeText(link); $('#xferOut').textContent = 'Enlace copiado ✓ — pégalo en WhatsApp, Telegram o un correo para ti.'; }
-  }catch(e){ if(e.name !== 'AbortError') $('#xferOut').textContent = 'No se pudo copiar automáticamente.'; }
+    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'Mis tareas de Mi Estudio (ábrelo en tu otro dispositivo):', url: link}); $('#xferOut').textContent = 'Enviado ✓'; toast('✅ Enviado'); }
+    else { await navigator.clipboard.writeText(link); $('#xferOut').textContent = 'Enlace copiado ✓ — pégalo en WhatsApp, Telegram o un correo para ti.'; toast('✅ Enlace copiado'); }
+  }catch(e){ if(e.name !== 'AbortError'){ $('#xferOut').textContent = 'No se pudo copiar automáticamente.'; toast('No se pudo copiar', 'err'); } else toast('Envío cancelado', 'err'); }
 };
 function importXfer(){
   const m = location.hash.match(/^#xfer=([A-Za-z0-9_-]+)$/); if(!m) return false;
@@ -1433,7 +1452,7 @@ function importXfer(){
   const c = d.cfg || {};
   if(okUrl(c.moodleUrl) && !cfg.moodleUrl) cfg.moodleUrl = c.moodleUrl;
   if(okUrl(c.electudeUrl)) cfg.electudeUrl = c.electudeUrl;
-  if(/\.apps\.googleusercontent\.com$/.test(c.googleClientId || '') && !cfg.googleClientId) cfg.googleClientId = c.googleClientId;
+  if(/^https:\/\/classroom\.google\.com/.test(c.classroomUrl || '')) cfg.classroomUrl = c.classroomUrl;
   saveCfg();
   let n = 0;
   ['moodle', 'classroom', 'electude'].forEach(k => {
@@ -1456,25 +1475,24 @@ window.addEventListener('hashchange', () => { if(importXfer()) renderAll(); });
 $('#shareLink').onclick = async () => {
   const qp = new URLSearchParams();
   if(cfg.moodleUrl) qp.set('moodle', cfg.moodleUrl);
-  if(cfg.googleClientId) qp.set('gcid', cfg.googleClientId);
   if(cfg.electudeUrl && cfg.electudeUrl !== 'https://clotfje.electude.eu/srestore') qp.set('electude', cfg.electudeUrl);
   const link = location.origin + location.pathname + (qp.toString() ? '?' + qp : '');
   try{
-    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'App para tener Moodle, Classroom y Electude juntos:', url: link}); $('#shareOut').textContent = ''; }
-    else { await navigator.clipboard.writeText(link); $('#shareOut').textContent = 'Enlace copiado ✓'; }
-  }catch(e){ if(e.name !== 'AbortError') $('#shareOut').textContent = link; }
+    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'App para tener Moodle, Classroom y Electude juntos:', url: link}); $('#shareOut').textContent = ''; toast('✅ Enlace compartido'); }
+    else { await navigator.clipboard.writeText(link); $('#shareOut').textContent = 'Enlace copiado ✓'; toast('✅ Enlace para compañeros copiado'); }
+  }catch(e){ if(e.name !== 'AbortError'){ $('#shareOut').textContent = link; toast('Cópialo a mano: lo tienes debajo del botón', 'err'); } }
 };
 (function applySharedConfig(){
   const qp = new URLSearchParams(location.search); let changed = false;
-  const take = (k, key, ok) => { const v = (qp.get(k) || '').trim(); if(v && ok(v) && !cfg[key]){ cfg[key] = v; changed = true; } };
+  const take = (k, key, ok) => { const v = (qp.get(k) || '').trim(); if(v && ok(v) && cfg[key] !== v){ cfg[key] = v; changed = true; } };
   take('moodle', 'moodleUrl', v => /^https:\/\//.test(v));
-  take('gcid', 'googleClientId', v => /\.apps\.googleusercontent\.com$/.test(v));
   if(qp.get('electude') && /^https:\/\//.test(qp.get('electude'))){ cfg.electudeUrl = qp.get('electude'); changed = true; }
-  if(changed){ saveCfg(); msg('Configuración del centro cargada. Ve a <b>Ajustes</b> e inicia sesión con <b>tus</b> cuentas.', 'info'); }
+  if(changed){ saveCfg(); msg('Direcciones del centro cargadas. Ve a <b>Ajustes → ⚡ Conectar Moodle y Classroom</b> y sigue la ⓘ con <b>tus</b> cuentas.', 'info'); }
   if(qp.toString()) history.replaceState(null, '', location.pathname);
 })();
 
 /* ---------- arranque ---------- */
+try{ if(sessionStorage.getItem('me_wiped')){ sessionStorage.removeItem('me_wiped'); setTimeout(() => toast('🗑 Datos de este dispositivo borrados'), 300); } }catch(e){}
 importXfer() || importSync();
 renderAll();
 window.addEventListener('load', () => sync(false));
