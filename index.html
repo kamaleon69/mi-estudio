@@ -378,7 +378,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <div class="ai-f">
     <button class="ibtn" id="aiLens" title="Seleccionar zona de la pantalla">🔍</button>
     <button class="ibtn" id="aiPhoto" title="Foto o imagen">📷</button>
-    <textarea id="aiInput" placeholder="Pregunta lo que necesites…" rows="1"></textarea>
+    <textarea id="aiInput" placeholder="Escribe tu pregunta…" rows="1"></textarea>
     <button class="ibtn" id="aiSend" title="Enviar">➤</button>
   </div>
 </dialog>
@@ -886,15 +886,15 @@ function renderAI(){
   $$('#aiSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   $('#aiMode').innerHTML = hasKey(p)
     ? `Chat dentro de la app con tu clave de API de ${AI_NAME[p]}.`
-    : `Usando tu cuenta de ${AI_NAME[p]}: al enviar se abrirá ${isTouch() ? 'el menú Compartir para elegir la app de ' + AI_NAME[p] : (p === 'claude' ? 'claude.ai' : 'Gemini') + ' con tu pregunta'}. <a href="#" id="aiCfgLink">Configurar chat integrado</a>`;
+    : `Sin clave de API: escribe y envía; podrás abrirlo en ${AI_NAME[p]} con tu cuenta o añadir una clave gratis de Gemini para chatear aquí. <a href="#" id="aiCfgLink">Configurar chat integrado</a>`;
   const l = $('#aiCfgLink'); if(l) l.onclick = e => { e.preventDefault(); $('#ai').close(); $('nav button[data-tab=cfg]').click(); setTimeout(() => $('#cKey').scrollIntoView({block: 'center'}), 50); };
   $('#aiCtx').innerHTML = ai.ctx ? `<span class="ctx">📌 <span>Tarea: ${esc(ai.ctx.label)}</span><button id="ctxX" title="Quitar contexto">✕</button></span>` : '';
   if(ai.ctx) $('#ctxX').onclick = () => { ai.ctx = null; renderAI(); toast('Contexto de la tarea quitado'); };
   $('#aiAtt').innerHTML = ai.att.map((a, i) => `<div class="att">${a.url ? `<img src="${a.url}" alt="">` : ''}<span class="tx">${esc(a.label || 'Imagen')}${a.text ? ' · texto' : ''}</span><button data-rm="${i}">✕</button></div>`).join('');
   $$('#aiAtt [data-rm]').forEach(b => b.onclick = () => { ai.att.splice(+b.dataset.rm, 1); renderAI(); toast('Imagen quitada'); });
   $('#aiSend').disabled = ai.busy;
-  $('#aiSend').textContent = hasKey(p) ? '➤' : '↗';
-  $('#aiSend').title = hasKey(p) ? 'Enviar' : 'Abrir en ' + AI_NAME[p];
+  $('#aiSend').textContent = '➤';
+  $('#aiSend').title = 'Enviar';
   renderMsgs();
 }
 function renderMsgs(){
@@ -906,10 +906,34 @@ function renderMsgs(){
   const tgt = draftTarget();
   box.innerHTML = ai.msgs.map((m, i) => m.role === 'user'
     ? `<div class="bub u">${(m.images || []).map(im => `<img src="${im.url}" alt="">`).join('')}${esc(m.text).replace(/\n/g, '<br>')}${m.hasExtra ? '<div class="small" style="opacity:.8;margin-top:4px">📎 + texto de la selección</div>' : ''}</div>`
+    : m.choice ? `<div class="bub a"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
+        <p>Para que te responda <b>aquí dentro</b> hace falta una clave de API. ¿Cómo lo envío?</p>
+        <div class="bub-actions" style="flex-direction:column;align-items:stretch">
+          <button data-ext="${i}">↗ Enviar con mi cuenta de ${AI_NAME[m.provider]} (abre su app o web)</button>
+          <button data-key="${i}">🔑 Chatear aquí: clave gratis de Gemini (1 min)</button>
+        </div>
+        <div class="keybox" id="keybox${i}" hidden style="margin-top:8px">
+          <ol class="small" style="padding-left:18px;margin:4px 0">
+            <li>Abre <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio → API keys</a> con tu <b>Gmail personal</b>.</li>
+            <li>Pulsa <b>Create API key</b> y cópiala.</li>
+            <li>Pégala aquí:</li>
+          </ol>
+          <input id="keyIn${i}" placeholder="AIza…" autocomplete="off">
+          <div class="bub-actions"><button data-keysave="${i}">Guardar y enviar</button></div>
+        </div></div>`
     : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
         <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${md(m.text)}</div>
-        ${!m.note && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
+        ${(!m.note || m.copyable) && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
   $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; toast('✅ Respuesta copiada'); }catch(e){ toast('No se pudo copiar', 'err'); } });
+  $$('#aiMsgs [data-ext]').forEach(b => b.onclick = () => { const m = ai.msgs[+b.dataset.ext]; ai.msgs.splice(+b.dataset.ext, 1); aiExternal(m.provider, m.payload.full, m.payload.images); });
+  $$('#aiMsgs [data-key]').forEach(b => b.onclick = () => { const k = $('#keybox' + b.dataset.key); k.hidden = !k.hidden; if(!k.hidden) setTimeout(() => $('#keyIn' + b.dataset.key).focus(), 50); });
+  $$('#aiMsgs [data-keysave]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.keysave, v = $('#keyIn' + i).value.trim();
+    if(!/^AIza[0-9A-Za-z_\-]{20,}$/.test(v)){ toast('Esa clave no parece de Gemini (empieza por AIza…)', 'err'); return; }
+    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); renderAICfg();
+    ai.msgs.splice(i, 1); toast('✅ Clave guardada: enviando a Gemini');
+    aiRun('gemini');
+  });
   $$('#aiMsgs [data-ins]').forEach(b => b.onclick = () => {
     const t = draftTarget(); if(!t) return;
     t.value = (t.value ? t.value.replace(/\s+$/, '') + '\n\n' : '') + plain(ai.msgs[+b.dataset.ins].text);
@@ -996,7 +1020,7 @@ async function* geminiStream(){
 }
 
 async function aiSend(){
-  if(ai.busy) return;
+  if(ai.busy) return toast('Espera a que termine la respuesta', 'err');
   const input = $('#aiInput'), p = cfg.aiProvider;
   const typed = input.value.trim();
   if(!typed && !ai.att.length){ toast('Escribe una pregunta o añade una imagen', 'err'); return input.focus(); }
@@ -1004,9 +1028,18 @@ async function aiSend(){
   const images = ai.att.filter(a => a.data).map(a => ({mime: a.mime, data: a.data, url: a.url}));
   const extra = ai.att.map(a => a.text).filter(Boolean).join('\n\n');
   const full = text + (extra ? '\n\n[Texto de la zona seleccionada]\n' + extra : '');
-  if(!hasKey(p)) return aiExternal(p, full, images);
   ai.msgs.push({role: 'user', text, full, images, hasExtra: !!extra});
   ai.att = []; input.value = ''; input.style.height = '';
+  if(!hasKey(p)){
+    // Sin clave: el mensaje se queda en el chat y se ofrecen opciones claras
+    ai.msgs.push({role: 'assistant', provider: p, note: true, choice: true, text: '', payload: {full, images}});
+    renderAI(); toast('Mensaje listo: elige cómo enviarlo ↓');
+    return;
+  }
+  toast('✅ Enviado a ' + AI_NAME[p]);
+  return aiRun(p);
+}
+async function aiRun(p){
   const out = {role: 'assistant', provider: p, text: ''}; ai.msgs.push(out);
   ai.busy = true; renderAI();
   let raf = 0;
@@ -1019,9 +1052,10 @@ async function aiSend(){
   }catch(e){
     out.error = true;
     let m = e.message;
-    if(/Failed to fetch|NetworkError/i.test(m)) m = 'No hay conexión con ' + AI_NAME[p] + '.';
-    if(/api.key|x-api-key|API_KEY|authentication|401|403/i.test(m)) m += ' — revisa la clave en Ajustes.';
+    if(/Failed to fetch|NetworkError|Load failed/i.test(m)) m = 'No hay conexión con ' + AI_NAME[p] + '.';
+    if(/api.key|x-api-key|API_KEY|authentication|401|403|PERMISSION|INVALID_ARGUMENT/i.test(m)) m += ' — revisa la clave en Ajustes → Asistentes IA.';
     out.text = (out.text ? out.text + '\n\n' : '') + '⚠️ ' + m;
+    toast('No se pudo obtener respuesta', 'err');
   }
   ai.busy = false; renderAI();
 }
@@ -1036,34 +1070,33 @@ async function toPngBlob(url){
 }
 async function aiExternal(p, text, images){
   const img = images[0];
-  const shareText = text;
-  // Móvil: menú Compartir → app de Claude o Gemini (con la cuenta del usuario)
-  if(isTouch() && navigator.share){
-    const files = img ? [new File([dataUrlToBlob(img.url)], 'seleccion.' + (img.mime.split('/')[1] || 'png'), {type: img.mime})] : [];
-    const data = files.length ? {text: shareText, files} : {text: shareText};
+  const name = p === 'claude' ? 'Claude' : 'Gemini';
+  // 1) Copiar al portapapeles: la imagen si la hay; si no, el texto (para Gemini, que no admite pregunta en el enlace)
+  let copied = '';
+  try{
+    if(img){ await navigator.clipboard.write([new ClipboardItem({'image/png': toPngBlob(img.url)})]); copied = 'img'; }
+    else if(p === 'gemini'){ await navigator.clipboard.writeText(text); copied = 'txt'; }
+  }catch(e){ console.warn(e); }
+  // 2) Si hay imagen y no se pudo copiar (algunos móviles), último recurso: menú Compartir
+  if(img && !copied && navigator.share){
+    const file = new File([dataUrlToBlob(img.url)], 'seleccion.' + (img.mime.split('/')[1] || 'png'), {type: img.mime});
+    const data = {text, files: [file]};
     if(!navigator.canShare || navigator.canShare(data)){
-      try{ await navigator.share(data); ai.att = []; $('#aiInput').value = ''; aiNote(`Elige **${AI_NAME[p]}** en el menú Compartir. Se abrirá en su app con tu cuenta.`, p); }
-      catch(e){ if(e.name !== 'AbortError') aiNote('⚠️ No se pudo compartir: ' + e.message, p); }
+      try{ await navigator.share(data); aiNote(`En el menú Compartir elige **${name}**: se abrirá con tu cuenta, la imagen y tu pregunta.`, p); toast('Elige ' + name + ' en el menú Compartir'); }
+      catch(e){ if(e.name !== 'AbortError') aiNote('⚠️ No se pudo compartir: ' + e.message, p); else toast('Envío cancelado', 'err'); }
       return;
     }
   }
-  // PC: copiar imagen al portapapeles y abrir la web
-  let copied = false;
-  try{
-    if(img){ await navigator.clipboard.write([new ClipboardItem({'image/png': toPngBlob(img.url)})]); copied = 'img'; }
-    else if(p === 'gemini'){ await navigator.clipboard.writeText(shareText); copied = 'txt'; }
-  }catch(e){ console.warn(e); }
-  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(shareText.slice(0, 7000)) : 'https://gemini.google.com/app';
+  // 3) Abrir la app/web con la cuenta del usuario (en el móvil abre su app si está instalada)
+  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(text.slice(0, 7000)) : 'https://gemini.google.com/app';
   window.open(url, '_blank', 'noopener');
-  toast('↗ Abriendo ' + (p === 'claude' ? 'claude.ai' : 'Gemini') + ' con tu pregunta…');
-  ai.att = []; $('#aiInput').value = '';
-  let note = `He abierto **${p === 'claude' ? 'claude.ai' : 'Gemini'}** en otra pestaña con tu cuenta.`;
-  if(p === 'claude') note += ' Tu pregunta ya está escrita.';
-  if(copied === 'img') note += ' La imagen está copiada: pégala con **Ctrl+V**.';
-  if(p === 'gemini' && copied === 'img') note += ' Después pega el texto con el botón «Copiar» de abajo.';
-  if(p === 'gemini' && copied === 'txt') note += ' Tu pregunta está copiada: pégala con **Ctrl+V**.';
+  toast('↗ Abriendo ' + name + ' con tu pregunta…');
+  let note = `He abierto **${name}** con tu cuenta.`;
+  if(p === 'claude') note += ' Tu pregunta ya está escrita: solo pulsa enviar allí.';
+  if(copied === 'txt') note += ' Tu pregunta está **copiada**: pégala allí y envía.';
+  if(copied === 'img') note += ' La **imagen está copiada**: pégala allí (mantén pulsado → Pegar, o Ctrl+V).' + (p === 'gemini' ? ' Después copia el texto de abajo y pégalo.' : '');
   ai.msgs.push({role: 'assistant', provider: p, text: note, note: true});
-  if(p === 'gemini' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text: shareText});
+  if(p === 'gemini' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text, note: true, copyable: true});
   renderAI();
 }
 

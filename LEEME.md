@@ -81,10 +81,10 @@ La app usa un **marcador**: lee tus tareas con la sesión que ya tienes abierta 
 - **✳ Claude** (abajo a la derecha) o **✳ Ayuda** dentro de una tarea: abre un chat. Desde una tarea, la IA ya sabe cuál es. Con «Pegar en mi borrador» guardas la respuesta en tus notas de esa tarea.
 - **🔍 Lens**: arrastra sobre una zona de la pantalla y elige **Claude** o **Gemini**. Con **📷 Foto** envías una foto de tu libreta o tu libro.
 
-Dos formas de usarlo:
+Escribe tu pregunta y pulsa **➤**. Tu mensaje se queda en el chat:
 
-- **Con tu cuenta normal, sin configurar nada:** se abre claude.ai o Gemini con tu pregunta. En el móvil, a través de «Compartir».
-- **Chat dentro de la app:** pon una clave en **Ajustes → Asistentes IA**. La de Gemini es gratis en https://aistudio.google.com/apikey con tu Gmail personal. La de Claude se crea en https://console.anthropic.com/settings/keys y se paga por uso, aparte de Claude Pro.
+- **Con una clave de API**, la respuesta llega dentro de la app. La de **Gemini es gratis**: dentro del chat pulsa **🔑 Chatear aquí**, abre https://aistudio.google.com/apikey con tu Gmail personal, pulsa *Create API key*, pégala y pulsa **Guardar y enviar**. La de Claude se crea en https://console.anthropic.com/settings/keys y se paga por uso, aparte de Claude Pro. Ambas se pueden poner también en **Ajustes → Asistentes IA**.
+- **Sin clave**, pulsa **↗ Enviar con mi cuenta**. Se abre la app o la web de Claude con tu pregunta ya escrita, o Gemini con la pregunta copiada para pegarla. Si hay una imagen, se copia para pegarla allí. El menú «Compartir» solo aparece si el móvil no deja copiar la imagen.
 
 ## 7. Compartir con compañeros
 
