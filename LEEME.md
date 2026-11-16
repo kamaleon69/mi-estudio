@@ -50,6 +50,19 @@ Otra opción, si tu centro la tiene activada: en Moodle, ve a *Preferencias → 
 
 > El token es como una contraseña para la app: no se lo pases a nadie. Si alguna vez quieres anularlo, cierra la sesión de Moodle en todos los dispositivos o cambia tu contraseña.
 
+## 2b. Si tu centro bloquea la conexión: el marcador «⚡ Sincronizar Mi Estudio»
+
+En algunos centros, como Jesuïtes Educació, Moodle y Google bloquean las apps externas. En ese caso usa el marcador. Lee tus tareas **con la sesión que ya tienes abierta** en Moodle o Classroom y las pasa a Mi Estudio.
+
+1. En la app ve a **Ajustes → ⚡ Sincronizar con el marcador**.
+2. Pulsa **Ctrl+Shift+B** para mostrar la barra de marcadores y **arrastra** el botón «⚡ Sincronizar Mi Estudio» hasta ella.
+3. Para sincronizar:
+   - **Moodle:** entra en tu Moodle (cualquier página) y pulsa el marcador.
+   - **Classroom:** entra en **Classroom → Pendientes** con tu cuenta del centro y pulsa el marcador. Lee también la pestaña «Sin entregar».
+4. Se abre Mi Estudio con las tareas cargadas. Repite el paso 3 cada vez que quieras actualizar.
+
+Con el marcador **ves** las tareas, fechas y cursos. Para entregar, pulsa «Abrir en Moodle» o «Abrir en Classroom». El marcador no envía tu contraseña ni tu sesión a ningún sitio.
+
 ## 3. Conectar Google Classroom (≈10 min, solo una vez)
 
 Necesitas un "Client ID" gratuito de Google:

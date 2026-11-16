@@ -13,7 +13,7 @@
 :root{--bg:#f4f6f9;--card:#fff;--ink:#1c2430;--muted:#667085;--line:#e3e7ee;--brand:#1f3a5f;--accent:#2f6fde;
 --moodle:#f98012;--classroom:#1e8e3e;--electude:#7b3fe4;--danger:#c62828;--warn:#b26a00;--ok:#2e7d32}
 @media (prefers-color-scheme:dark){:root{--bg:#11151b;--card:#1a2029;--ink:#e6e9ef;--muted:#98a2b3;--line:#2a323e;--brand:#9ab8e8;--accent:#6ea0ff}}
-*{box-sizing:border-box}
+*{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
 header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px env(safe-area-inset-top);display:flex;align-items:center;gap:12px}
 header h1{font-size:18px;margin:0;flex:1;color:var(--brand)}
@@ -175,6 +175,28 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   </section>
 
   <section id="cfg">
+    <div class="card" style="border-color:var(--accent)">
+      <strong>⚡ Sincronizar con el marcador</strong>
+      <p class="meta small">Si tu centro bloquea la conexión directa (como Jesuïtes Educació), usa este botón: lee tus tareas <b>con la sesión que ya tienes abierta</b> en Moodle, Classroom o Electude y las trae aquí.</p>
+      <div class="row" style="margin:10px 0"><a class="btn primary" id="bmLink" href="#" title="Arrástrame a la barra de marcadores">⚡ Sincronizar Mi Estudio</a><span class="meta small">← arrástralo a tu barra de marcadores</span></div>
+      <div id="bmStatus" class="meta small"></div>
+      <details class="help"><summary><span class="i">i</span> Cómo usarlo</summary><div class="hb">
+        <ol>
+          <li>Muestra la barra de marcadores: <b>Ctrl + Shift + B</b>.</li>
+          <li><b>Arrastra</b> el botón «⚡ Sincronizar Mi Estudio» hasta esa barra. No hagas clic en él aquí: tiene que quedar guardado como marcador.</li>
+          <li>Entra en tu web y pulsa el marcador:
+            <ul>
+              <li><b>Moodle</b>: en cualquier página de <a href="https://moodle4.net.fje.edu/my/" target="_blank" rel="noopener">tu Moodle</a> con la sesión iniciada.</li>
+              <li><b>Classroom</b>: en <a href="https://classroom.google.com/a/not-turned-in/all" target="_blank" rel="noopener">Classroom → Pendientes</a>, con tu cuenta del centro (@fje.edu). El marcador lee también las tareas «Sin entregar».</li>
+              <li><b>Electude</b>: en tu página de Electude con la sesión iniciada.</li>
+            </ul></li>
+          <li>Se abrirá Mi Estudio con las tareas cargadas. Repite el paso 3 cuando quieras actualizar.</li>
+        </ol>
+        <div class="tip">El marcador no envía tu contraseña ni tu sesión a ningún sitio: lee la lista de tareas en tu navegador y se la pasa a esta app, que la guarda solo en este dispositivo. Desde aquí no se puede entregar: usa «Abrir en Moodle/Classroom».</div>
+        <p class="small"><b>En el móvil:</b> guarda cualquier página como marcador, edítalo, cambia su dirección por el código del botón (pulsa «Copiar código») y llámalo <i>Sincronizar</i>. Después, estando en Moodle o Classroom, escribe «Sincronizar» en la barra de direcciones y elige el marcador. <button class="btn small" type="button" id="bmCopy">Copiar código</button></p>
+      </div></details>
+    </div>
+
     <div class="card">
       <strong>Moodle</strong>
       <label>Dirección de tu Moodle</label>
@@ -376,6 +398,7 @@ let cfg = Object.assign({moodleUrl:'', moodleToken:'', moodleUser:'', googleClie
   claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
 const saveCfg = () => store.set('cfg', cfg);
 let data = store.get('cache', {moodle:{tasks:[], courses:[]}, classroom:{tasks:[], courses:[]}, at:0});
+data.electude = data.electude || {tasks: [], courses: []};
 let manual = store.get('manual', []);
 let filter = 'all';
 let gToken = null, gExp = 0;
@@ -527,16 +550,17 @@ function gMaterialLinks(mats){
 }
 
 /* ---------- sincronizar ---------- */
-let syncing = false;
+let syncing = false, syncNote = '';
+const hasMarkerData = () => ['moodle', 'classroom', 'electude'].some(k => data[k] && data[k].via === 'marcador');
 async function sync(interactive = false){
   if(syncing) return; syncing = true;
   $('#syncBtn').innerHTML = '<span class="spin"></span>'; msg('');
   const errs = [];
   if(cfg.moodleUrl && cfg.moodleToken){ try{ await loadMoodle(); }catch(e){ errs.push('Moodle: ' + esc(e.message)); } }
-  if(cfg.googleClientId && !isLocalFile()){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length) errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
+  if(cfg.googleClientId && !isLocalFile()){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length && data.classroom.via !== 'marcador') errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
   data.at = Date.now(); store.set('cache', data);
-  if(errs.length) msg(errs.join('<br>'), 'err');
-  if(!cfg.moodleToken && !cfg.googleClientId) msg('Empieza en <b>Ajustes</b>: conecta Moodle y pon tu Client ID de Google para Classroom.', 'info');
+  if(errs.length) msg(errs.join('<br>'), 'err'); else if(syncNote){ msg(syncNote, 'ok'); syncNote = ''; }
+  if(!cfg.moodleToken && !cfg.googleClientId && !hasMarkerData()) msg('Empieza en <b>Ajustes</b>: conecta Moodle y pon tu Client ID de Google para Classroom.', 'info');
   syncing = false; $('#syncBtn').textContent = '↻ Actualizar';
   renderAll();
 }
@@ -545,11 +569,12 @@ $('#syncBtn').onclick = () => sync(true);
 /* ---------- render: pendientes ---------- */
 function allTasks(){
   const man = manual.filter(t => !t.done).map(t => Object.assign({src: 'electude', course: 'Electude', url: cfg.electudeUrl}, t));
-  return [...data.moodle.tasks, ...data.classroom.tasks, ...man];
+  return [...data.moodle.tasks, ...data.classroom.tasks, ...(data.electude.tasks || []), ...man];
 }
 function taskCard(t){
   const now = Date.now(); let cls = '', txt = 'Sin fecha';
-  if(t.due){ txt = fmtDate(t.due); if(t.due < now) cls = 'late'; else if(t.due - now < 2*86400e3) cls = 'soon'; }
+  if(t.due){ txt = fmtDate(t.due); if(t.due < now || t.late) cls = 'late'; else if(t.due - now < 2*86400e3) cls = 'soon'; }
+  else if(t.dueText){ txt = t.dueText; if(t.late) cls = 'late'; }
   const extra = t.src === 'classroom' && t.state === 'RECLAIMED_BY_STUDENT' ? ' · anulada la entrega' : (t.action ? ' · ' + esc(t.action) : '');
   return `<div class="card task" data-id="${esc(t.id)}"><div class="bar ${t.src}"></div><div class="body">
     <div class="t">${esc(t.title)}</div><div class="meta"><span class="badge b-${t.src}">${SRC[t.src]}</span> ${esc(t.course)}${extra}${store.get('draft_'+t.id) ? ' · ✏️ borrador' : ''}</div></div>
@@ -558,8 +583,8 @@ function taskCard(t){
 function renderPending(){
   const now = Date.now(), day = new Date(); day.setHours(23,59,59,999);
   const tasks = allTasks().filter(t => filter === 'all' || t.src === filter);
-  const groups = [['Atrasadas', t => t.due && t.due < now], ['Hoy', t => t.due && t.due >= now && t.due <= day.getTime()],
-    ['Próximos 7 días', t => t.due && t.due > day.getTime() && t.due <= now + 7*86400e3], ['Más adelante', t => t.due && t.due > now + 7*86400e3], ['Sin fecha', t => !t.due]];
+  const groups = [['Atrasadas', t => (t.due && t.due < now) || (!t.due && t.late)], ['Hoy', t => t.due && t.due >= now && t.due <= day.getTime()],
+    ['Próximos 7 días', t => t.due && t.due > day.getTime() && t.due <= now + 7*86400e3], ['Más adelante', t => t.due && t.due > now + 7*86400e3], ['Sin fecha', t => !t.due && !t.late]];
   let html = '';
   for(const [name, fn] of groups){
     const g = tasks.filter(fn).sort((a, b) => (a.due || 0) - (b.due || 0));
@@ -593,8 +618,9 @@ function wireDraft(t){
 async function openTask(t){
   if(!t) return; openDlg(t); const body = $('#dlgBody');
   if(t.src === 'classroom'){
-    body.innerHTML = `${t.desc ? `<div class="intro">${linkify(t.desc)}</div>` : '<p class="meta">Sin descripción.</p>'}
-      ${t.materials.length ? `<h2>Materiales</h2><ul class="mods">${gMaterialLinks(t.materials)}</ul>` : ''}
+    const mats = t.materials || [];
+    body.innerHTML = `${t.late ? '<div class="msg err">⚠ Tarea vencida sin entregar</div>' : ''}${t.desc ? `<div class="intro">${linkify(t.desc)}</div>` : (t.via === 'marcador' || !t.desc ? '<p class="meta">El enunciado y los materiales están en Classroom.</p>' : '')}
+      ${mats.length ? `<h2>Materiales</h2><ul class="mods">${gMaterialLinks(mats)}</ul>` : ''}
       ${t.points ? `<p class="meta">Puntos: ${esc(t.points)}</p>` : ''}
       ${draftBox(t, 'Escribe aquí tu respuesta (luego la copias en Classroom)')}
       <div class="msg info small" style="margin-top:12px">Google no deja entregar tareas de Classroom desde apps externas. Copia tu texto, adjunta lo que necesites y pulsa «Entregar» en Classroom.</div>
@@ -612,9 +638,10 @@ async function openTask(t){
   }
   // Moodle
   const openBtn = `<a class="btn" href="${esc(t.url)}" target="_blank" rel="noopener">Abrir en Moodle ↗</a>`;
-  if(t.kind !== 'assign'){
-    body.innerHTML = `<p>Tipo de actividad: <b>${esc(t.kind)}</b>${t.action ? ' · ' + esc(t.action) : ''}</p>
-      <p class="meta">Este tipo de actividad (cuestionario, foro…) se hace en la propia web de Moodle.</p>${draftBox(t, 'Notas')}<div class="row" style="margin-top:12px">${openBtn}</div>`;
+  if(t.kind !== 'assign' || !cfg.moodleToken){
+    const kindName = {assign: 'Tarea', quiz: 'Cuestionario', forum: 'Foro', lesson: 'Lección', workshop: 'Taller', h5pactivity: 'Actividad H5P'}[t.kind] || t.kind;
+    body.innerHTML = `${t.late ? '<div class="msg err">⚠ Vencida</div>' : ''}<p>Tipo: <b>${esc(kindName)}</b>${t.action ? ' · ' + esc(t.action) : ''}</p>
+      <p class="meta">${cfg.moodleToken ? 'Este tipo de actividad se hace en la propia web de Moodle.' : 'El enunciado y la entrega están en Moodle. Aquí puedes preparar tu respuesta y pedir ayuda a la IA (pega el enunciado en el chat o envía una 📷).'}</p>${draftBox(t, 'Notas')}<div class="row" style="margin-top:12px">${openBtn}</div>`;
     wireDraft(t); return;
   }
   body.innerHTML = '<p><span class="spin"></span> Cargando tarea…</p>';
@@ -697,10 +724,14 @@ async function openTask(t){
 /* ---------- render: zonas de estudio ---------- */
 function renderStudy(){
   let html = '';
-  if(data.moodle.courses.length){
+  if(data.moodle.courses.length && !cfg.moodleToken){
+    html += '<h2>Moodle</h2>' + data.moodle.courses.map(c => `<div class="card row"><span style="flex:1"><span class="badge b-moodle">Moodle</span> ${esc(c.name)}</span><a class="btn small" href="${esc(c.url)}" target="_blank" rel="noopener">Abrir ↗</a></div>`).join('');
+  } else if(data.moodle.courses.length){
     html += '<h2>Moodle</h2>' + data.moodle.courses.map(c => `<div class="card"><details data-mc="${c.id}"><summary><span class="badge b-moodle">Moodle</span> ${esc(c.name)}</summary><div class="mc-body"><p class="meta"><span class="spin"></span> Cargando…</p></div></details></div>`).join('');
   }
-  if(data.classroom.courses.length){
+  if(data.classroom.courses.length && data.classroom.via === 'marcador'){
+    html += '<h2>Classroom</h2>' + data.classroom.courses.map(c => `<div class="card row"><span style="flex:1"><span class="badge b-classroom">Classroom</span> ${esc(c.name)}</span><a class="btn small" href="${esc(c.url)}" target="_blank" rel="noopener">Abrir ↗</a></div>`).join('');
+  } else if(data.classroom.courses.length){
     html += '<h2>Classroom</h2>' + data.classroom.courses.map((c, i) => `<div class="card"><details><summary><span class="badge b-classroom">Classroom</span> ${esc(c.name)} <span class="meta">${esc(c.section)}</span></summary>
       <ul class="mods">${c.materials.map(m => `<li><a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.title)}</a>${m.materials.length ? `<ul class="mods" style="padding-left:16px">${gMaterialLinks(m.materials)}</ul>` : ''}</li>`).join('') || '<li class="meta">Sin materiales</li>'}</ul>
       <div class="row" style="margin-top:8px"><a class="btn small" href="${esc(c.url)}" target="_blank" rel="noopener">Abrir clase ↗</a></div></details></div>`).join('');
@@ -1157,7 +1188,7 @@ $('#aiSave').onclick = () => {
 };
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
 
-function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); }
+function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); }
 
 /* ---------- Electude en ventana lateral (PC) ----------
    Electude no permite abrirse dentro de otra web, así que en el PC se abre
@@ -1172,6 +1203,104 @@ document.addEventListener('click', e => {
   const win = window.open(a.href, 'electude', `popup,width=${w},height=${H},left=${(screen.availLeft || 0) + W - w},top=${screen.availTop || 0}`);
   if(win) win.focus(); else window.open(a.href, '_blank', 'noopener');
 });
+
+/* ---------- marcador de sincronización ----------
+   __msSync se ejecuta DENTRO de Moodle / Classroom / Electude (bookmarklet).
+   Debe ser autónoma: no usa nada de fuera de la función. */
+function __msSync(APP){
+  (async () => {
+    const enc = d => btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const go = d => { const u = APP + '#sync=' + enc(d); const w = window.open(u, 'miestudio'); if(!w) location.href = u; };
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    const MON = {gen:0,ene:0,jan:0,feb:1,febr:1,'març':2,marc:2,mar:2,abr:3,apr:3,maig:4,may:4,jun:5,juny:5,jul:6,ag:7,ago:7,aug:7,set:8,sep:8,sept:8,oct:9,nov:10,des:11,dic:11,dec:11};
+    const parseDue = (txt) => {
+      if(!txt) return null; const t = txt.toLowerCase();
+      if(/publica|posted|publicad/.test(t)) return null;
+      const now = new Date(); let d = null;
+      if(/\b(avui|hoy|today)\b/.test(t)) d = new Date(now);
+      else if(/\b(demà|dema|mañana|manana|tomorrow)\b/.test(t)){ d = new Date(now); d.setDate(d.getDate() + 1); }
+      else if(/\b(ahir|ayer|yesterday)\b/.test(t)){ d = new Date(now); d.setDate(d.getDate() - 1); }
+      else {
+        const m = t.match(/(\d{1,2})\s*(?:de\s+|d['’]\s*)?([a-zçñ]+)/i);
+        if(m){ const k = m[2].replace(/\.$/, ''); const mon = MON[k] ?? MON[k.slice(0,4)] ?? MON[k.slice(0,3)]; if(mon !== undefined){ d = new Date(now.getFullYear(), mon, +m[1]); const diff = d - now; if(diff > 180*864e5) d.setFullYear(d.getFullYear() - 1); if(diff < -180*864e5) d.setFullYear(d.getFullYear() + 1); } }
+      }
+      if(!d) return null;
+      const tm = t.match(/(\d{1,2}):(\d{2})/); if(tm) d.setHours(+tm[1], +tm[2], 0, 0); else d.setHours(23, 59, 0, 0);
+      return d.getTime();
+    };
+    try{
+      const h = location.hostname;
+      /* ---------- MOODLE ---------- */
+      const sk = (window.M && M.cfg && M.cfg.sesskey) || ((document.documentElement.innerHTML.match(/"sesskey":"([^"]+)"/) || [])[1]);
+      if(sk && window.M){
+        const root = (M.cfg && M.cfg.wwwroot) || location.origin;
+        const call = async (n, a) => { const r = await fetch(root + '/lib/ajax/service.php?sesskey=' + sk + '&info=' + n, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify([{index: 0, methodname: n, args: a}])}); const j = await r.json(); if(j[0].error) throw new Error((j[0].exception && j[0].exception.message) || n); return j[0].data; };
+        const now = Math.floor(Date.now() / 1000);
+        const ev = await call('core_calendar_get_action_events_by_timesort', {timesortfrom: now - 60*86400, limitnum: 50});
+        let cs = {courses: []}; try{ cs = await call('core_course_get_enrolled_courses_by_timeline_classification', {classification: 'inprogress', limit: 0, offset: 0}); }catch(e){}
+        return go({src: 'moodle', at: Date.now(), site: root,
+          tasks: (ev.events || []).map(e => ({id: e.id, title: e.activityname || e.name, course: e.course ? e.course.fullname : '', due: e.timesort * 1000, url: e.url || e.viewurl, kind: e.modulename, action: e.action ? e.action.name : '', late: !!e.overdue})),
+          courses: (cs.courses || []).map(c => ({id: c.id, name: c.fullname, url: c.viewurl}))});
+      }
+      /* ---------- CLASSROOM ---------- */
+      if(/(^|\.)classroom\.google\.com$/.test(h)){
+        const u = (location.pathname.match(/^\/u\/\d+/) || [''])[0];
+        const read = (late) => [...document.querySelectorAll('li')].filter(li => li.querySelector('a[href*="/details"]')).map(li => {
+          const a = li.querySelector('a[href*="/details"]'), href = a.getAttribute('href');
+          const leaves = [...li.querySelectorAll('*')].filter(e => !e.children.length && e.textContent.trim() && !/google-symbols|material-icons/.test(e.className)).map(e => e.textContent.trim());
+          const dueTxt = leaves.slice(2).find(x => /\d|avui|demà|hoy|mañana|today|tomorrow|ahir|ayer/i.test(x)) || '';
+          return {id: (href.match(/\/a\/([^/]+)/) || [])[1] || href, title: leaves[0] || '', course: leaves[1] || '', due: parseDue(dueTxt), dueText: /publica|posted/i.test(dueTxt) ? '' : dueTxt, url: 'https://classroom.google.com' + href, kind: 'classroom', late};
+        });
+        const waitFor = async (re) => { for(let i = 0; i < 30; i++){ if(re.test(location.pathname)) { await sleep(1800); return true; } await sleep(200); } return false; };
+        const tab = re => [...document.querySelectorAll('a[href]')].find(x => re.test(x.getAttribute('href')));
+        let pending = [], missing = [];
+        if(!/\/a\/(not-turned-in|missing)\//.test(location.pathname)){
+          const t = tab(/\/a\/not-turned-in\//); if(!t){ alert('Mi Estudio: abre Classroom → «Pendientes» (menú de la izquierda) y pulsa el marcador allí.'); return; }
+          t.click(); await waitFor(/not-turned-in/);
+        }
+        if(/missing/.test(location.pathname)){ missing = read(true); const t = tab(/\/a\/not-turned-in\//); if(t){ t.click(); await waitFor(/not-turned-in/); pending = read(false); } }
+        else { pending = read(false); const t = tab(/\/a\/missing\//); if(t){ t.click(); await waitFor(/missing/); missing = read(true); } }
+        const seen = new Set(), tasks = [...missing, ...pending].filter(t => !seen.has(t.id) && seen.add(t.id));
+        const courses = [...document.querySelectorAll('a[href]')].filter(x => new RegExp('^' + u + '/c/[^/]+$').test(x.getAttribute('href'))).map(x => ({id: x.getAttribute('href').split('/c/')[1], name: (x.textContent || '').trim().replace(/^[A-Z]\s*/, ''), url: 'https://classroom.google.com' + x.getAttribute('href')})).filter((c, i, arr) => c.name && arr.findIndex(z => z.id === c.id) === i);
+        return go({src: 'classroom', at: Date.now(), tasks, courses});
+      }
+      /* ---------- ELECTUDE ---------- */
+      if(/(^|\.)electude\./.test(h)){
+        alert('Mi Estudio: la sincronización de Electude todavía no está disponible.'); return;
+      }
+      alert('Mi Estudio: abre Moodle, Classroom o Electude (con tu sesión iniciada) y pulsa este marcador allí.');
+    }catch(e){ alert('Mi Estudio: no se pudo sincronizar (' + e.message + ')'); }
+  })();
+}
+const appUrl = () => isLocalFile() ? WEB_URL : location.origin + location.pathname;
+const bookmarkletCode = () => 'javascript:' + encodeURIComponent('(' + __msSync.toString() + ')(' + JSON.stringify(appUrl()) + ');void 0');
+function renderBookmarklet(){
+  const a = $('#bmLink'); if(!a) return;
+  a.href = bookmarkletCode();
+  a.onclick = e => { e.preventDefault(); $('#bmStatus').innerHTML = '<span style="color:var(--warn)">Arrástralo a la barra de marcadores (no hagas clic aquí).</span>'; };
+  const parts = ['moodle', 'classroom', 'electude'].filter(k => data[k] && data[k].via === 'marcador').map(k => `${SRC[k]}: ${data[k].tasks.length} tareas · ${new Date(data[k].at).toLocaleString('es-ES', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'})}`);
+  $('#bmStatus').textContent = parts.length ? 'Última sincronización — ' + parts.join(' | ') : '';
+}
+$('#bmCopy').onclick = async e => { try{ await navigator.clipboard.writeText(bookmarkletCode()); e.target.textContent = 'Copiado ✓'; }catch(err){} };
+function importSync(){
+  const m = location.hash.match(/^#sync=([A-Za-z0-9_-]+)$/); if(!m) return false;
+  history.replaceState(null, '', location.pathname);
+  let d;
+  try{ let b = m[1].replace(/-/g, '+').replace(/_/g, '/'); while(b.length % 4) b += '='; d = JSON.parse(decodeURIComponent(escape(atob(b)))); }
+  catch(e){ msg('No se pudo leer la sincronización.', 'err'); return false; }
+  if(!['moodle', 'classroom', 'electude'].includes(d.src) || !Array.isArray(d.tasks)) return false;
+  const clean = v => typeof v === 'string' ? v.slice(0, 500) : v;
+  const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
+  data[d.src] = {via: 'marcador', at: d.at || Date.now(),
+    tasks: d.tasks.slice(0, 200).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', late: !!t.late})),
+    courses: (d.courses || []).slice(0, 100).map(c => ({id: clean(String(c.id)), name: clean(c.name), url: okUrl(c.url)}))};
+  if(d.src === 'moodle' && okUrl(d.site) && !cfg.moodleUrl){ cfg.moodleUrl = d.site; saveCfg(); }
+  data.at = Date.now(); store.set('cache', data);
+  syncNote = `✅ ${SRC[d.src]} sincronizado: ${data[d.src].tasks.length} tareas pendientes.`; msg(syncNote, 'ok');
+  $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend'));
+  return true;
+}
+window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 
 /* ---------- compartir ---------- */
 $('#shareLink').onclick = async () => {
@@ -1196,6 +1325,7 @@ $('#shareLink').onclick = async () => {
 })();
 
 /* ---------- arranque ---------- */
+importSync();
 renderAll();
 window.addEventListener('load', () => sync(false));
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
