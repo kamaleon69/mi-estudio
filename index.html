@@ -132,7 +132,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #lensBar button.cl{background:#d97757}#lensBar button.ge{background:#4b7bec}
 #lensBar button:disabled{opacity:.4;cursor:default}
 @media (max-width:520px){#hdrPhone .lbl{display:none}.views button{padding:8px 4px;font-size:12.5px;line-height:1.25}.views button .n{display:block;width:max-content;margin:3px auto 0}#syncInfo{display:none}#hdrInstall .lbl{display:none}#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
-.views{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.views{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 10px}
 .views button{min-width:0;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:9px 12px;font:600 14px system-ui,sans-serif;cursor:pointer}
 .views button.on{background:var(--brand);color:var(--bg);border-color:var(--brand)}
 .views button .n{display:inline-block;margin-left:6px;padding:0 7px;border-radius:999px;background:rgba(127,127,127,.18);font-size:12px}
@@ -176,6 +176,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <button data-v="pending" class="on" type="button">📋 Pendientes<span class="n" id="nPending">0</span></button>
       <button data-v="missing" type="button">⚠️ Sin presentar<span class="n" id="nMissing">0</span></button>
       <button data-v="done" type="button">✅ Entregadas<span class="n" id="nDone">0</span></button>
+      <button data-v="review" type="button">🧹 Revisar<span class="n" id="nReview">0</span></button>
     </div>
     <div class="chips" id="filters">
       <button class="chip on" data-f="all">Todo</button>
@@ -662,7 +663,7 @@ function syncAgo(ts){
   const m = Math.round((Date.now() - ts) / 60000);
   if(m < 1) return 'ahora mismo'; if(m < 60) return 'hace ' + m + ' min';
   const h = Math.round(m / 60); if(h < 24) return 'hace ' + h + ' h';
-  return 'hace ' + Math.round(h / 24) + ' días';
+  const dd = Math.round(h / 24); return 'hace ' + dd + (dd === 1 ? ' día' : ' días');
 }
 function renderUpd(){
   const rows = [['moodle', 'Moodle'], ['classroom', 'Classroom']].map(([k, n]) => {
@@ -692,14 +693,81 @@ $('#updSync').onclick = () => {
 
 /* ---------- render: pendientes ---------- */
 let view = 'pending';
+function reviewIssues(items){
+  const now = Date.now(), out = [];
+  ['moodle', 'classroom'].forEach(k => { const d = data[k]; if(d && d.via === 'marcador' && now - (d.at || 0) > 24 * 3600e3) out.push({kind: 'stale', src: k, text: `${SRC[k]}: datos de ${syncAgo(d.at)}. Pueden haber cambiado entregas o notas.`}); });
+  items.forEach(t => {
+    if(t.manual && !t.done && t.due && t.due < now) out.push({kind: 'task', t, text: 'Electude: venció y no está marcada como hecha'});
+    else if(t.overridden) out.push({kind: 'task', t, text: 'La marcaste tú como entregada; la plataforma aún no lo confirma'});
+    else if(statusOf(t) === 'missing' && t.due && now - t.due < 3 * 86400e3) out.push({kind: 'task', t, text: 'Venció hace poco: comprueba si la entregaste'});
+  });
+  return out;
+}
+function renderReview(items, attention){
+  const hiddenCount = hidden.size;
+  let html = `<div class="card"><div class="row" style="justify-content:space-between"><strong>🧹 Revisar tareas y entregas</strong><button class="btn small primary" id="revSync" type="button">⚡ Sincronizar ahora</button></div>
+    <p class="meta small">Aquí ves todo lo que puede estar desfasado. Comprueba cada tarea, márcala como entregada si la entregaste por otra vía, o elimínala si ya no te interesa.</p>
+    <div class="small">${['moodle', 'classroom'].map(k => { const d = data[k] || {}; return `<span class="badge b-${k}">${SRC[k]}</span> ${d.via === 'marcador' ? 'sincronizado ' + syncAgo(d.at) : 'sin sincronizar'}`; }).join(' &nbsp; ')}</div></div>`;
+  html += `<h2>⚠️ Posiblemente desfasadas (${attention.length})</h2>` + (attention.length ? attention.map(a => a.kind === 'stale'
+      ? `<div class="card small">🕒 ${esc(a.text)}</div>`
+      : `<div class="card task" data-id="${esc(a.t.id)}"><div class="bar ${a.t.src}"></div><div class="body"><div class="t">${esc(a.t.title)}</div><div class="meta"><span class="badge b-${a.t.src}">${SRC[a.t.src]}</span> ${esc(a.text)}</div></div>
+          <div class="row" style="flex-direction:column;gap:4px">${a.t.overridden ? `<button class="btn small" data-unmark="${esc(a.t.id)}" type="button">↩ Quitar marca</button>` : `<button class="btn small" data-mark="${esc(a.t.id)}" type="button">✓ Entregada</button>`}<button class="btn small" data-del="${esc(a.t.id)}" type="button">🗑</button></div></div>`).join('')
+    : '<div class="empty">👍 Todo parece al día.</div>');
+  const all = items.slice().sort((a, b) => (b.due || 0) - (a.due || 0));
+  const lbl = {pending: '📋 Pendiente', missing: '⚠️ Sin presentar', submitted: '📤 Entregada', graded: '✅ Calificada'};
+  html += `<h2>Todas las tareas (${all.length})</h2>` + all.map(t => `<div class="card task" data-id="${esc(t.id)}"><div class="bar ${t.src}"></div><div class="body"><div class="t">${esc(t.title)}</div>
+      <div class="meta"><span class="badge b-${t.src}">${SRC[t.src]}</span> ${lbl[statusOf(t)]}${t.grade ? ' · ' + esc(t.grade) : ''}${t.due ? ' · ' + fmtDate(t.due) : ''}${t.overridden ? ' · marcada por ti' : ''}</div></div>
+      <div class="row" style="flex-direction:column;gap:4px">${['pending', 'missing'].includes(statusOf(t)) && !t.manual ? `<button class="btn small" data-mark="${esc(t.id)}" type="button">✓</button>` : ''}<button class="btn small" data-del="${esc(t.id)}" type="button">🗑</button></div></div>`).join('');
+  if(hiddenCount) html += `<div class="card row" style="justify-content:space-between"><span class="small">🗑 ${hiddenCount} tarea${hiddenCount === 1 ? '' : 's'} eliminada${hiddenCount === 1 ? '' : 's'} (no se muestran ni vuelven al sincronizar)</span><button class="btn small" id="revRestore" type="button">↩ Restaurar</button></div>`;
+  $('#pendList').innerHTML = html;
+  $$('#pendList .task').forEach(el => el.onclick = e => { if(e.target.closest('button')) return; openTask(items.find(t => t.id === el.dataset.id)); });
+  $$('#pendList [data-mark]').forEach(b => b.onclick = () => markDone(b.dataset.mark));
+  $$('#pendList [data-unmark]').forEach(b => b.onclick = () => unmarkDone(b.dataset.unmark));
+  $$('#pendList [data-del]').forEach(b => b.onclick = () => deleteTask(b.dataset.del));
+  $('#revSync').onclick = () => { if(!extSync()) $('#syncBtn').click(); };
+  const rr = $('#revRestore'); if(rr) rr.onclick = () => { const n = hidden.size; hidden.clear(); saveHidden(); renderAll(); toast('↩ ' + n + ' tarea' + (n === 1 ? '' : 's') + ' restaurada' + (n === 1 ? '' : 's')); };
+  $('#syncInfo').textContent = data.at ? 'Actualizado ' + new Date(data.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) : '';
+}
+function findItem(id){ return rawItems().find(t => t.id === id); }
+function markDone(id){
+  const t = findItem(id); if(!t) return;
+  if(t.manual){ manual = manual.map(x => x.id === id ? Object.assign(x, {done: true}) : x); store.set('manual', manual); }
+  else { overrides[id] = 'submitted'; saveOver(); }
+  renderAll(); toast('✅ Marcada como entregada');
+}
+function unmarkDone(id){ delete overrides[id]; saveOver(); renderAll(); toast('↩ Marca quitada'); }
+function deleteTask(id){
+  const t = findItem(id); if(!t) return;
+  if(!confirm(`¿Eliminar «${t.title}»?` + (t.manual ? '' : '\n\nNo volverá a aparecer al sincronizar. Puedes recuperarla en «🧹 Revisar → Restaurar».'))) return;
+  if(t.manual){ manual = manual.filter(x => x.id !== id); store.set('manual', manual); }
+  else { hidden.add(id); saveHidden(); }
+  store.del('draft_' + id);
+  if($('#dlg').open) $('#dlg').close();
+  renderAll(); toast('🗑 Tarea eliminada');
+}
+let hidden = new Set(store.get('hidden', [])), overrides = store.get('over', {});
+const saveHidden = () => store.set('hidden', [...hidden]);
+const saveOver = () => store.set('over', overrides);
 function statusOf(t){
   if(t.src === 'electude' && t.manual) return t.done ? 'submitted' : (t.due && t.due < Date.now() ? 'missing' : 'pending');
   if(t.status) return t.status === 'pending' && t.due && t.due < Date.now() ? 'missing' : t.status;
   return t.late || (t.due && t.due < Date.now()) ? 'missing' : 'pending';
 }
-function allItems(){
+function rawItems(){
   const man = manual.map(t => Object.assign({src: 'electude', course: 'Electude', url: cfg.electudeUrl, manual: true}, t));
-  return [...data.moodle.tasks, ...data.classroom.tasks, ...(data.electude.tasks || []), ...man];
+  const F = fromTs();
+  return [...data.moodle.tasks.map(t => Object.assign({syncedAt: data.moodle.at}, t)), ...data.classroom.tasks.map(t => Object.assign({syncedAt: data.classroom.at}, t)), ...(data.electude.tasks || []), ...man]
+    .filter(t => !(F && typeof t.due === 'number' && t.due < F));
+}
+function allItems(){
+  return rawItems().filter(t => !hidden.has(t.id)).map(t => {
+    const o = overrides[t.id];
+    if(o && !t.manual){
+      if(t.status === 'submitted' || t.status === 'graded'){ delete overrides[t.id]; saveOver(); return t; }   // la plataforma ya lo confirma
+      return Object.assign({}, t, {status: o, overridden: true, late: false});
+    }
+    return t;
+  });
 }
 function allTasks(){ return allItems().filter(t => statusOf(t) === 'pending' || statusOf(t) === 'missing'); }
 function gradeBadge(g){
@@ -723,10 +791,13 @@ function taskCard(t){
 function renderPending(){
   const now = Date.now(), day = new Date(); day.setHours(23,59,59,999);
   const items = allItems().filter(t => filter === 'all' || t.src === filter);
+  const attention = reviewIssues(items);
+  $('#nReview').textContent = attention.length;
   const by = {pending: [], missing: [], done: []};
   items.forEach(t => { const st = statusOf(t); (st === 'graded' || st === 'submitted' ? by.done : by[st] || by.pending).push(t); });
   $('#nPending').textContent = by.pending.length; $('#nMissing').textContent = by.missing.length; $('#nDone').textContent = by.done.length;
   $$('#views button').forEach(b => b.classList.toggle('on', b.dataset.v === view));
+  if(view === 'review'){ renderReview(items, attention); return; }
   let groups, list = by[view];
   if(view === 'pending') groups = [['Hoy', t => t.due && t.due <= day.getTime()], ['Próximos 7 días', t => t.due && t.due > day.getTime() && t.due <= now + 7*86400e3], ['Más adelante', t => t.due && t.due > now + 7*86400e3], ['Sin fecha', t => !t.due]];
   else if(view === 'missing') groups = [['Vencidas sin entregar', t => true]];
@@ -738,6 +809,8 @@ function renderPending(){
   }
   const empty = {pending: '🎉 No tienes nada pendiente (o aún no has sincronizado tus plataformas).', missing: '👏 No tienes tareas sin presentar.', done: 'Aquí verás tus tareas entregadas y sus notas. Sincroniza Moodle y Classroom con el marcador ⚡ para traerlas.'};
   const noData = !hasMarkerData() && !cfg.moodleToken;
+  const oldest = Math.min(...['moodle', 'classroom'].filter(k => data[k] && data[k].via === 'marcador').map(k => data[k].at || 0));
+  if(!noData && isFinite(oldest) && Date.now() - oldest > 24 * 3600e3 && !extBusy) html = `<div class="msg info">🕒 Algunas tareas son de <b>${syncAgo(oldest)}</b> y pueden estar desfasadas. <button class="btn small primary" type="button" id="staleSync">↻ Actualizar</button></div>` + html;
   if(noData && isTouch() && view === 'pending'){
     const iosApp = platform() === 'ios' && (matchMedia('(display-mode: standalone)').matches || navigator.standalone);
     html = `<div class="bigcard"><h3>📱 Trae tus tareas del ordenador</h3>
@@ -751,10 +824,11 @@ function renderPending(){
   }
   $('#pendList').innerHTML = html || `<div class="empty">${empty[view]}</div>`;
   const bp = $('#bigPaste'); if(bp) bp.onclick = pasteSync;
+  const ss = $('#staleSync'); if(ss) ss.onclick = () => $('#syncBtn').click();
   $$('#pendList .task').forEach(el => el.onclick = () => openTask(items.find(t => t.id === el.dataset.id)));
   $('#syncInfo').textContent = data.at ? 'Actualizado ' + new Date(data.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) : '';
 }
-$$('#views button').forEach(b => b.onclick = () => { view = b.dataset.v; renderPending(); toast({pending: '📋 Pendientes', missing: '⚠️ Sin presentar', done: '✅ Entregadas y calificadas'}[view] + ': ' + $('#n' + {pending: 'Pending', missing: 'Missing', done: 'Done'}[view]).textContent); });
+$$('#views button').forEach(b => b.onclick = () => { view = b.dataset.v; renderPending(); toast({pending: '📋 Pendientes', missing: '⚠️ Sin presentar', done: '✅ Entregadas y calificadas', review: '🧹 Por revisar'}[view] + ': ' + $('#n' + {pending: 'Pending', missing: 'Missing', done: 'Done', review: 'Review'}[view]).textContent); });
 
 /* ---------- detalle de tarea ---------- */
 function openDlg(t){
@@ -778,7 +852,16 @@ function wireDraft(t){
 }
 
 async function openTask(t){
-  if(!t) return; openDlg(t); const body = $('#dlgBody');
+  if(!t) return;
+  await openTaskInner(t);
+  const st = statusOf(t), bar = document.createElement('div');
+  bar.className = 'row'; bar.style.cssText = 'margin-top:14px;padding-top:12px;border-top:1px solid var(--line)';
+  bar.innerHTML = (t.manual ? '' : (t.overridden ? '<button class="btn" type="button" data-a="unmark">↩ Quitar «entregada»</button>' : (['pending', 'missing'].includes(st) ? '<button class="btn" type="button" data-a="mark">✓ Marcar como entregada</button>' : ''))) + '<button class="btn" type="button" data-a="del" style="color:var(--danger)">🗑 Eliminar tarea</button>';
+  $('#dlgBody').appendChild(bar);
+  bar.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { const a = b.dataset.a; if(a === 'del') deleteTask(t.id); else { $('#dlg').close(); a === 'mark' ? markDone(t.id) : unmarkDone(t.id); } });
+}
+async function openTaskInner(t){
+  openDlg(t); const body = $('#dlgBody');
   if(t.src === 'classroom'){
     const mats = t.materials || [];
     body.innerHTML = `${t.late ? '<div class="msg err">⚠ Tarea vencida sin entregar</div>' : ''}${t.desc ? `<div class="intro">${linkify(t.desc)}</div>` : (t.via === 'marcador' || !t.desc ? '<p class="meta">El enunciado y los materiales están en Classroom.</p>' : '')}
@@ -792,10 +875,9 @@ async function openTask(t){
   if(t.src === 'electude'){
     body.innerHTML = `${t.note ? `<p>${linkify(t.note)}</p>` : ''}${draftBox(t, 'Notas / borrador')}
       <div class="row" style="margin-top:12px"><a class="btn primary" href="${esc(cfg.electudeUrl)}" target="_blank" rel="noopener">Abrir Electude ↗</a>
-      <button class="btn" id="mDone">✓ Marcar como hecha</button><button class="btn" id="mDel">Eliminar</button></div>`;
+      <button class="btn" id="mDone">✓ Marcar como hecha</button></div>`;
     wireDraft(t);
     $('#mDone').onclick = () => { manual = manual.map(x => x.id === t.id ? Object.assign(x, {done: true}) : x); store.set('manual', manual); $('#dlg').close(); renderAll(); toast('✅ Marcada como hecha'); };
-    $('#mDel').onclick = () => { manual = manual.filter(x => x.id !== t.id); store.set('manual', manual); store.del('draft_' + t.id); $('#dlg').close(); renderAll(); toast('🗑 Tarea eliminada'); };
     return;
   }
   // Moodle
@@ -1411,7 +1493,7 @@ let extVersion = null, extBusy = false, extNotes = [];
 window.addEventListener('message', e => {
   if(e.source !== window || !e.data || typeof e.data.type !== 'string') return;
   const m = e.data;
-  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } } }
+  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
   if(m.type === 'MS_EXT_START') extSync();
   if(m.type === 'MS_EXT_PROGRESS'){ msg('<span class="spin"></span> ' + esc(m.text), m.login ? 'err' : 'info'); if($('#updProg')) $('#updProg').innerHTML = '<span class="spin"></span> ' + esc(m.text); if(m.login) toast(m.text, 'err'); }
   if(m.type === 'MS_EXT_RESULT'){
@@ -1627,7 +1709,7 @@ function renderExt(){
   card.hidden = isTouch() && !extVersion && !(isGecko() && platform() === 'android');
   const oldExt = extVersion && extVersion.localeCompare('1.1.0', undefined, {numeric: true}) < 0;
   if(oldExt){ box.innerHTML = `<div class="msg err">Tienes la extensión v${esc(extVersion)}. Descarga la nueva (v1.1) para leer desde septiembre y abrir Classroom con tu cuenta del centro: <a href="${extZip()}" download>⬇ Descargar</a>, sustituye los archivos de su carpeta y pulsa ↻ (recargar) en la página de extensiones.</div>`; return; }
-  if(extVersion){ box.innerHTML = `<div class="msg ok">✅ Extensión instalada (v${esc(extVersion)}). Pulsa <b>↻ Actualizar</b> arriba para sincronizar Moodle y Classroom con un clic.</div><div class="row"><button class="btn primary" id="extSyncNow" type="button">⚡ Sincronizar ahora</button></div>`; $('#extSyncNow').onclick = () => extSync(); $('#extHelp').open = false; }
+  if(extVersion){ box.innerHTML = `<div class="msg ok">✅ Extensión instalada (v${esc(extVersion)}). Pulsa <b>↻ Actualizar</b> arriba para sincronizar Moodle y Classroom con un clic.</div><div class="row"><button class="btn primary" id="extSyncNow" type="button">⚡ Sincronizar ahora</button></div><label class="check" style="margin-top:10px"><input type="checkbox" id="autoSyncChk" ${cfg.autoSync !== false ? 'checked' : ''}> <span>Actualizar automáticamente al abrir la app (si hace más de 1 hora)</span></label>`; $('#extSyncNow').onclick = () => extSync(); $('#autoSyncChk').onchange = e => { cfg.autoSync = e.target.checked; saveCfg(); toast(e.target.checked ? '✅ Se actualizará al abrir la app' : 'Actualización automática desactivada'); }; $('#extHelp').open = false; }
   else { box.innerHTML = `<p class="meta small">Con ella, <b>↻ Actualizar</b> trae Moodle y Classroom solo, sin marcadores. Recomendado en el ordenador.</p><div class="row"><a class="btn primary" href="${extZip()}" download id="extDl">⬇ Descargar la extensión para ${isGecko() ? 'Zen / Firefox' : 'Chrome / Edge'}</a></div>`; $('#extHelpChrome').hidden = isGecko(); $('#extHelpFx').hidden = !isGecko(); $('#extHelp').open = true; $('#extDl').onclick = () => toast('⬇ Descargando: descomprímela y sigue los pasos'); }
 }
 $('#copyExtUrl').onclick = async () => { try{ await navigator.clipboard.writeText(/Edg\//.test(navigator.userAgent) ? 'edge://extensions' : 'chrome://extensions'); toast('✅ Copiado: pégalo en una pestaña nueva'); }catch(e){ toast('Escríbelo a mano en una pestaña nueva', 'err'); } };

@@ -84,6 +84,14 @@ En la pantalla principal tienes tres pestañas:
 - **⚠️ No presentadas:** tareas vencidas que no entregaste, también las calificadas con 0.
 - **✅ Entregadas:** primero las **calificadas, con su nota** (en rojo si es menor que la mitad) y luego las entregadas que aún no tienen nota.
 
+- **🧹 Revisar:** muestra lo que puede estar **desfasado** (plataformas sin sincronizar hace más de un día, tareas vencidas hace poco que quizá entregaste, tareas de Electude vencidas sin marcar) y la lista completa de tareas con su estado. Desde aquí puedes sincronizar, marcar tareas como entregadas o eliminarlas.
+
+**Eliminar o marcar una tarea:** abre la tarea y usa **🗑 Eliminar tarea** o **✓ Marcar como entregada**, que sirve si la entregaste en papel o por otra vía. Las tareas eliminadas no vuelven al sincronizar; se recuperan en 🧹 Revisar → **↩ Restaurar**. La marca de «entregada» desaparece sola cuando la plataforma confirma la entrega.
+
+**Al abrir la app:** con la extensión, si la última sincronización es de hace más de 1 hora, se actualiza sola (se puede desactivar en Ajustes → 🧩). Sin extensión, verás un aviso si tus tareas son de hace más de un día.
+
+Solo se muestran las tareas con fecha **desde el 1 de septiembre de 2026**, o desde la fecha que pongas en Ajustes → Tus plataformas.
+
 En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (verás «Leyendo tareas 12/32…»). En Classroom lee las pestañas «Assignat», «Sense entregar» y «Fet».
 
 > Con el marcador **ves** las tareas, fechas y cursos. Para **entregar**, pulsa «Abrir en Moodle» o «Abrir en Classroom» en cada tarea.
