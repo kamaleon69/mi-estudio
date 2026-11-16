@@ -182,7 +182,6 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <button class="chip on" data-f="all">Todo</button>
       <button class="chip" data-f="moodle">Moodle</button>
       <button class="chip" data-f="classroom">Classroom</button>
-      <button class="chip" data-f="electude">Electude</button>
     </div>
     <div id="pendList"></div>
   </section>
@@ -190,19 +189,12 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <section id="study"><div id="studyList"></div></section>
 
   <section id="elec">
-    <div class="card">
-      <div class="row"><strong style="flex:1">Electude</strong><a class="btn primary" id="elecOpen" target="_blank" rel="noopener">Abrir Electude ↗</a></div>
-      <p class="meta">Electude no ofrece una API para alumnos, así que sus tareas las apuntas aquí y aparecen junto al resto en «Pendientes».</p>
+    <div class="card" style="text-align:center;padding:30px 16px">
+      <div style="font-size:42px">🔧</div>
+      <h3 style="margin:8px 0 4px">Electude</h3>
+      <p class="meta small" id="elecUrlTxt"></p>
+      <a class="btn primary" id="elecOpen" target="_blank" rel="noopener" style="font-size:17px;padding:13px 26px;margin-top:8px">Abrir Electude ↗</a>
     </div>
-    <div class="card">
-      <strong>Añadir tarea de Electude</strong>
-      <label>Título</label><input id="eTitle" placeholder="Ej.: Módulo 4 – Sistema de encendido">
-      <label>Fecha límite (opcional)</label><input id="eDue" type="datetime-local">
-      <label>Notas (opcional)</label><input id="eNote" placeholder="Ej.: hacer el test final">
-      <div class="row" style="margin-top:10px"><button class="btn primary" id="eAdd">Añadir</button></div>
-    </div>
-    <h2>Tus tareas de Electude</h2>
-    <div id="elecList"></div>
   </section>
 
   <section id="cfg">
@@ -319,7 +311,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
           <li><b>Electude:</b> copia la dirección de la página donde inicias sesión. En Jesuïtes El Clot es <code>https://clotfje.electude.eu/srestore</code>.</li>
           <li>Pulsa <b>Guardar</b> y comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.</li>
         </ol>
-        <div class="tip">Las tareas de Electude se apuntan a mano en la pestaña <b>Electude</b>. En el ordenador, Electude se abre en una ventana lateral para usarlo junto a la app.</div>
+        <div class="tip">La pestaña <b>Electude</b> es un acceso directo a esta dirección. En el ordenador se abre en una ventana lateral para usarlo junto a la app.</div>
       </div></details>
     </div>
 
@@ -670,7 +662,7 @@ function renderUpd(){
     const d = data[k] || {}, ok = d.via === 'marcador';
     const old = !ok || Date.now() - (d.at || 0) > 24 * 3600e3;
     return `<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span><span class="badge b-${k}">${n}</span> ${ok ? d.tasks.length + ' tareas' : 'sin sincronizar'}</span><span class="small" style="color:${old ? 'var(--warn)' : 'var(--ok)'}">${ok ? syncAgo(d.at) : '—'}</span></div>`;
-  }).join('') + `<div class="row" style="justify-content:space-between;padding:6px 0"><span><span class="badge b-electude">Electude</span> ${manual.filter(t => !t.done).length} apuntadas</span><span class="small meta">manual</span></div>`;
+  }).join('');
   $('#updStatus').innerHTML = rows;
   const b = $('#updSync');
   b.disabled = extBusy; b.innerHTML = extBusy ? '<span class="spin"></span> Sincronizando…' : '⚡ Sincronizar';
@@ -754,7 +746,7 @@ function statusOf(t){
   return t.late || (t.due && t.due < Date.now()) ? 'missing' : 'pending';
 }
 function rawItems(){
-  const man = manual.map(t => Object.assign({src: 'electude', course: 'Electude', url: cfg.electudeUrl, manual: true}, t));
+  const man = [];   // Electude: solo acceso directo, sin tareas
   const F = fromTs();
   return [...data.moodle.tasks.map(t => Object.assign({syncedAt: data.moodle.at}, t)), ...data.classroom.tasks.map(t => Object.assign({syncedAt: data.classroom.at}, t)), ...(data.electude.tasks || []), ...man]
     .filter(t => !(F && typeof t.due === 'number' && t.due < F));
@@ -1001,18 +993,8 @@ function renderStudy(){
 /* ---------- Electude ---------- */
 function renderElec(){
   $('#elecOpen').href = cfg.electudeUrl;
-  const list = manual.slice().sort((a, b) => (a.done - b.done) || ((a.due || 9e15) - (b.due || 9e15)));
-  $('#elecList').innerHTML = list.map(t => `<div class="card row"><span style="flex:1;${t.done ? 'text-decoration:line-through;opacity:.6' : ''}"><b>${esc(t.title)}</b><br><span class="meta">${t.due ? fmtDate(t.due) : 'Sin fecha'}${t.note ? ' · ' + esc(t.note) : ''}</span></span>
-    <button class="btn small" data-tog="${t.id}">${t.done ? 'Reabrir' : '✓ Hecha'}</button><button class="btn small" data-del="${t.id}">✕</button></div>`).join('') || '<div class="empty">Aún no has apuntado tareas de Electude.</div>';
-  $$('#elecList [data-tog]').forEach(b => b.onclick = () => { let done; manual = manual.map(x => x.id === b.dataset.tog ? Object.assign(x, {done: (done = !x.done)}) : x); store.set('manual', manual); renderAll(); toast(done ? '✅ Marcada como hecha' : '↩ Tarea reabierta'); });
-  $$('#elecList [data-del]').forEach(b => b.onclick = () => { manual = manual.filter(x => x.id !== b.dataset.del); store.set('manual', manual); renderAll(); toast('🗑 Tarea eliminada'); });
+  $('#elecUrlTxt').textContent = cfg.electudeUrl.replace(/^https:\/\//, '');
 }
-$('#eAdd').onclick = () => {
-  const title = $('#eTitle').value.trim(); if(!title){ toast('Escribe un título para la tarea', 'err'); return $('#eTitle').focus(); }
-  const due = $('#eDue').value ? new Date($('#eDue').value).getTime() : null;
-  manual.push({id: 'e' + Date.now(), title, due, note: $('#eNote').value.trim(), done: false});
-  store.set('manual', manual); $('#eTitle').value = $('#eDue').value = $('#eNote').value = ''; renderAll(); toast('✅ Tarea añadida a Pendientes');
-};
 
 /* ---------- Ajustes ---------- */
 const WEB_URL = 'https://kamaleon69.github.io/mi-estudio/';

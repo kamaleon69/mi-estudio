@@ -98,8 +98,7 @@ En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (ve
 
 ## 4. Electude
 
-- El botón **Abrir Electude** abre `https://clotfje.electude.eu/srestore`. En el PC se abre en una ventana lateral para usarlo junto a la app.
-- Electude no deja que otras apps lean tus tareas. Apúntalas en la pestaña **Electude** con título y fecha, y aparecerán en «Pendientes» junto al resto.
+La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. En el ordenador se abre en una ventana lateral para usarlo junto a la app.
 
 ## 5. Pasar tus tareas al móvil (QR)
 
