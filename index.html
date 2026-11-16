@@ -131,7 +131,16 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #lensBar button{border:0;border-radius:999px;padding:9px 14px;font:600 14px system-ui,sans-serif;cursor:pointer;color:#fff;background:#3a3f47;white-space:nowrap}
 #lensBar button.cl{background:#d97757}#lensBar button.ge{background:#4b7bec}
 #lensBar button:disabled{opacity:.4;cursor:default}
-@media (max-width:520px){#syncInfo{display:none}#hdrInstall .lbl{display:none}#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
+@media (max-width:520px){.views button{padding:8px 4px;font-size:12.5px;line-height:1.25}.views button .n{display:block;width:max-content;margin:3px auto 0}#syncInfo{display:none}#hdrInstall .lbl{display:none}#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
+.views{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.views button{min-width:0;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:9px 12px;font:600 14px system-ui,sans-serif;cursor:pointer}
+.views button.on{background:var(--brand);color:var(--bg);border-color:var(--brand)}
+.views button .n{display:inline-block;margin-left:6px;padding:0 7px;border-radius:999px;background:rgba(127,127,127,.18);font-size:12px}
+.grade{display:inline-block;font-weight:700;font-size:13px;padding:3px 9px;border-radius:8px;background:#e8f5e9;color:#1b5e20;white-space:nowrap}
+.grade.low{background:#fdecea;color:#8a1c1c}
+.st{font-size:12px;font-weight:600;white-space:nowrap}
+.st.sub{color:var(--accent)}.st.miss{color:var(--danger)}
+@media (prefers-color-scheme:dark){.grade{background:#173b1c;color:#b4ffbe}.grade.low{background:#3b1717;color:#ffb4b4}}
 #toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#1c2430;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;max-width:92vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.err{background:#b3261e}
@@ -156,6 +165,11 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 
   <section id="pend" class="on">
     <div class="row" id="pasteRow" style="justify-content:flex-end;margin:-4px 0 8px"><button class="btn small" id="pasteBtn" type="button">📋 Pegar sincronización</button></div>
+    <div class="views" id="views">
+      <button data-v="pending" class="on" type="button">📋 Pendientes<span class="n" id="nPending">0</span></button>
+      <button data-v="missing" type="button">⚠️ Sin presentar<span class="n" id="nMissing">0</span></button>
+      <button data-v="done" type="button">✅ Entregadas<span class="n" id="nDone">0</span></button>
+    </div>
     <div class="chips" id="filters">
       <button class="chip on" data-f="all">Todo</button>
       <button class="chip" data-f="moodle">Moodle</button>
@@ -636,37 +650,62 @@ $('#updMoodle').addEventListener('click', () => toast('Abriendo Moodle… pulsa 
 $('#updClass').addEventListener('click', () => toast('Abriendo Classroom… pulsa allí tu marcador ⚡'));
 
 /* ---------- render: pendientes ---------- */
-function allTasks(){
-  const man = manual.filter(t => !t.done).map(t => Object.assign({src: 'electude', course: 'Electude', url: cfg.electudeUrl}, t));
+let view = 'pending';
+function statusOf(t){
+  if(t.src === 'electude' && t.manual) return t.done ? 'submitted' : (t.due && t.due < Date.now() ? 'missing' : 'pending');
+  if(t.status) return t.status === 'pending' && t.due && t.due < Date.now() ? 'missing' : t.status;
+  return t.late || (t.due && t.due < Date.now()) ? 'missing' : 'pending';
+}
+function allItems(){
+  const man = manual.map(t => Object.assign({src: 'electude', course: 'Electude', url: cfg.electudeUrl, manual: true}, t));
   return [...data.moodle.tasks, ...data.classroom.tasks, ...(data.electude.tasks || []), ...man];
 }
+function allTasks(){ return allItems().filter(t => statusOf(t) === 'pending' || statusOf(t) === 'missing'); }
+function gradeBadge(g){
+  if(!g) return '';
+  const m = String(g).replace(/,/g, '.').match(/(-?[\d.]+)\s*\/\s*([\d.]+)/); const low = m && +m[2] > 0 && +m[1] / +m[2] < 0.5;
+  return `<span class="grade${low ? ' low' : ''}">${esc(g)}</span>`;
+}
 function taskCard(t){
-  const now = Date.now(); let cls = '', txt = 'Sin fecha';
-  if(t.due){ txt = fmtDate(t.due); if(t.due < now || t.late) cls = 'late'; else if(t.due - now < 2*86400e3) cls = 'soon'; }
-  else if(t.dueText){ txt = t.dueText; if(t.late) cls = 'late'; }
-  const extra = t.src === 'classroom' && t.state === 'RECLAIMED_BY_STUDENT' ? ' · anulada la entrega' : (t.action ? ' · ' + esc(t.action) : '');
+  const now = Date.now(), st = statusOf(t); let cls = '', txt = 'Sin fecha';
+  if(t.due){ txt = fmtDate(t.due); if(st === 'missing') cls = 'late'; else if(t.due - now < 2*86400e3 && st === 'pending') cls = 'soon'; }
+  else if(t.dueText){ txt = t.dueText; if(st === 'missing') cls = 'late'; }
+  const extra = t.action && st !== 'graded' && st !== 'submitted' ? ' · ' + esc(t.action) : '';
+  const right = st === 'graded' ? gradeBadge(t.grade) || '<span class="st sub">✅ Calificada</span>'
+    : st === 'submitted' ? `<span class="st sub">📤 Entregada${t.manual ? '' : ' · sin nota'}</span>`
+    : st === 'missing' ? `<div class="due late">⚠ ${t.due || t.dueText ? esc(txt) : 'No presentada'}</div>${t.grade ? gradeBadge(t.grade) : ''}`
+    : `<div class="due ${cls}">${esc(txt)}</div>`;
   return `<div class="card task" data-id="${esc(t.id)}"><div class="bar ${t.src}"></div><div class="body">
     <div class="t">${esc(t.title)}</div><div class="meta"><span class="badge b-${t.src}">${SRC[t.src]}</span> ${esc(t.course)}${extra}${store.get('draft_'+t.id) ? ' · ✏️ borrador' : ''}</div></div>
-    <div class="due ${cls}">${cls === 'late' ? '⚠ ' : ''}${esc(txt)}</div></div>`;
+    <div style="text-align:right">${right}</div></div>`;
 }
 function renderPending(){
   const now = Date.now(), day = new Date(); day.setHours(23,59,59,999);
-  const tasks = allTasks().filter(t => filter === 'all' || t.src === filter);
-  const groups = [['Atrasadas', t => (t.due && t.due < now) || (!t.due && t.late)], ['Hoy', t => t.due && t.due >= now && t.due <= day.getTime()],
-    ['Próximos 7 días', t => t.due && t.due > day.getTime() && t.due <= now + 7*86400e3], ['Más adelante', t => t.due && t.due > now + 7*86400e3], ['Sin fecha', t => !t.due && !t.late]];
+  const items = allItems().filter(t => filter === 'all' || t.src === filter);
+  const by = {pending: [], missing: [], done: []};
+  items.forEach(t => { const st = statusOf(t); (st === 'graded' || st === 'submitted' ? by.done : by[st] || by.pending).push(t); });
+  $('#nPending').textContent = by.pending.length; $('#nMissing').textContent = by.missing.length; $('#nDone').textContent = by.done.length;
+  $$('#views button').forEach(b => b.classList.toggle('on', b.dataset.v === view));
+  let groups, list = by[view];
+  if(view === 'pending') groups = [['Hoy', t => t.due && t.due <= day.getTime()], ['Próximos 7 días', t => t.due && t.due > day.getTime() && t.due <= now + 7*86400e3], ['Más adelante', t => t.due && t.due > now + 7*86400e3], ['Sin fecha', t => !t.due]];
+  else if(view === 'missing') groups = [['Vencidas sin entregar', t => true]];
+  else groups = [['Calificadas', t => statusOf(t) === 'graded'], ['Entregadas, pendientes de nota', t => statusOf(t) === 'submitted']];
   let html = '';
   for(const [name, fn] of groups){
-    const g = tasks.filter(fn).sort((a, b) => (a.due || 0) - (b.due || 0));
+    const g = list.filter(fn).sort((a, b) => view === 'pending' ? (a.due || 9e15) - (b.due || 9e15) : (b.due || 0) - (a.due || 0));
     if(g.length) html += `<h2>${name} (${g.length})</h2>` + g.map(taskCard).join('');
   }
-  $('#pendList').innerHTML = html || '<div class="empty">🎉 No tienes nada pendiente (o aún no has conectado tus plataformas).</div>';
-  $$('#pendList .task').forEach(el => el.onclick = () => openTask(tasks.find(t => t.id === el.dataset.id)));
+  const empty = {pending: '🎉 No tienes nada pendiente (o aún no has sincronizado tus plataformas).', missing: '👏 No tienes tareas sin presentar.', done: 'Aquí verás tus tareas entregadas y sus notas. Sincroniza Moodle y Classroom con el marcador ⚡ para traerlas.'};
+  $('#pendList').innerHTML = html || `<div class="empty">${empty[view]}</div>`;
+  $$('#pendList .task').forEach(el => el.onclick = () => openTask(items.find(t => t.id === el.dataset.id)));
   $('#syncInfo').textContent = data.at ? 'Actualizado ' + new Date(data.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) : '';
 }
+$$('#views button').forEach(b => b.onclick = () => { view = b.dataset.v; renderPending(); toast({pending: '📋 Pendientes', missing: '⚠️ Sin presentar', done: '✅ Entregadas y calificadas'}[view] + ': ' + $('#n' + {pending: 'Pending', missing: 'Missing', done: 'Done'}[view]).textContent); });
 
 /* ---------- detalle de tarea ---------- */
 function openDlg(t){
-  $('#dlgBadge').innerHTML = `<span class="badge b-${t.src}">${SRC[t.src]}</span>`;
+  const st = statusOf(t);
+  $('#dlgBadge').innerHTML = `<span class="badge b-${t.src}">${SRC[t.src]}</span> ` + (st === 'graded' ? '✅ Calificada ' + gradeBadge(t.grade) : st === 'submitted' ? '<span class="st sub">📤 Entregada</span>' : st === 'missing' ? '<span class="st miss">⚠ No presentada</span>' : '');
   $('#dlgTitle').textContent = t.title;
   $('#dlgMeta').textContent = (t.course || '') + (t.due ? ' · Entrega: ' + fmtDate(t.due) : '');
   $('#dlg').showModal();
@@ -1337,6 +1376,8 @@ function __msSync(APP){
       box.append(title, bCopy, bOpen, info, bClose); document.body.appendChild(box);
     };
     const sleep = ms => new Promise(r => setTimeout(r, ms));
+    const prog = (txt) => { let b = document.getElementById('__msProg'); if(!b){ b = document.createElement('div'); b.id = '__msProg'; b.style.cssText = 'position:fixed;top:12px;right:12px;z-index:2147483647;background:#1f3a5f;color:#fff;padding:10px 14px;border-radius:10px;font:600 14px system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.35)'; document.body.appendChild(b); } b.textContent = '⚡ Mi Estudio: ' + txt; };
+    const progDone = () => { const b = document.getElementById('__msProg'); if(b) b.remove(); };
     const MON = {gen:0,ene:0,jan:0,feb:1,febr:1,'març':2,marc:2,mar:2,abr:3,apr:3,maig:4,may:4,jun:5,juny:5,jul:6,ag:7,ago:7,aug:7,set:8,sep:8,sept:8,oct:9,nov:10,des:11,dic:11,dec:11};
     const parseDue = (txt) => {
       if(!txt) return null; const t = txt.toLowerCase();
@@ -1361,31 +1402,67 @@ function __msSync(APP){
         const root = (M.cfg && M.cfg.wwwroot) || location.origin;
         const call = async (n, a) => { const r = await fetch(root + '/lib/ajax/service.php?sesskey=' + sk + '&info=' + n, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify([{index: 0, methodname: n, args: a}])}); const j = await r.json(); if(j[0].error) throw new Error((j[0].exception && j[0].exception.message) || n); return j[0].data; };
         const now = Math.floor(Date.now() / 1000);
-        const ev = await call('core_calendar_get_action_events_by_timesort', {timesortfrom: now - 60*86400, limitnum: 50});
+        prog('leyendo tareas pendientes…');
+        const ev = await call('core_calendar_get_action_events_by_timesort', {timesortfrom: now - 365*86400, limitnum: 50});
         let cs = {courses: []}; try{ cs = await call('core_course_get_enrolled_courses_by_timeline_classification', {classification: 'inprogress', limit: 0, offset: 0}); }catch(e){}
-        return go({src: 'moodle', at: Date.now(), site: root,
-          tasks: (ev.events || []).map(e => ({id: e.id, title: e.activityname || e.name, course: e.course ? e.course.fullname : '', due: e.timesort * 1000, url: e.url || e.viewurl, kind: e.modulename, action: e.action ? e.action.name : '', late: !!e.overdue})),
+        const tasks = (ev.events || []).map(e => ({id: (String(e.url || '').match(/id=(\d+)/) || [])[1] || ('e' + e.id), title: e.activityname || e.name, course: e.course ? e.course.fullname : '', due: e.timesort * 1000, url: e.url || e.viewurl, kind: e.modulename, action: e.action ? e.action.name : '', late: !!e.overdue, status: e.overdue || e.timesort < now ? 'missing' : 'pending'}));
+        const seen = new Set(tasks.map(t => String(t.id)));
+        /* tareas entregadas / calificadas / no presentadas: estado de cada tarea del curso */
+        const todo = [];
+        for(const c of (cs.courses || [])){
+          try{ const st = await call('core_courseformat_get_state', {courseid: c.id}); const S = typeof st === 'string' ? JSON.parse(st) : st;
+            (S.cm || []).filter(m => m.module === 'assign' && m.uservisible !== false && !seen.has(String(m.id))).forEach(m => todo.push({cm: m, course: c.fullname})); }catch(e){}
+        }
+        let done = 0;
+        const worker = async () => { for(;;){ const it = todo.shift(); if(!it) return; try{
+          const html = await fetch(it.cm.url, {credentials: 'include'}).then(r => r.text());
+          const d = new DOMParser().parseFromString(html, 'text/html');
+          const sub = !!d.querySelector('td.submissionstatussubmitted, .submissionstatussubmitted');
+          const graded = !!d.querySelector('td.submissiongraded, .submissiongraded');
+          const overdue = !!d.querySelector('td.overdue, .overdue');
+          let grade = '';
+          d.querySelectorAll('table.generaltable td.cell.c1, table.generaltable td').forEach(td => { const t = td.textContent.trim(); if(!grade && /^-?\d+([.,]\d+)?\s*\/\s*\d+([.,]\d+)?$/.test(t)) grade = t.replace(/,00\b/g, '').replace(/\s+/g, ' '); });
+          const status = graded ? 'graded' : sub ? 'submitted' : overdue ? 'missing' : 'pending';
+          tasks.push({id: it.cm.id, title: it.cm.name, course: it.course, due: null, url: it.cm.url, kind: 'assign', status, grade: graded ? grade : '', late: status === 'missing'});
+        }catch(e){} done++; prog('leyendo tareas ' + done + '/' + total + '…'); } };
+        const total = todo.length;
+        await Promise.all([worker(), worker(), worker(), worker()]);
+        progDone();
+        return go({src: 'moodle', at: Date.now(), site: root, tasks,
           courses: (cs.courses || []).map(c => ({id: c.id, name: c.fullname, url: c.viewurl}))});
       }
       /* ---------- CLASSROOM ---------- */
       if(/(^|\.)classroom\.google\.com$/.test(h)){
         const u = (location.pathname.match(/^\/u\/\d+/) || [''])[0];
-        const read = (late) => [...document.querySelectorAll('li')].filter(li => li.querySelector('a[href*="/details"]')).map(li => {
+        const now = Date.now();
+        const read = () => [...document.querySelectorAll('li')].filter(li => li.querySelector('a[href*="/details"]')).map(li => {
           const a = li.querySelector('a[href*="/details"]'), href = a.getAttribute('href');
           const leaves = [...li.querySelectorAll('*')].filter(e => !e.children.length && e.textContent.trim() && !/google-symbols|material-icons/.test(e.className)).map(e => e.textContent.trim());
-          const dueTxt = leaves.slice(2).find(x => /\d|avui|demà|hoy|mañana|today|tomorrow|ahir|ayer/i.test(x)) || '';
-          return {id: (href.match(/\/a\/([^/]+)/) || [])[1] || href, title: leaves[0] || '', course: leaves[1] || '', due: parseDue(dueTxt), dueText: /publica|posted/i.test(dueTxt) ? '' : dueTxt, url: 'https://classroom.google.com' + href, kind: 'classroom', late};
+          const rest = leaves.slice(2).join(' | ');
+          const gm = rest.match(/(-?[\d.,]+)\s*(?:punts|puntos|points|punti|points?)\s*(?:de|of|di|sur)\s*([\d.,]+)/i);
+          const turned = /lliurat|entregad|turned in|consegnat|remis/i.test(rest) && !/sense lliurar|sin entregar|missing|non consegnat/i.test(rest);
+          const missingTxt = /sense lliurar|sin entregar|missing|non consegnat|non remis/i.test(rest);
+          const dueTxt = leaves.slice(2).find(x => /\d|avui|demà|hoy|mañana|today|tomorrow|ahir|ayer/i.test(x) && !/punts|puntos|points|^\/|^\d+([.,]\d+)?$/i.test(x)) || '';
+          const due = parseDue(dueTxt);
+          const status = gm && !missingTxt ? 'graded' : turned ? 'submitted' : (missingTxt || (due && due < now)) ? 'missing' : 'pending';
+          return {id: (href.match(/\/(?:a|sa|mc|q)\/([^/]+)/) || [])[1] || href, title: leaves[0] || '', course: leaves[1] || '', due, dueText: /publica|posted/i.test(dueTxt) ? '' : dueTxt, url: 'https://classroom.google.com' + href, kind: 'classroom', status, grade: gm ? gm[1] + '/' + gm[2] : '', late: status === 'missing'};
         });
         const waitFor = async (re) => { for(let i = 0; i < 30; i++){ if(re.test(location.pathname)) { await sleep(1800); return true; } await sleep(200); } return false; };
         const tab = re => [...document.querySelectorAll('a[href]')].find(x => re.test(x.getAttribute('href')));
-        let pending = [], missing = [];
-        if(!/\/a\/(not-turned-in|missing)\//.test(location.pathname)){
+        if(!/\/a\/(not-turned-in|missing|turned-in)\//.test(location.pathname)){
           const t = tab(/\/a\/not-turned-in\//); if(!t){ alert('Mi Estudio: abre Classroom → «Pendientes» (menú de la izquierda) y pulsa el marcador allí.'); return; }
           t.click(); await waitFor(/not-turned-in/);
         }
-        if(/missing/.test(location.pathname)){ missing = read(true); const t = tab(/\/a\/not-turned-in\//); if(t){ t.click(); await waitFor(/not-turned-in/); pending = read(false); } }
-        else { pending = read(false); const t = tab(/\/a\/missing\//); if(t){ t.click(); await waitFor(/missing/); missing = read(true); } }
-        const seen = new Set(), tasks = [...missing, ...pending].filter(t => !seen.has(t.id) && seen.add(t.id)).map(t => Object.assign(t, {late: !!t.due && t.due < Date.now()}));
+        const all = [];
+        for(const [re, label] of [[/\/a\/not-turned-in\//, 'asignadas'], [/\/a\/missing\//, 'sin entregar'], [/\/a\/turned-in\//, 'hechas']]){
+          prog('leyendo ' + label + '…');
+          if(!re.test(location.pathname)){ const t = tab(re); if(!t) continue; t.click(); await waitFor(re); }
+          all.push(...read());
+        }
+        progDone();
+        const rank = {graded: 4, submitted: 3, missing: 2, pending: 1}, byId = {};
+        all.forEach(t => { const o = byId[t.id]; if(!o || rank[t.status] > rank[o.status]) byId[t.id] = t; });
+        const tasks = Object.values(byId);
         const courses = [...document.querySelectorAll('a[href]')].filter(x => new RegExp('^' + u + '/c/[^/]+$').test(x.getAttribute('href'))).map(x => ({id: x.getAttribute('href').split('/c/')[1], name: (x.textContent || '').trim().replace(/^[A-Z]\s*/, ''), url: 'https://classroom.google.com' + x.getAttribute('href')})).filter((c, i, arr) => c.name && arr.findIndex(z => z.id === c.id) === i);
         return go({src: 'classroom', at: Date.now(), tasks, courses});
       }
@@ -1394,7 +1471,7 @@ function __msSync(APP){
         alert('Mi Estudio: la sincronización de Electude todavía no está disponible.'); return;
       }
       alert('Mi Estudio: abre Moodle, Classroom o Electude (con tu sesión iniciada) y pulsa este marcador allí.');
-    }catch(e){ alert('Mi Estudio: no se pudo sincronizar (' + e.message + ')'); }
+    }catch(e){ const b = document.getElementById('__msProg'); if(b) b.remove(); alert('Mi Estudio: no se pudo sincronizar (' + e.message + ')'); }
   })();
 }
 const appUrl = () => isLocalFile() ? WEB_URL : location.origin + location.pathname;
@@ -1418,11 +1495,12 @@ function importSync(){
   const clean = v => typeof v === 'string' ? v.slice(0, 500) : v;
   const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
   data[d.src] = {via: 'marcador', at: d.at || Date.now(),
-    tasks: d.tasks.slice(0, 200).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', late: !!t.late && typeof t.due === 'number' && t.due < Date.now()})),
+    tasks: d.tasks.slice(0, 200).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', status: ['pending', 'missing', 'submitted', 'graded'].includes(t.status) ? t.status : undefined, grade: typeof t.grade === 'string' ? t.grade.slice(0, 20) : '', late: !!t.late && (t.status === 'missing' || (typeof t.due === 'number' && t.due < Date.now()))})),
     courses: (d.courses || []).slice(0, 100).map(c => ({id: clean(String(c.id)), name: clean(c.name), url: okUrl(c.url)}))};
   if(d.src === 'moodle' && okUrl(d.site) && !cfg.moodleUrl){ cfg.moodleUrl = d.site; saveCfg(); }
   data.at = Date.now(); store.set('cache', data);
-  syncNote = `✅ ${SRC[d.src]} sincronizado: ${data[d.src].tasks.length} tareas pendientes.`; msg(syncNote, 'ok');
+  const cnt = {pending: 0, missing: 0, done: 0}; data[d.src].tasks.forEach(t => { const st = statusOf(t); cnt[st === 'graded' || st === 'submitted' ? 'done' : st]++; });
+  syncNote = `✅ ${SRC[d.src]} sincronizado: ${cnt.pending} pendientes · ${cnt.missing} sin presentar · ${cnt.done} entregadas.`; msg(syncNote, 'ok');
   $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend'));
   return true;
 }
@@ -1499,13 +1577,13 @@ async function zipDecode(code){
   const txt = await new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
   return JSON.parse(txt);
 }
-function xferPayload(){
-  const slim = t => ({id: t.id, title: (t.title || '').slice(0, 90), course: (t.course || '').slice(0, 60), due: t.due || null, dueText: t.dueText || undefined, url: t.url, kind: t.kind || undefined, action: t.action || undefined, late: t.late || undefined});
-  const pick = k => data[k] && data[k].via === 'marcador' ? {at: data[k].at, tasks: data[k].tasks.map(slim), courses: (data[k].courses || []).map(c => ({id: c.id, name: (c.name || '').slice(0, 60), url: c.url}))} : null;
+function xferPayload(onlyOpen){
+  const slim = t => ({id: t.id, title: (t.title || '').slice(0, 90), course: (t.course || '').slice(0, 60), due: t.due || null, dueText: t.dueText || undefined, url: t.url, kind: t.kind || undefined, action: t.action || undefined, late: t.late || undefined, status: t.status || undefined, grade: t.grade || undefined});
+  const pick = k => data[k] && data[k].via === 'marcador' ? {at: data[k].at, tasks: data[k].tasks.filter(t => !onlyOpen || !['submitted', 'graded'].includes(statusOf(t))).map(slim), courses: (data[k].courses || []).map(c => ({id: c.id, name: (c.name || '').slice(0, 60), url: c.url}))} : null;
   return {v: 2, at: Date.now(), cfg: {moodleUrl: cfg.moodleUrl, electudeUrl: cfg.electudeUrl, classroomUrl: cfg.classroomUrl},
     moodle: pick('moodle'), classroom: pick('classroom'), electude: pick('electude'), manual: manual.map(t => ({id: t.id, title: t.title, due: t.due, note: t.note, done: t.done}))};
 }
-async function xferLink(){ return appUrl() + '#x=' + await zipEncode(xferPayload()); }
+async function xferLink(onlyOpen){ return appUrl() + '#x=' + await zipEncode(xferPayload(onlyOpen)); }
 let qrLibP = null;
 function loadQR(){
   if(window.qrcode) return Promise.resolve(window.qrcode);
@@ -1531,7 +1609,8 @@ function renderMobSync(){
 }
 async function showQR(){
   if(!hasMarkerData() && !manual.length){ toast('Primero sincroniza con el marcador ⚡ en este ordenador', 'err'); return; }
-  const link = await xferLink();
+  let link = await xferLink(), partial = false;
+  if(link.length > 2600){ link = await xferLink(true); partial = true; }
   $('#qrBox').innerHTML = '<span class="spin"></span>'; $('#qrInfo').textContent = '';
   $('#qrDlg').showModal();
   try{
@@ -1539,7 +1618,7 @@ async function showQR(){
     const qr = qrcode(0, link.length > 700 ? 'L' : 'M'); qr.addData(link, 'Byte'); qr.make();
     const cells = qr.getModuleCount(), size = Math.min(620, innerWidth - 60, innerHeight - 260), cell = Math.max(3, Math.floor(size / (cells + 8)));
     $('#qrBox').innerHTML = qr.createSvgTag({cellSize: cell, margin: cell * 4, scalable: false});
-    $('#qrInfo').textContent = 'QR listo · ' + link.length + ' caracteres';
+    $('#qrInfo').innerHTML = partial ? 'Este QR lleva tus <b>pendientes y no presentadas</b>. Para pasar también las entregadas y notas, usa <b>💬 Enviar por WhatsApp</b> o <b>🔗 Copiar enlace</b>.' : 'QR listo · ' + link.length + ' caracteres';
     toast('✅ QR listo: escanéalo con el móvil');
   }catch(e){
     $('#qrBox').innerHTML = '<p class="small" style="color:#333">No se pudo crear el QR (¿sin conexión?).</p>';

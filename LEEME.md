@@ -51,6 +51,14 @@ La app usa un **marcador**: lee tus tareas con la sesión que ya tienes abierta 
 
 **Para actualizar**, pulsa **↻ Actualizar** en la app. Verás cuándo sincronizaste cada plataforma por última vez y botones para abrir Moodle o Classroom (y allí pulsas el marcador ⚡) o para pegar una sincronización.
 
+En la pantalla principal tienes tres pestañas:
+
+- **📋 Pendientes:** lo que tienes que hacer, ordenado por fecha.
+- **⚠️ No presentadas:** tareas vencidas que no entregaste, también las calificadas con 0.
+- **✅ Entregadas:** primero las **calificadas, con su nota** (en rojo si es menor que la mitad) y luego las entregadas que aún no tienen nota.
+
+En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (verás «Leyendo tareas 12/32…»). En Classroom lee las pestañas «Assignat», «Sense entregar» y «Fet».
+
 > Con el marcador **ves** las tareas, fechas y cursos. Para **entregar**, pulsa «Abrir en Moodle» o «Abrir en Classroom» en cada tarea.
 
 ## 4. Electude
