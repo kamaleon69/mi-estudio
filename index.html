@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mi Estudio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#1f3a5f">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2430;--muted:#667085;--line:#e3e7ee;--brand:#1f3a5f;--accent:#2f6fde;
+--moodle:#f98012;--classroom:#1e8e3e;--electude:#7b3fe4;--danger:#c62828;--warn:#b26a00;--ok:#2e7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--card:#1a2029;--ink:#e6e9ef;--muted:#98a2b3;--line:#2a323e;--brand:#9ab8e8;--accent:#6ea0ff}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px env(safe-area-inset-top);display:flex;align-items:center;gap:12px}
+header h1{font-size:18px;margin:0;flex:1;color:var(--brand)}
+nav{display:flex;gap:4px;padding:8px 16px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:49px;z-index:4}
+nav button{border:0;background:none;padding:8px 14px;border-radius:999px;color:var(--muted);font:inherit;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--brand);color:var(--bg)}
+main{max-width:900px;margin:0 auto;padding:16px 16px 80px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:8px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.small{padding:4px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.task{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.task:hover{border-color:var(--accent)}
+.task .bar{width:4px;align-self:stretch;border-radius:4px;flex:none}
+.task .body{flex:1;min-width:0}
+.task .t{font-weight:600}
+.meta{color:var(--muted);font-size:13px}
+.badge{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 7px;border-radius:999px;color:#fff;display:inline-block}
+.b-moodle{background:var(--moodle)}.b-classroom{background:var(--classroom)}.b-electude{background:var(--electude)}
+.bar.moodle{background:var(--moodle)}.bar.classroom{background:var(--classroom)}.bar.electude{background:var(--electude)}
+.due{font-size:13px;white-space:nowrap;text-align:right}
+.due.late{color:var(--danger);font-weight:600}.due.soon{color:var(--warn);font-weight:600}
+h2{font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:22px 0 8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,textarea,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:160px;resize:vertical}
+dialog{border:0;border-radius:14px;padding:0;width:min(760px,96vw);max-height:92vh;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dlg-h{position:sticky;top:0;background:var(--card);padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.dlg-h h3{margin:0;flex:1;font-size:17px}
+.dlg-b{padding:14px 16px}
+.intro{overflow-wrap:anywhere}.intro img{max-width:100%;height:auto}
+.msg{padding:10px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+.msg.err{background:#fdecea;color:#8a1c1c}.msg.ok{background:#e8f5e9;color:#1b5e20}.msg.info{background:#e8f0fe;color:#1a3d7c}
+@media (prefers-color-scheme:dark){.msg.err{background:#3b1717;color:#ffb4b4}.msg.ok{background:#173b1c;color:#b4ffbe}.msg.info{background:#172a4b;color:#b4cdff}}
+details{border-top:1px solid var(--line);padding:8px 0}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:600}
+ul.mods{list-style:none;padding:0;margin:6px 0 0}
+ul.mods li{padding:5px 0;border-bottom:1px dashed var(--line);font-size:14px}
+ul.mods a{color:var(--accent);text-decoration:none}
+.empty{color:var(--muted);text-align:center;padding:30px 10px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite;vertical-align:-2px}
+@keyframes s{to{transform:rotate(360deg)}}
+.small{font-size:13px}
+.check{display:flex;gap:8px;align-items:flex-start}.check input{width:auto;margin-top:3px}
+/* ---- Asistente IA y Lens ---- */
+#dock{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:20}
+.fab{border:0;border-radius:999px;height:52px;padding:0 18px;display:flex;align-items:center;gap:8px;font:600 15px system-ui,sans-serif;color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.fab .ic{font-size:22px;line-height:1}
+.fab.claude{background:#d97757}
+.fab.lens{background:linear-gradient(135deg,#4b7bec,#8e44ad 55%,#e84393)}
+@media (max-width:520px){.fab span.lbl{display:none}.fab{width:52px;padding:0;justify-content:center}}
+#ai{margin:0 0 0 auto;width:min(460px,100vw);max-width:100vw;padding:0;height:100dvh;max-height:100dvh;border-radius:0}
+#ai[open]{display:flex;flex-direction:column}
+#ai .ai-h{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}
+#ai .ai-h strong{flex:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{white-space:nowrap;border:0;background:none;color:var(--muted);padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+.seg button.on[data-p=claude]{background:#d97757;color:#fff}.seg button.on[data-p=gemini]{background:#4b7bec;color:#fff}
+#aiMode{font-size:12px;color:var(--muted);padding:6px 14px;border-bottom:1px solid var(--line)}
+#aiCtx:empty,#aiAtt:empty{display:none}
+#aiCtx{padding:8px 14px 0}
+.ctx{display:inline-flex;gap:6px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 6px 3px 10px;font-size:13px;max-width:100%}
+.ctx span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctx button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:14px}
+#aiMsgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.bub{max-width:92%;padding:10px 12px;border-radius:14px;overflow-wrap:anywhere;font-size:14.5px}
+.bub p{margin:0 0 8px}.bub p:last-child{margin:0}.bub ul,.bub ol{margin:4px 0 8px;padding-left:20px}.bub h4{margin:8px 0 4px}
+.bub pre{background:rgba(0,0,0,.06);padding:8px;border-radius:8px;overflow:auto;font-size:13px}.bub code{font-size:13px}
+.bub.u{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.bub.a{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bub.a.err{border-color:var(--danger)}
+.bub img{max-width:180px;max-height:140px;border-radius:8px;display:block;margin-bottom:6px}
+.bub .who{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.bub-actions{display:flex;gap:6px;margin-top:8px}
+.bub-actions button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer}
+#aiAtt{display:flex;gap:8px;padding:8px 14px 0;flex-wrap:wrap}
+.att{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg);font-size:12px;display:flex;align-items:center;gap:6px;padding-right:22px}
+.att img{height:54px;max-width:110px;object-fit:cover;display:block}
+.att .tx{padding:0 4px 0 8px;max-width:140px;color:var(--muted)}
+.att button{position:absolute;top:2px;right:2px;border:0;border-radius:50%;width:18px;height:18px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;cursor:pointer;line-height:18px;padding:0}
+#ai .ai-f{padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;gap:8px;align-items:flex-end}
+#aiInput{min-height:44px;max-height:160px;height:44px;resize:none;flex:1}
+.ibtn{border:1px solid var(--line);background:var(--card);border-radius:10px;width:44px;height:44px;font-size:19px;cursor:pointer;flex:none;color:var(--ink)}
+#aiSend{background:var(--accent);color:#fff;border-color:var(--accent)}
+#aiSend:disabled{opacity:.5}
+.typing::after{content:'▍';animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
+#lens{margin:0;width:100vw;height:100dvh;max-width:none;max-height:none;border-radius:0;background:rgba(0,0,0,.4);touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;overflow:hidden;padding:0}
+#lens.has{background:transparent}
+#lens::backdrop{background:transparent}
+#lensSel{position:absolute;border:3px solid #fff;border-radius:10px;box-shadow:0 0 0 3px #8e44ad,0 0 22px 4px rgba(142,68,173,.6),0 0 0 200vmax rgba(0,0,0,.45);pointer-events:none}
+#lensHint{position:absolute;top:calc(18px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:rgba(20,20,20,.85);color:#fff;padding:8px 16px;border-radius:999px;font-size:14px;white-space:nowrap;pointer-events:none}
+#lensBar{position:absolute;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:8px;background:rgba(20,20,20,.9);padding:8px;border-radius:999px;cursor:default;flex-wrap:nowrap}
+#lensBar button{border:0;border-radius:999px;padding:9px 14px;font:600 14px system-ui,sans-serif;cursor:pointer;color:#fff;background:#3a3f47;white-space:nowrap}
+#lensBar button.cl{background:#d97757}#lensBar button.ge{background:#4b7bec}
+#lensBar button:disabled{opacity:.4;cursor:default}
+@media (max-width:520px){#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
+#lensBusy{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:50;color:#fff;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 Mi Estudio</h1>
+  <span id="syncInfo" class="meta"></span>
+  <button class="btn small" id="syncBtn">↻ Actualizar</button>
+</header>
+<nav>
+  <button data-tab="pend" class="on">Pendientes</button>
+  <button data-tab="study">Zonas de estudio</button>
+  <button data-tab="elec">Electude</button>
+  <button data-tab="cfg">Ajustes</button>
+</nav>
+<main>
+  <div id="globalMsg"></div>
+
+  <section id="pend" class="on">
+    <div class="chips" id="filters">
+      <button class="chip on" data-f="all">Todo</button>
+      <button class="chip" data-f="moodle">Moodle</button>
+      <button class="chip" data-f="classroom">Classroom</button>
+      <button class="chip" data-f="electude">Electude</button>
+    </div>
+    <div id="pendList"></div>
+  </section>
+
+  <section id="study"><div id="studyList"></div></section>
+
+  <section id="elec">
+    <div class="card">
+      <div class="row"><strong style="flex:1">Electude</strong><a class="btn primary" id="elecOpen" target="_blank" rel="noopener">Abrir Electude ↗</a></div>
+      <p class="meta">Electude no ofrece una API para alumnos, así que sus tareas las apuntas aquí y aparecen junto al resto en «Pendientes».</p>
+    </div>
+    <div class="card">
+      <strong>Añadir tarea de Electude</strong>
+      <label>Título</label><input id="eTitle" placeholder="Ej.: Módulo 4 – Sistema de encendido">
+      <label>Fecha límite (opcional)</label><input id="eDue" type="datetime-local">
+      <label>Notas (opcional)</label><input id="eNote" placeholder="Ej.: hacer el test final">
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="eAdd">Añadir</button></div>
+    </div>
+    <h2>Tus tareas de Electude</h2>
+    <div id="elecList"></div>
+  </section>
+
+  <section id="cfg">
+    <div class="card">
+      <strong>Moodle</strong>
+      <label>Dirección de tu Moodle</label>
+      <input id="mUrl" placeholder="https://campus.tucentro.es" autocomplete="url">
+      <div id="mStatus" class="meta" style="margin-top:6px"></div>
+      <div id="mLoginBox">
+        <label>Usuario</label><input id="mUser" autocomplete="username">
+        <label>Contraseña</label><input id="mPass" type="password" autocomplete="current-password">
+        <p class="meta small">La contraseña no se guarda: solo se usa una vez para conseguir el token de la app móvil de Moodle, que se guarda en este dispositivo.</p>
+        <div class="row"><button class="btn primary" id="mLogin">Conectar Moodle</button></div>
+        <details style="margin-top:10px"><summary class="small">¿Entras a Moodle con Google u otro inicio de sesión?</summary>
+          <p class="meta small">Si tu centro usa inicio de sesión externo, usuario/contraseña no funcionará. En la web de Moodle ve a <em>Preferencias → Claves de seguridad</em> y copia la clave de «Moodle mobile web service».</p>
+          <label>Token manual</label><input id="mTok"><div class="row" style="margin-top:8px"><button class="btn" id="mTokSave">Guardar token</button></div>
+        </details>
+      </div>
+      <div class="row" style="margin-top:8px"><button class="btn small" id="mLogout" hidden>Desconectar Moodle</button></div>
+    </div>
+
+    <div class="card">
+      <strong>Google Classroom</strong>
+      <label>Google OAuth Client ID</label>
+      <input id="gCid" placeholder="123456-abc.apps.googleusercontent.com">
+      <p class="meta small">Se crea gratis en Google Cloud (ver instrucciones en el README). Al pulsar «Actualizar» te pedirá iniciar sesión con tu cuenta del centro.</p>
+      <div class="row"><button class="btn primary" id="gSave">Guardar y conectar</button><button class="btn small" id="gOut">Cerrar sesión de Google</button></div>
+      <div id="gStatus" class="meta" style="margin-top:6px"></div>
+    </div>
+
+    <div class="card">
+      <strong>Electude</strong>
+      <label>Dirección de Electude</label>
+      <input id="eUrl" placeholder="https://www.electude.com">
+      <div class="row" style="margin-top:8px"><button class="btn" id="eUrlSave">Guardar</button></div>
+    </div>
+
+    <div class="card">
+      <strong>Asistentes IA (Claude y Gemini)</strong>
+      <p class="meta small"><b>Sin claves</b>, la app usa tu cuenta normal: abre claude.ai o Gemini con tu pregunta ya escrita y la imagen copiada (en el móvil, a través del menú «Compartir»).<br>
+      <b>Con una clave de API</b>, el chat funciona dentro de la app.</p>
+      <label>Clave de API de Claude (console.anthropic.com · se paga por uso, aparte de Claude Pro)</label>
+      <input id="cKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <label>Modelo de Claude</label>
+      <select id="cModel"><option value="claude-sonnet-5-5">Claude Sonnet 5.5 (recomendado)</option><option value="claude-opus-5-5">Claude Opus 5.5 (más potente)</option><option value="claude-haiku-5-5">Claude Haiku 5.5 (más rápido y barato)</option></select>
+      <label>Clave de API de Gemini (aistudio.google.com · tiene nivel gratuito)</label>
+      <input id="gKey" type="password" placeholder="AIza…" autocomplete="off">
+      <label>Modelo de Gemini</label>
+      <input id="gModel" placeholder="gemini-3.5-flash">
+      <label>Cómo quieres que te ayude (instrucciones para la IA)</label>
+      <textarea id="aiSys" style="min-height:90px"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn primary" id="aiSave">Guardar</button><span id="aiSaved" class="meta small"></span></div>
+    </div>
+
+    <div class="card">
+      <strong>Datos</strong>
+      <p class="meta small">Todo (tokens, borradores y tareas de Electude) se guarda solo en este navegador.</p>
+      <button class="btn small" id="wipe">Borrar todos los datos de este dispositivo</button>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg"><div class="dlg-h"><div style="flex:1"><div id="dlgBadge"></div><h3 id="dlgTitle"></h3><div id="dlgMeta" class="meta"></div></div>
+  <button class="btn small" id="dlgLens" title="Seleccionar una zona y preguntar a la IA">🔍 Lens</button>
+  <button class="btn small" id="dlgAI" title="Pedir ayuda a la IA con esta tarea" style="background:#d97757;border-color:#d97757;color:#fff">✳ Ayuda</button>
+  <button class="btn small" id="dlgClose">✕</button></div><div class="dlg-b" id="dlgBody"></div></dialog>
+
+<div id="dock">
+  <button class="fab lens" id="lensBtn" title="Seleccionar una zona de la pantalla y preguntar a la IA"><span class="ic">🔍</span><span class="lbl">Lens</span></button>
+  <button class="fab claude" id="aiBtn" title="Asistente IA"><span class="ic">✳</span><span class="lbl">Claude</span></button>
+</div>
+
+<dialog id="ai">
+  <div class="ai-h">
+    <strong>Asistente</strong>
+    <div class="seg" id="aiSeg"><button data-p="claude">✳ Claude</button><button data-p="gemini">✦ Gemini</button></div>
+    <button class="btn small" id="aiNew" title="Nueva conversación">＋</button>
+    <button class="btn small" id="aiClose">✕</button>
+  </div>
+  <div id="aiMode"></div>
+  <div id="aiCtx"></div>
+  <div id="aiMsgs"></div>
+  <div id="aiAtt"></div>
+  <div class="ai-f">
+    <button class="ibtn" id="aiLens" title="Seleccionar zona de la pantalla">🔍</button>
+    <button class="ibtn" id="aiPhoto" title="Foto o imagen">📷</button>
+    <textarea id="aiInput" placeholder="Pregunta lo que necesites…" rows="1"></textarea>
+    <button class="ibtn" id="aiSend" title="Enviar">➤</button>
+  </div>
+</dialog>
+<input type="file" id="photoIn" accept="image/*" hidden>
+
+<dialog id="lens">
+  <div id="lensHint">Arrastra para seleccionar una zona</div>
+  <div id="lensSel" hidden></div>
+  <div id="lensBar">
+    <button id="lensPhoto">📷 Foto</button>
+    <button id="lensCancel">Cancelar</button>
+    <button class="cl" id="lensClaude" disabled>✳ Claude</button>
+    <button class="ge" id="lensGemini" disabled>✦ Gemini</button>
+  </div>
+</dialog>
+<div id="lensBusy"><span><span class="spin"></span> Capturando…</span></div>
+
+<script>
+"use strict";
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('me_'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('me_'+k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem('me_'+k); }catch(e){} }
+};
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const linkify = s => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
+const fmtDate = ms => new Date(ms).toLocaleString('es-ES', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+const SRC = {moodle:'Moodle', classroom:'Classroom', electude:'Electude'};
+
+const DEFAULT_SYS = 'Eres un tutor para un estudiante de Formación Profesional. Responde siempre en español, de forma clara y ordenada. ' +
+  'Explica el razonamiento paso a paso para que el estudiante entienda la materia, no solo el resultado. ' +
+  'Si te envían una imagen o un texto seleccionado, primero di brevemente qué ves y después ayuda con ello.';
+let cfg = Object.assign({moodleUrl:'', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://www.electude.com',
+  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
+const saveCfg = () => store.set('cfg', cfg);
+let data = store.get('cache', {moodle:{tasks:[], courses:[]}, classroom:{tasks:[], courses:[]}, at:0});
+let manual = store.get('manual', []);
+let filter = 'all';
+let gToken = null, gExp = 0;
+try{ const t = JSON.parse(sessionStorage.getItem('me_g') || 'null'); if(t && t.exp > Date.now()){ gToken = t.tok; gExp = t.exp; } }catch(e){}
+
+function msg(html, type='info', el=$('#globalMsg')){ el.innerHTML = html ? `<div class="msg ${type}">${html}</div>` : ''; }
+
+/* ---------- pestañas ---------- */
+$$('nav button').forEach(b => b.onclick = () => {
+  $$('nav button').forEach(x => x.classList.toggle('on', x === b));
+  $$('main section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+});
+$$('#filters .chip').forEach(c => c.onclick = () => { filter = c.dataset.f; $$('#filters .chip').forEach(x => x.classList.toggle('on', x === c)); renderPending(); });
+
+/* ---------- Moodle ---------- */
+const mBase = () => cfg.moodleUrl.trim().replace(/\/+$/, '');
+function flatten(obj, prefix, out){
+  for(const k in obj){
+    const v = obj[k]; if(v === undefined || v === null) continue;
+    const key = prefix ? `${prefix}[${k}]` : k;
+    if(typeof v === 'object') flatten(v, key, out);
+    else out.append(key, typeof v === 'boolean' ? (v ? '1' : '0') : String(v));
+  }
+}
+async function moodle(fn, params = {}){
+  const body = new URLSearchParams();
+  body.append('wstoken', cfg.moodleToken); body.append('wsfunction', fn); body.append('moodlewsrestformat', 'json');
+  flatten(params, '', body);
+  const r = await fetch(mBase() + '/webservice/rest/server.php', {method:'POST', body});
+  const j = await r.json();
+  if(j && j.exception) throw new Error(j.message || j.errorcode);
+  return j;
+}
+function tokUrl(u){
+  if(!u || !cfg.moodleToken || !u.startsWith(mBase())) return u;
+  if(u.includes('/pluginfile.php') && !u.includes('/webservice/pluginfile.php')) u = u.replace('/pluginfile.php', '/webservice/pluginfile.php');
+  if(u.includes('/webservice/pluginfile.php') && !/[?&]token=/.test(u)) u += (u.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(cfg.moodleToken);
+  return u;
+}
+function safeHtml(html){
+  const d = new DOMParser().parseFromString(html || '', 'text/html');
+  d.querySelectorAll('script,style,object,embed,form,link,meta').forEach(e => e.remove());
+  d.querySelectorAll('iframe').forEach(f => { const a = d.createElement('a'); a.href = f.src; a.textContent = '▶ Ver contenido incrustado'; f.replaceWith(a); });
+  d.querySelectorAll('*').forEach(el => {
+    [...el.attributes].forEach(a => { if(/^on/i.test(a.name) || (/^(href|src)$/i.test(a.name) && /^\s*javascript:/i.test(a.value))) el.removeAttribute(a.name); });
+    if(el.tagName === 'A'){ el.target = '_blank'; el.rel = 'noopener'; el.setAttribute('href', tokUrl(el.getAttribute('href') || '')); }
+    if(el.tagName === 'IMG') el.setAttribute('src', tokUrl(el.getAttribute('src') || ''));
+  });
+  return d.body.innerHTML;
+}
+function htmlToText(html){
+  const d = new DOMParser().parseFromString((html || '').replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n'), 'text/html');
+  return (d.body.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+}
+const textToHtml = t => t.split(/\n{2,}/).map(p => '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>').join('');
+
+let assignById = {};
+async function loadMoodle(){
+  const site = await moodle('core_webservice_get_site_info');
+  const courses = await moodle('core_enrol_get_users_courses', {userid: site.userid});
+  const now = Math.floor(Date.now()/1000);
+  const ev = await moodle('core_calendar_get_action_events_by_timesort', {timesortfrom: now - 30*86400, limitnum: 50});
+  try{
+    const as = await moodle('mod_assign_get_assignments', {courseids: courses.map(c => c.id)});
+    assignById = {};
+    (as.courses || []).forEach(c => (c.assignments || []).forEach(a => assignById[a.id] = a));
+    store.set('assigns', assignById);
+  }catch(e){ console.warn(e); }
+  const tasks = (ev.events || []).map(e => ({
+    id: 'm' + e.id, src: 'moodle', title: e.activityname || e.name, course: e.course ? e.course.fullname : '',
+    due: e.timesort * 1000, url: e.url, kind: e.modulename, instance: e.instance,
+    action: e.action ? e.action.name : ''
+  }));
+  data.moodle = {tasks, courses: courses.map(c => ({id: c.id, name: c.fullname, url: mBase() + '/course/view.php?id=' + c.id}))};
+}
+
+/* ---------- Google Classroom ---------- */
+const G_SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly','https://www.googleapis.com/auth/classroom.coursework.me.readonly',
+  'https://www.googleapis.com/auth/classroom.courseworkmaterials.readonly','https://www.googleapis.com/auth/classroom.announcements.readonly'].join(' ');
+function gLogin(){
+  return new Promise((res, rej) => {
+    if(!window.google || !google.accounts) return rej(new Error('No se pudo cargar el inicio de sesión de Google (¿sin conexión?).'));
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: cfg.googleClientId, scope: G_SCOPES,
+      callback: r => {
+        if(r.error) return rej(new Error(r.error_description || r.error));
+        gToken = r.access_token; gExp = Date.now() + (Number(r.expires_in || 3600) - 60) * 1000;
+        try{ sessionStorage.setItem('me_g', JSON.stringify({tok: gToken, exp: gExp})); }catch(e){}
+        res();
+      },
+      error_callback: e => rej(new Error(e.type === 'popup_closed' ? 'Ventana de Google cerrada' : (e.message || e.type)))
+    });
+    client.requestAccessToken();
+  });
+}
+async function gapi(path, params = {}){
+  const qs = new URLSearchParams(params).toString();
+  const r = await fetch('https://classroom.googleapis.com/v1/' + path + (qs ? '?' + qs : ''), {headers: {Authorization: 'Bearer ' + gToken}});
+  if(r.status === 401){ gToken = null; sessionStorage.removeItem('me_g'); throw new Error('La sesión de Google caducó. Pulsa «Actualizar».'); }
+  const j = await r.json();
+  if(j.error) throw new Error(j.error.message);
+  return j;
+}
+async function gAll(path, key, params = {}){
+  let out = [], pageToken;
+  do{ const j = await gapi(path, Object.assign({pageSize: 100}, params, pageToken ? {pageToken} : {})); out = out.concat(j[key] || []); pageToken = j.nextPageToken; }while(pageToken);
+  return out;
+}
+function gDue(cw){
+  if(!cw.dueDate) return null;
+  if(!cw.dueTime) return new Date(cw.dueDate.year, cw.dueDate.month - 1, cw.dueDate.day, 23, 59).getTime();
+  const t = cw.dueTime;
+  return Date.UTC(cw.dueDate.year, cw.dueDate.month - 1, cw.dueDate.day, t.hours ?? 23, t.minutes ?? (t.hours == null ? 59 : 0));
+}
+async function loadClassroom(interactive){
+  if(!gToken || Date.now() > gExp){ if(!interactive) return false; await gLogin(); }
+  const courses = await gAll('courses', 'courses', {studentId: 'me', courseStates: 'ACTIVE'});
+  const tasks = [], cl = [];
+  await Promise.all(courses.map(async c => {
+    const [cws, subs, mats] = await Promise.all([
+      gAll(`courses/${c.id}/courseWork`, 'courseWork').catch(() => []),
+      gAll(`courses/${c.id}/courseWork/-/studentSubmissions`, 'studentSubmissions', {userId: 'me'}).catch(() => []),
+      gAll(`courses/${c.id}/courseWorkMaterials`, 'courseWorkMaterial').catch(() => [])
+    ]);
+    const subBy = {}; subs.forEach(s => subBy[s.courseWorkId] = s);
+    cws.forEach(cw => {
+      const s = subBy[cw.id] || {};
+      const pending = !s.state || ['NEW','CREATED','RECLAIMED_BY_STUDENT'].includes(s.state);
+      if(!pending) return;
+      tasks.push({id: 'g' + cw.id, src: 'classroom', title: cw.title, course: c.name, due: gDue(cw),
+        url: s.alternateLink || cw.alternateLink, desc: cw.description || '', materials: cw.materials || [],
+        state: s.state || 'NEW', late: !!s.late, kind: cw.workType, points: cw.maxPoints});
+    });
+    cl.push({id: c.id, name: c.name, section: c.section || '', url: c.alternateLink,
+      materials: mats.map(m => ({title: m.title, desc: m.description || '', materials: m.materials || [], url: m.alternateLink, topicId: m.topicId}))
+        .concat(cws.map(cw => ({title: '📝 ' + cw.title, desc: '', materials: cw.materials || [], url: cw.alternateLink})))});
+  }));
+  data.classroom = {tasks, courses: cl};
+  return true;
+}
+function gMaterialLinks(mats){
+  return (mats || []).map(m => {
+    if(m.driveFile) return `<li>📄 <a href="${esc(m.driveFile.driveFile.alternateLink)}" target="_blank" rel="noopener">${esc(m.driveFile.driveFile.title)}</a></li>`;
+    if(m.link) return `<li>🔗 <a href="${esc(m.link.url)}" target="_blank" rel="noopener">${esc(m.link.title || m.link.url)}</a></li>`;
+    if(m.youtubeVideo) return `<li>▶️ <a href="${esc(m.youtubeVideo.alternateLink)}" target="_blank" rel="noopener">${esc(m.youtubeVideo.title)}</a></li>`;
+    if(m.form) return `<li>📋 <a href="${esc(m.form.formUrl)}" target="_blank" rel="noopener">${esc(m.form.title)}</a></li>`;
+    return '';
+  }).join('');
+}
+
+/* ---------- sincronizar ---------- */
+let syncing = false;
+async function sync(interactive = false){
+  if(syncing) return; syncing = true;
+  $('#syncBtn').innerHTML = '<span class="spin"></span>'; msg('');
+  const errs = [];
+  if(cfg.moodleUrl && cfg.moodleToken){ try{ await loadMoodle(); }catch(e){ errs.push('Moodle: ' + esc(e.message)); } }
+  if(cfg.googleClientId){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length) errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
+  data.at = Date.now(); store.set('cache', data);
+  if(errs.length) msg(errs.join('<br>'), 'err');
+  if(!cfg.moodleToken && !cfg.googleClientId) msg('Empieza en <b>Ajustes</b>: conecta Moodle y pon tu Client ID de Google para Classroom.', 'info');
+  syncing = false; $('#syncBtn').textContent = '↻ Actualizar';
+  renderAll();
+}
+$('#syncBtn').onclick = () => sync(true);
+
+/* ---------- render: pendientes ---------- */
+function allTasks(){
+  const man = manual.filter(t => !t.done).map(t => Object.assign({src: 'electude', course: 'Electude', url: cfg.electudeUrl}, t));
+  return [...data.moodle.tasks, ...data.classroom.tasks, ...man];
+}
+function taskCard(t){
+  const now = Date.now(); let cls = '', txt = 'Sin fecha';
+  if(t.due){ txt = fmtDate(t.due); if(t.due < now) cls = 'late'; else if(t.due - now < 2*86400e3) cls = 'soon'; }
+  const extra = t.src === 'classroom' && t.state === 'RECLAIMED_BY_STUDENT' ? ' · anulada la entrega' : (t.action ? ' · ' + esc(t.action) : '');
+  return `<div class="card task" data-id="${esc(t.id)}"><div class="bar ${t.src}"></div><div class="body">
+    <div class="t">${esc(t.title)}</div><div class="meta"><span class="badge b-${t.src}">${SRC[t.src]}</span> ${esc(t.course)}${extra}${store.get('draft_'+t.id) ? ' · ✏️ borrador' : ''}</div></div>
+    <div class="due ${cls}">${cls === 'late' ? '⚠ ' : ''}${esc(txt)}</div></div>`;
+}
+function renderPending(){
+  const now = Date.now(), day = new Date(); day.setHours(23,59,59,999);
+  const tasks = allTasks().filter(t => filter === 'all' || t.src === filter);
+  const groups = [['Atrasadas', t => t.due && t.due < now], ['Hoy', t => t.due && t.due >= now && t.due <= day.getTime()],
+    ['Próximos 7 días', t => t.due && t.due > day.getTime() && t.due <= now + 7*86400e3], ['Más adelante', t => t.due && t.due > now + 7*86400e3], ['Sin fecha', t => !t.due]];
+  let html = '';
+  for(const [name, fn] of groups){
+    const g = tasks.filter(fn).sort((a, b) => (a.due || 0) - (b.due || 0));
+    if(g.length) html += `<h2>${name} (${g.length})</h2>` + g.map(taskCard).join('');
+  }
+  $('#pendList').innerHTML = html || '<div class="empty">🎉 No tienes nada pendiente (o aún no has conectado tus plataformas).</div>';
+  $$('#pendList .task').forEach(el => el.onclick = () => openTask(tasks.find(t => t.id === el.dataset.id)));
+  $('#syncInfo').textContent = data.at ? 'Actualizado ' + new Date(data.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) : '';
+}
+
+/* ---------- detalle de tarea ---------- */
+function openDlg(t){
+  $('#dlgBadge').innerHTML = `<span class="badge b-${t.src}">${SRC[t.src]}</span>`;
+  $('#dlgTitle').textContent = t.title;
+  $('#dlgMeta').textContent = (t.course || '') + (t.due ? ' · Entrega: ' + fmtDate(t.due) : '');
+  $('#dlg').showModal();
+}
+$('#dlgClose').onclick = () => $('#dlg').close();
+$('#dlg').addEventListener('close', () => renderPending());
+
+function draftBox(t, label = 'Tu borrador (se guarda en este dispositivo)'){
+  return `<label>${label}</label><textarea id="draft">${esc(store.get('draft_' + t.id, ''))}</textarea>
+  <div class="row" style="margin-top:8px"><button class="btn small" id="copyDraft">Copiar texto</button><span id="draftSaved" class="meta small"></span></div>`;
+}
+function wireDraft(t){
+  const ta = $('#draft'); if(!ta) return;
+  ta.oninput = () => { ta.value ? store.set('draft_' + t.id, ta.value) : store.del('draft_' + t.id); $('#draftSaved').textContent = 'Guardado'; };
+  $('#copyDraft').onclick = async () => { try{ await navigator.clipboard.writeText(ta.value); $('#draftSaved').textContent = 'Copiado ✓'; }catch(e){ ta.select(); } };
+}
+
+async function openTask(t){
+  if(!t) return; openDlg(t); const body = $('#dlgBody');
+  if(t.src === 'classroom'){
+    body.innerHTML = `${t.desc ? `<div class="intro">${linkify(t.desc)}</div>` : '<p class="meta">Sin descripción.</p>'}
+      ${t.materials.length ? `<h2>Materiales</h2><ul class="mods">${gMaterialLinks(t.materials)}</ul>` : ''}
+      ${t.points ? `<p class="meta">Puntos: ${esc(t.points)}</p>` : ''}
+      ${draftBox(t, 'Escribe aquí tu respuesta (luego la copias en Classroom)')}
+      <div class="msg info small" style="margin-top:12px">Google no deja entregar tareas de Classroom desde apps externas. Copia tu texto, adjunta lo que necesites y pulsa «Entregar» en Classroom.</div>
+      <div class="row"><a class="btn primary" href="${esc(t.url)}" target="_blank" rel="noopener">Abrir en Classroom para entregar ↗</a></div>`;
+    wireDraft(t); return;
+  }
+  if(t.src === 'electude'){
+    body.innerHTML = `${t.note ? `<p>${linkify(t.note)}</p>` : ''}${draftBox(t, 'Notas / borrador')}
+      <div class="row" style="margin-top:12px"><a class="btn primary" href="${esc(cfg.electudeUrl)}" target="_blank" rel="noopener">Abrir Electude ↗</a>
+      <button class="btn" id="mDone">✓ Marcar como hecha</button><button class="btn" id="mDel">Eliminar</button></div>`;
+    wireDraft(t);
+    $('#mDone').onclick = () => { manual = manual.map(x => x.id === t.id ? Object.assign(x, {done: true}) : x); store.set('manual', manual); $('#dlg').close(); renderAll(); };
+    $('#mDel').onclick = () => { manual = manual.filter(x => x.id !== t.id); store.set('manual', manual); store.del('draft_' + t.id); $('#dlg').close(); renderAll(); };
+    return;
+  }
+  // Moodle
+  const openBtn = `<a class="btn" href="${esc(t.url)}" target="_blank" rel="noopener">Abrir en Moodle ↗</a>`;
+  if(t.kind !== 'assign'){
+    body.innerHTML = `<p>Tipo de actividad: <b>${esc(t.kind)}</b>${t.action ? ' · ' + esc(t.action) : ''}</p>
+      <p class="meta">Este tipo de actividad (cuestionario, foro…) se hace en la propia web de Moodle.</p>${draftBox(t, 'Notas')}<div class="row" style="margin-top:12px">${openBtn}</div>`;
+    wireDraft(t); return;
+  }
+  body.innerHTML = '<p><span class="spin"></span> Cargando tarea…</p>';
+  if(!Object.keys(assignById).length) assignById = store.get('assigns', {});
+  const a = assignById[t.instance] || {};
+  let st;
+  try{ st = await moodle('mod_assign_get_submission_status', {assignid: t.instance}); }
+  catch(e){ body.innerHTML = `<div class="msg err">${esc(e.message)}</div>${openBtn}`; return; }
+  const la = st.lastattempt || {};
+  const sub = la.submission || la.teamsubmission || {};
+  const plugOn = p => (a.configs || []).some(c => c.plugin === p && c.subtype === 'assignsubmission' && c.name === 'enabled' && c.value === '1');
+  const hasText = plugOn('onlinetext'), hasFile = plugOn('file');
+  let curText = '', curFiles = [];
+  (sub.plugins || []).forEach(p => {
+    if(p.type === 'onlinetext') (p.editorfields || []).forEach(f => curText = f.text || '');
+    if(p.type === 'file') (p.fileareas || []).forEach(fa => curFiles = curFiles.concat(fa.files || []));
+  });
+  const statusTxt = {new: 'Sin entregar', draft: 'Borrador guardado (sin enviar)', submitted: 'Enviada para calificar', reopened: 'Reabierta'}[sub.status] || sub.status || '—';
+  const fb = st.feedback && st.feedback.gradefordisplay ? `<div class="msg ok">Calificación: ${safeHtml(st.feedback.gradefordisplay)}</div>` : '';
+  const localDraft = store.get('draft_' + t.id);
+  const intro = (a.intro ? `<div class="intro">${safeHtml(a.intro)}</div>` : '') +
+    ((a.introattachments || []).length ? `<ul class="mods">${a.introattachments.map(f => `<li>📎 <a href="${esc(tokUrl(f.fileurl))}" target="_blank" rel="noopener">${esc(f.filename)}</a></li>`).join('')}</ul>` : '');
+  const canEdit = la.canedit !== false && !la.locked;
+  body.innerHTML = `${intro || '<p class="meta">Sin enunciado.</p>'}
+    <h2>Tu entrega</h2><p>Estado: <b>${esc(statusTxt)}</b></p>${fb}
+    ${curFiles.length ? `<p class="small">Archivos ya subidos:</p><ul class="mods">${curFiles.map(f => `<li>📎 <a href="${esc(tokUrl(f.fileurl))}" target="_blank" rel="noopener">${esc(f.filename)}</a></li>`).join('')}</ul>` : ''}
+    ${!canEdit ? `<div class="msg info">Esta entrega ya no se puede modificar desde aquí.</div>${openBtn}` : `
+      ${hasText ? `<label>Texto en línea</label><textarea id="mText">${esc(localDraft ?? htmlToText(curText))}</textarea><div class="meta small" id="draftSaved"></div>` : ''}
+      ${hasFile ? `<label>Archivos${curFiles.length ? ' (si eliges archivos nuevos, sustituyen a los ya subidos)' : ''}</label><input type="file" id="mFiles" multiple>` : ''}
+      ${!hasText && !hasFile ? '<p class="meta">Esta tarea no tiene texto ni archivos que entregar desde aquí.</p>' : ''}
+      ${a.requiresubmissionstatement ? `<label class="check"><input type="checkbox" id="mStmt"> <span>${a.submissionstatement ? safeHtml(a.submissionstatement) : 'Confirmo que este trabajo es mío.'}</span></label>` : ''}
+      <div id="mOut"></div>
+      <div class="row" style="margin-top:12px">
+        ${hasText || hasFile ? '<button class="btn" id="mSave">Guardar borrador en Moodle</button>' : ''}
+        ${la.cansubmit || hasText || hasFile ? '<button class="btn primary" id="mSubmit">Entregar</button>' : ''}
+        ${openBtn}
+      </div>`}`;
+  const ta = $('#mText');
+  if(ta) ta.oninput = () => { store.set('draft_' + t.id, ta.value); $('#draftSaved').textContent = 'Borrador guardado en el dispositivo'; };
+  const out = $('#mOut');
+  async function save(){
+    const plugindata = {};
+    if(hasText && ta){
+      let item; try{ item = (await moodle('core_files_get_unused_draft_itemid')).itemid; }catch(e){ item = Math.floor(Math.random() * 1e9); }
+      plugindata.onlinetext_editor = {text: textToHtml(ta.value), format: 1, itemid: item};
+    }
+    const files = $('#mFiles') ? [...$('#mFiles').files] : [];
+    if(hasFile && files.length){
+      const fd = new FormData(); fd.append('token', cfg.moodleToken); fd.append('filearea', 'draft'); fd.append('itemid', '0');
+      files.forEach((f, i) => fd.append('file_' + (i + 1), f, f.name));
+      const r = await fetch(mBase() + '/webservice/upload.php', {method: 'POST', body: fd});
+      const j = await r.json();
+      if(!Array.isArray(j) || !j.length || j.error) throw new Error((j && (j.error || j.message)) || 'Error al subir archivos');
+      plugindata.files_filemanager = j[0].itemid;
+    }
+    const w = await moodle('mod_assign_save_submission', {assignmentid: t.instance, plugindata});
+    if(Array.isArray(w) && w.length) throw new Error(w.map(x => x.message || x.item).join(' · '));
+  }
+  const busy = on => $$('#mSave,#mSubmit').forEach(b => b.disabled = on);
+  if($('#mSave')) $('#mSave').onclick = async () => {
+    busy(true); out.innerHTML = '<p><span class="spin"></span> Guardando…</p>';
+    try{ await save(); out.innerHTML = '<div class="msg ok">Guardado en Moodle como borrador (aún no está entregado).</div>'; }
+    catch(e){ out.innerHTML = `<div class="msg err">${esc(e.message)}</div>`; } busy(false);
+  };
+  if($('#mSubmit')) $('#mSubmit').onclick = async () => {
+    if(a.requiresubmissionstatement && !$('#mStmt').checked){ out.innerHTML = '<div class="msg err">Marca la casilla de confirmación antes de entregar.</div>'; return; }
+    if(!confirm('¿Entregar esta tarea en Moodle? Puede que después no puedas modificarla.')) return;
+    busy(true); out.innerHTML = '<p><span class="spin"></span> Entregando…</p>';
+    try{
+      await save();
+      const w = await moodle('mod_assign_submit_for_grading', {assignmentid: t.instance, acceptsubmissionstatement: 1});
+      if(Array.isArray(w) && w.length) throw new Error(w.map(x => x.message || x.item).join(' · '));
+      store.del('draft_' + t.id);
+      out.innerHTML = '<div class="msg ok">✅ ¡Entregada! Actualizando la lista…</div>';
+      setTimeout(() => { $('#dlg').close(); sync(false); }, 1200);
+    }catch(e){ out.innerHTML = `<div class="msg err">${esc(e.message)}</div>`; busy(false); }
+  };
+}
+
+/* ---------- render: zonas de estudio ---------- */
+function renderStudy(){
+  let html = '';
+  if(data.moodle.courses.length){
+    html += '<h2>Moodle</h2>' + data.moodle.courses.map(c => `<div class="card"><details data-mc="${c.id}"><summary><span class="badge b-moodle">Moodle</span> ${esc(c.name)}</summary><div class="mc-body"><p class="meta"><span class="spin"></span> Cargando…</p></div></details></div>`).join('');
+  }
+  if(data.classroom.courses.length){
+    html += '<h2>Classroom</h2>' + data.classroom.courses.map((c, i) => `<div class="card"><details><summary><span class="badge b-classroom">Classroom</span> ${esc(c.name)} <span class="meta">${esc(c.section)}</span></summary>
+      <ul class="mods">${c.materials.map(m => `<li><a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.title)}</a>${m.materials.length ? `<ul class="mods" style="padding-left:16px">${gMaterialLinks(m.materials)}</ul>` : ''}</li>`).join('') || '<li class="meta">Sin materiales</li>'}</ul>
+      <div class="row" style="margin-top:8px"><a class="btn small" href="${esc(c.url)}" target="_blank" rel="noopener">Abrir clase ↗</a></div></details></div>`).join('');
+  }
+  html += `<h2>Electude</h2><div class="card row"><span style="flex:1"><span class="badge b-electude">Electude</span> Plataforma Electude</span><a class="btn small" href="${esc(cfg.electudeUrl)}" target="_blank" rel="noopener">Abrir ↗</a></div>`;
+  $('#studyList').innerHTML = html;
+  $$('#studyList details[data-mc]').forEach(d => d.addEventListener('toggle', async () => {
+    if(!d.open || d.dataset.loaded) return; d.dataset.loaded = 1;
+    const box = d.querySelector('.mc-body');
+    try{
+      const secs = await moodle('core_course_get_contents', {courseid: d.dataset.mc});
+      const icon = {resource:'📄', url:'🔗', assign:'📝', quiz:'❓', forum:'💬', page:'📃', folder:'📁', label:'', book:'📖', lesson:'🎓', h5pactivity:'🎮', scorm:'🎮', lti:'🧩'};
+      box.innerHTML = secs.filter(s => (s.modules || []).length).map(s => `<details><summary>${esc(s.name)}</summary><ul class="mods">${s.modules.filter(m => m.uservisible !== false).map(m => {
+        if(m.modname === 'label') return `<li class="intro small">${safeHtml(m.description || '')}</li>`;
+        const file = m.modname === 'resource' && m.contents && m.contents[0] ? tokUrl(m.contents[0].fileurl) : null;
+        const ext = m.modname === 'url' && m.contents && m.contents[0] ? m.contents[0].fileurl : null;
+        return `<li>${icon[m.modname] ?? '•'} <a href="${esc(file || ext || m.url)}" target="_blank" rel="noopener">${esc(m.name)}</a></li>`;
+      }).join('')}</ul></details>`).join('') || '<p class="meta">Curso vacío.</p>';
+    }catch(e){ box.innerHTML = `<div class="msg err">${esc(e.message)}</div>`; }
+  }));
+}
+
+/* ---------- Electude ---------- */
+function renderElec(){
+  $('#elecOpen').href = cfg.electudeUrl;
+  const list = manual.slice().sort((a, b) => (a.done - b.done) || ((a.due || 9e15) - (b.due || 9e15)));
+  $('#elecList').innerHTML = list.map(t => `<div class="card row"><span style="flex:1;${t.done ? 'text-decoration:line-through;opacity:.6' : ''}"><b>${esc(t.title)}</b><br><span class="meta">${t.due ? fmtDate(t.due) : 'Sin fecha'}${t.note ? ' · ' + esc(t.note) : ''}</span></span>
+    <button class="btn small" data-tog="${t.id}">${t.done ? 'Reabrir' : '✓ Hecha'}</button><button class="btn small" data-del="${t.id}">✕</button></div>`).join('') || '<div class="empty">Aún no has apuntado tareas de Electude.</div>';
+  $$('#elecList [data-tog]').forEach(b => b.onclick = () => { manual = manual.map(x => x.id === b.dataset.tog ? Object.assign(x, {done: !x.done}) : x); store.set('manual', manual); renderAll(); });
+  $$('#elecList [data-del]').forEach(b => b.onclick = () => { manual = manual.filter(x => x.id !== b.dataset.del); store.set('manual', manual); renderAll(); });
+}
+$('#eAdd').onclick = () => {
+  const title = $('#eTitle').value.trim(); if(!title) return $('#eTitle').focus();
+  const due = $('#eDue').value ? new Date($('#eDue').value).getTime() : null;
+  manual.push({id: 'e' + Date.now(), title, due, note: $('#eNote').value.trim(), done: false});
+  store.set('manual', manual); $('#eTitle').value = $('#eDue').value = $('#eNote').value = ''; renderAll();
+};
+
+/* ---------- Ajustes ---------- */
+function renderCfg(){
+  $('#mUrl').value = cfg.moodleUrl; $('#gCid').value = cfg.googleClientId; $('#eUrl').value = cfg.electudeUrl;
+  const mOn = !!cfg.moodleToken;
+  $('#mLoginBox').hidden = mOn; $('#mLogout').hidden = !mOn;
+  $('#mStatus').innerHTML = mOn ? `✅ Conectado${cfg.moodleUser ? ' como <b>' + esc(cfg.moodleUser) + '</b>' : ''}` : 'No conectado';
+  $('#gStatus').innerHTML = !cfg.googleClientId ? 'Sin configurar' : (gToken && Date.now() < gExp ? '✅ Sesión de Google activa' : 'Configurado · inicia sesión pulsando «Actualizar»');
+}
+$('#mLogin').onclick = async () => {
+  cfg.moodleUrl = $('#mUrl').value.trim(); if(!/^https?:\/\//.test(cfg.moodleUrl)) cfg.moodleUrl = 'https://' + cfg.moodleUrl;
+  const body = new URLSearchParams({username: $('#mUser').value.trim(), password: $('#mPass').value, service: 'moodle_mobile_app'});
+  $('#mStatus').innerHTML = '<span class="spin"></span> Conectando…';
+  try{
+    const r = await fetch(mBase() + '/login/token.php', {method: 'POST', body});
+    const j = await r.json();
+    if(!j.token) throw new Error(j.error || 'No se recibió token');
+    cfg.moodleToken = j.token; cfg.moodleUser = $('#mUser').value.trim(); saveCfg(); $('#mPass').value = '';
+    renderCfg(); sync(false);
+  }catch(e){ $('#mStatus').innerHTML = `<span style="color:var(--danger)">Error: ${esc(e.message)}</span>`; }
+};
+$('#mTokSave').onclick = () => { cfg.moodleUrl = $('#mUrl').value.trim().replace(/^(?!https?:\/\/)/, 'https://'); cfg.moodleToken = $('#mTok').value.trim(); cfg.moodleUser = ''; saveCfg(); renderCfg(); sync(false); };
+$('#mLogout').onclick = () => { cfg.moodleToken = ''; cfg.moodleUser = ''; saveCfg(); data.moodle = {tasks: [], courses: []}; store.set('cache', data); renderAll(); };
+$('#gSave').onclick = () => { cfg.googleClientId = $('#gCid').value.trim(); saveCfg(); renderCfg(); if(cfg.googleClientId) sync(true); };
+$('#gOut').onclick = () => { if(gToken && window.google) google.accounts.oauth2.revoke(gToken, () => {}); gToken = null; sessionStorage.removeItem('me_g'); data.classroom = {tasks: [], courses: []}; store.set('cache', data); renderAll(); };
+$('#eUrlSave').onclick = () => { cfg.electudeUrl = $('#eUrl').value.trim() || 'https://www.electude.com'; saveCfg(); renderAll(); };
+$('#wipe').onclick = () => { if(!confirm('¿Borrar tokens, borradores y tareas guardadas en este dispositivo?')) return; Object.keys(localStorage).filter(k => k.startsWith('me_')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); location.reload(); };
+
+/* ======================================================================
+   ASISTENTE IA (Claude / Gemini)
+   ====================================================================== */
+const AI_NAME = {claude: 'Claude', gemini: 'Gemini'};
+const ai = {msgs: [], att: [], ctx: null, busy: false};
+const hasKey = p => !!(p === 'claude' ? cfg.claudeKey : cfg.geminiKey);
+const isTouch = () => matchMedia('(pointer:coarse)').matches;
+
+function md(s){
+  const blocks = [];
+  s = String(s || '').replace(/```[\w-]*\n?([\s\S]*?)```/g, (m, c) => { blocks.push('<pre><code>' + esc(c) + '</code></pre>'); return '\u0000' + (blocks.length - 1) + '\u0000'; });
+  const h = esc(s).replace(/`([^`\n]+)`/g, '<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g, '$1<i>$2</i>');
+  let out = '', list = null;
+  for(const ln of h.split('\n')){
+    let m;
+    if((m = ln.match(/^\s*[-*•]\s+(.*)/))){ if(list !== 'ul'){ if(list) out += `</${list}>`; out += '<ul>'; list = 'ul'; } out += '<li>' + m[1] + '</li>'; continue; }
+    if((m = ln.match(/^\s*\d+[.)]\s+(.*)/))){ if(list !== 'ol'){ if(list) out += `</${list}>`; out += '<ol>'; list = 'ol'; } out += '<li>' + m[1] + '</li>'; continue; }
+    if(list){ out += `</${list}>`; list = null; }
+    if((m = ln.match(/^#{1,6}\s+(.*)/))){ out += '<h4>' + m[1] + '</h4>'; continue; }
+    if(ln.trim()) out += '<p>' + ln + '</p>';
+  }
+  if(list) out += `</${list}>`;
+  return out.replace(/\u0000(\d+)\u0000/g, (m, i) => blocks[i]);
+}
+
+const plain = t => t.replace(/```[\w-]*\n?/g, '').replace(/\*\*([^*\n]+)\*\*/g, '$1').replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g, '$1$2').replace(/`([^`\n]+)`/g, '$1').replace(/^#{1,6}\s+/gm, '');
+function draftTarget(){ return $('#dlg').open ? ($('#mText') || $('#draft')) : null; }
+
+function renderAI(){
+  const p = cfg.aiProvider;
+  $$('#aiSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  $('#aiMode').innerHTML = hasKey(p)
+    ? `Chat dentro de la app con tu clave de API de ${AI_NAME[p]}.`
+    : `Usando tu cuenta de ${AI_NAME[p]}: al enviar se abrirá ${isTouch() ? 'el menú Compartir para elegir la app de ' + AI_NAME[p] : (p === 'claude' ? 'claude.ai' : 'Gemini') + ' con tu pregunta'}. <a href="#" id="aiCfgLink">Configurar chat integrado</a>`;
+  const l = $('#aiCfgLink'); if(l) l.onclick = e => { e.preventDefault(); $('#ai').close(); $('nav button[data-tab=cfg]').click(); setTimeout(() => $('#cKey').scrollIntoView({block: 'center'}), 50); };
+  $('#aiCtx').innerHTML = ai.ctx ? `<span class="ctx">📌 <span>Tarea: ${esc(ai.ctx.label)}</span><button id="ctxX" title="Quitar contexto">✕</button></span>` : '';
+  if(ai.ctx) $('#ctxX').onclick = () => { ai.ctx = null; renderAI(); };
+  $('#aiAtt').innerHTML = ai.att.map((a, i) => `<div class="att">${a.url ? `<img src="${a.url}" alt="">` : ''}<span class="tx">${esc(a.label || 'Imagen')}${a.text ? ' · texto' : ''}</span><button data-rm="${i}">✕</button></div>`).join('');
+  $$('#aiAtt [data-rm]').forEach(b => b.onclick = () => { ai.att.splice(+b.dataset.rm, 1); renderAI(); });
+  $('#aiSend').disabled = ai.busy;
+  $('#aiSend').textContent = hasKey(p) ? '➤' : '↗';
+  $('#aiSend').title = hasKey(p) ? 'Enviar' : 'Abrir en ' + AI_NAME[p];
+  renderMsgs();
+}
+function renderMsgs(){
+  const box = $('#aiMsgs');
+  if(!ai.msgs.length){
+    box.innerHTML = `<div class="empty">✳ Pregúntame lo que quieras sobre tus tareas.<br><span class="small">Usa 🔍 para seleccionar una zona de la pantalla o 📷 para enviar una foto.${ai.ctx ? '<br>Ya sé qué tarea tienes abierta.' : ''}</span></div>`;
+    return;
+  }
+  const tgt = draftTarget();
+  box.innerHTML = ai.msgs.map((m, i) => m.role === 'user'
+    ? `<div class="bub u">${(m.images || []).map(im => `<img src="${im.url}" alt="">`).join('')}${esc(m.text).replace(/\n/g, '<br>')}${m.hasExtra ? '<div class="small" style="opacity:.8;margin-top:4px">📎 + texto de la selección</div>' : ''}</div>`
+    : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
+        <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${md(m.text)}</div>
+        ${!m.note && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
+  $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; }catch(e){} });
+  $$('#aiMsgs [data-ins]').forEach(b => b.onclick = () => {
+    const t = draftTarget(); if(!t) return;
+    t.value = (t.value ? t.value.replace(/\s+$/, '') + '\n\n' : '') + plain(ai.msgs[+b.dataset.ins].text);
+    t.dispatchEvent(new Event('input')); b.textContent = 'Pegado ✓';
+  });
+  box.scrollTop = box.scrollHeight;
+}
+function aiNote(text, provider = cfg.aiProvider){ ai.msgs.push({role: 'assistant', provider, text, note: true}); renderAI(); }
+
+function openAI(opts = {}){
+  if(opts.provider){ cfg.aiProvider = opts.provider; saveCfg(); }
+  if(opts.ctx !== undefined) ai.ctx = opts.ctx;
+  if(opts.att) ai.att.push(...opts.att);
+  if(opts.text != null) $('#aiInput').value = opts.text;
+  renderAI();
+  if(!$('#ai').open) $('#ai').showModal();
+  if(!isTouch()) setTimeout(() => $('#aiInput').focus(), 60);
+}
+function taskContext(){
+  const title = $('#dlgTitle').textContent, meta = $('#dlgMeta').textContent;
+  const clone = $('#dlgBody').cloneNode(true);
+  clone.querySelectorAll('textarea,input,button,.btn,script').forEach(e => e.remove());
+  const statement = clone.innerText.replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
+  const draft = (draftTarget() || {}).value || '';
+  return {label: title, text: `Tarea: ${title}\n${meta}\n\nEnunciado y materiales:\n${statement}` + (draft ? `\n\nLo que el estudiante lleva escrito:\n${draft.slice(0, 4000)}` : '')};
+}
+
+/* --- historial → formato de cada API --- */
+function buildTurns(){
+  const turns = [];
+  ai.msgs.slice(0, -1).filter(m => !m.error && !m.note).forEach(m => {
+    const role = m.role === 'user' ? 'user' : 'assistant';
+    const last = turns[turns.length - 1];
+    if(last && last.role === role){ last.text += '\n\n' + (m.full || m.text); last.images.push(...(m.images || [])); }
+    else turns.push({role, text: m.full || m.text, images: [...(m.images || [])]});
+  });
+  while(turns.length && turns[0].role !== 'user') turns.shift();
+  return turns;
+}
+function sysPrompt(){
+  let s = cfg.aiSystem || DEFAULT_SYS;
+  s += '\n\nFecha de hoy: ' + new Date().toLocaleDateString('es-ES', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}) + '.';
+  if(ai.ctx) s += '\n\nContexto: el estudiante tiene abierta esta tarea en su app de estudio.\n' + ai.ctx.text;
+  return s;
+}
+async function* sse(resp){
+  const rd = resp.body.getReader(), dec = new TextDecoder(); let buf = '';
+  for(;;){
+    const {value, done} = await rd.read(); if(done) break;
+    buf += dec.decode(value, {stream: true}); let i;
+    while((i = buf.indexOf('\n')) >= 0){
+      const line = buf.slice(0, i).replace(/\r$/, ''); buf = buf.slice(i + 1);
+      if(line.startsWith('data:')){ const d = line.slice(5).trim(); if(d && d !== '[DONE]'){ try{ yield JSON.parse(d); }catch(e){} } }
+    }
+  }
+}
+async function apiError(r){ let m = 'Error ' + r.status; try{ const j = await r.json(); m = (j.error && (j.error.message || j.error.status)) || m; }catch(e){} return new Error(m); }
+async function* claudeStream(){
+  const messages = buildTurns().map(t => ({role: t.role, content: [
+    ...t.images.map(im => ({type: 'image', source: {type: 'base64', media_type: im.mime, data: im.data}})),
+    {type: 'text', text: t.text || '(imagen)'}]}));
+  const r = await fetch('https://api.anthropic.com/v1/messages', {method: 'POST',
+    headers: {'content-type': 'application/json', 'x-api-key': cfg.claudeKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'},
+    body: JSON.stringify({model: cfg.claudeModel, max_tokens: 4096, system: sysPrompt(), messages, stream: true})});
+  if(!r.ok) throw await apiError(r);
+  for await (const ev of sse(r)){
+    if(ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') yield ev.delta.text;
+    if(ev.type === 'error') throw new Error((ev.error && ev.error.message) || 'Error de Claude');
+  }
+}
+async function* geminiStream(){
+  const contents = buildTurns().map(t => ({role: t.role === 'user' ? 'user' : 'model', parts: [
+    ...t.images.map(im => ({inline_data: {mime_type: im.mime, data: im.data}})), {text: t.text || '(imagen)'}]}));
+  const model = (cfg.geminiModel || 'gemini-3.5-flash').replace(/^models\//, '');
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {method: 'POST',
+    headers: {'content-type': 'application/json', 'x-goog-api-key': cfg.geminiKey},
+    body: JSON.stringify({systemInstruction: {parts: [{text: sysPrompt()}]}, contents})});
+  if(!r.ok) throw await apiError(r);
+  for await (const ev of sse(r)){
+    if(ev.error) throw new Error(ev.error.message);
+    const parts = (ev.candidates && ev.candidates[0] && ev.candidates[0].content && ev.candidates[0].content.parts) || [];
+    for(const pt of parts) if(pt.text && !pt.thought) yield pt.text;
+  }
+}
+
+async function aiSend(){
+  if(ai.busy) return;
+  const input = $('#aiInput'), p = cfg.aiProvider;
+  const typed = input.value.trim();
+  if(!typed && !ai.att.length) return input.focus();
+  const text = typed || 'Explícame esto y ayúdame a resolverlo.';
+  const images = ai.att.filter(a => a.data).map(a => ({mime: a.mime, data: a.data, url: a.url}));
+  const extra = ai.att.map(a => a.text).filter(Boolean).join('\n\n');
+  const full = text + (extra ? '\n\n[Texto de la zona seleccionada]\n' + extra : '');
+  if(!hasKey(p)) return aiExternal(p, full, images);
+  ai.msgs.push({role: 'user', text, full, images, hasExtra: !!extra});
+  ai.att = []; input.value = ''; input.style.height = '';
+  const out = {role: 'assistant', provider: p, text: ''}; ai.msgs.push(out);
+  ai.busy = true; renderAI();
+  let raf = 0;
+  try{
+    for await (const chunk of (p === 'claude' ? claudeStream() : geminiStream())){
+      out.text += chunk;
+      if(!raf) raf = requestAnimationFrame(() => { raf = 0; renderMsgs(); });
+    }
+    if(!out.text) out.text = '(Sin respuesta)';
+  }catch(e){
+    out.error = true;
+    let m = e.message;
+    if(/Failed to fetch|NetworkError/i.test(m)) m = 'No hay conexión con ' + AI_NAME[p] + '.';
+    if(/api.key|x-api-key|API_KEY|authentication|401|403/i.test(m)) m += ' — revisa la clave en Ajustes.';
+    out.text = (out.text ? out.text + '\n\n' : '') + '⚠️ ' + m;
+  }
+  ai.busy = false; renderAI();
+}
+
+/* --- sin clave: abrir la app/web del usuario con su cuenta --- */
+function dataUrlToBlob(url){ const [h, b] = url.split(','); const mime = h.match(/:(.*?);/)[1]; const bin = atob(b); const u8 = new Uint8Array(bin.length); for(let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return new Blob([u8], {type: mime}); }
+async function toPngBlob(url){
+  if(url.startsWith('data:image/png')) return dataUrlToBlob(url);
+  const img = new Image(); img.src = url; await img.decode();
+  const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight; c.getContext('2d').drawImage(img, 0, 0);
+  return new Promise(r => c.toBlob(r, 'image/png'));
+}
+async function aiExternal(p, text, images){
+  const img = images[0];
+  const shareText = text;
+  // Móvil: menú Compartir → app de Claude o Gemini (con la cuenta del usuario)
+  if(isTouch() && navigator.share){
+    const files = img ? [new File([dataUrlToBlob(img.url)], 'seleccion.' + (img.mime.split('/')[1] || 'png'), {type: img.mime})] : [];
+    const data = files.length ? {text: shareText, files} : {text: shareText};
+    if(!navigator.canShare || navigator.canShare(data)){
+      try{ await navigator.share(data); ai.att = []; $('#aiInput').value = ''; aiNote(`Elige **${AI_NAME[p]}** en el menú Compartir. Se abrirá en su app con tu cuenta.`, p); }
+      catch(e){ if(e.name !== 'AbortError') aiNote('⚠️ No se pudo compartir: ' + e.message, p); }
+      return;
+    }
+  }
+  // PC: copiar imagen al portapapeles y abrir la web
+  let copied = false;
+  try{
+    if(img){ await navigator.clipboard.write([new ClipboardItem({'image/png': toPngBlob(img.url)})]); copied = 'img'; }
+    else if(p === 'gemini'){ await navigator.clipboard.writeText(shareText); copied = 'txt'; }
+  }catch(e){ console.warn(e); }
+  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(shareText.slice(0, 7000)) : 'https://gemini.google.com/app';
+  window.open(url, '_blank', 'noopener');
+  ai.att = []; $('#aiInput').value = '';
+  let note = `He abierto **${p === 'claude' ? 'claude.ai' : 'Gemini'}** en otra pestaña con tu cuenta.`;
+  if(p === 'claude') note += ' Tu pregunta ya está escrita.';
+  if(copied === 'img') note += ' La imagen está copiada: pégala con **Ctrl+V**.';
+  if(p === 'gemini' && copied === 'img') note += ' Después pega el texto con el botón «Copiar» de abajo.';
+  if(p === 'gemini' && copied === 'txt') note += ' Tu pregunta está copiada: pégala con **Ctrl+V**.';
+  ai.msgs.push({role: 'assistant', provider: p, text: note, note: true});
+  if(p === 'gemini' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text: shareText});
+  renderAI();
+}
+
+/* --- fotos --- */
+function shrinkImage(file, max = 1600){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => { const img = new Image(); img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      const url = c.toDataURL('image/jpeg', .88);
+      res({mime: 'image/jpeg', data: url.split(',')[1], url, label: 'Foto'});
+    }; img.onerror = rej; img.src = fr.result; };
+    fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+let photoFor = null;
+$('#photoIn').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{ const att = await shrinkImage(f); openAI({att: [att], provider: photoFor || cfg.aiProvider}); }catch(err){ msg('No se pudo leer la imagen.', 'err'); }
+};
+
+/* ======================================================================
+   LENS: seleccionar una zona de la pantalla
+   ====================================================================== */
+let h2cP = null;
+function loadH2C(){
+  if(window.html2canvas) return Promise.resolve(window.html2canvas);
+  return h2cP || (h2cP = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    s.onload = () => res(window.html2canvas); s.onerror = () => { h2cP = null; rej(new Error('sin html2canvas')); };
+    document.head.appendChild(s);
+  }));
+}
+let lensReturnToAI = false, sel = null, drag = null;
+function lensStart(fromAI){
+  lensReturnToAI = !!fromAI;
+  if(fromAI) $('#ai').close();
+  sel = null; $('#lensSel').hidden = true; $('#lens').classList.remove('has');
+  $('#lensHint').hidden = false; $('#lensClaude').disabled = $('#lensGemini').disabled = true;
+  $('#lens').showModal();
+  loadH2C().catch(() => {});
+}
+function lensCancel(){ $('#lens').close(); if(lensReturnToAI) openAI(); }
+(function(){
+  const L = $('#lens'), box = $('#lensSel');
+  const draw = () => { Object.assign(box.style, {left: sel.x + 'px', top: sel.y + 'px', width: sel.w + 'px', height: sel.h + 'px'}); };
+  L.addEventListener('pointerdown', e => {
+    if(e.target.closest('#lensBar')) return;
+    e.preventDefault(); L.setPointerCapture(e.pointerId);
+    drag = {x: e.clientX, y: e.clientY}; sel = {x: e.clientX, y: e.clientY, w: 0, h: 0};
+    box.hidden = false; L.classList.add('has'); $('#lensHint').hidden = true; draw();
+  });
+  L.addEventListener('pointermove', e => {
+    if(!drag) return;
+    sel = {x: Math.min(drag.x, e.clientX), y: Math.min(drag.y, e.clientY), w: Math.abs(e.clientX - drag.x), h: Math.abs(e.clientY - drag.y)}; draw();
+  });
+  const end = () => {
+    if(!drag) return; drag = null;
+    const ok = sel && sel.w > 12 && sel.h > 12;
+    if(!ok){ sel = null; box.hidden = true; L.classList.remove('has'); $('#lensHint').hidden = false; }
+    $('#lensClaude').disabled = $('#lensGemini').disabled = !ok;
+  };
+  L.addEventListener('pointerup', end); L.addEventListener('pointercancel', end);
+  L.addEventListener('cancel', e => { e.preventDefault(); lensCancel(); });
+})();
+
+function extractText(r){
+  const root = $('#dlg').open ? $('#dlg') : $('main');
+  const hit = q => q.right > r.x && q.left < r.x + r.w && q.bottom > r.y && q.top < r.y + r.h;
+  const parts = []; let lastBlock = null;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => n.nodeValue.trim() && !n.parentElement.closest('script,style,textarea,button,[hidden]') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+  const range = document.createRange();
+  for(let n; (n = walker.nextNode());){
+    range.selectNodeContents(n);
+    if(![...range.getClientRects()].some(hit)) continue;
+    const blk = n.parentElement.closest('p,li,div,h1,h2,h3,h4,td,summary,label,pre');
+    parts.push((lastBlock && blk !== lastBlock ? '\n' : ' ') + n.nodeValue.trim()); lastBlock = blk;
+  }
+  root.querySelectorAll('textarea,input[type=text],input:not([type])').forEach(el => { if(el.value && hit(el.getBoundingClientRect())) parts.push('\n' + el.value); });
+  return parts.join('').trim().slice(0, 8000);
+}
+function fixCloneDialogs(doc){
+  const live = $('#dlg'); if(!live.open) return;
+  const c = doc.getElementById('dlg'), r = live.getBoundingClientRect();
+  Object.assign(c.style, {position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: '0', maxHeight: 'none', overflow: 'hidden', zIndex: '9999', inset: 'auto'});
+  const b = c.querySelector('.dlg-b'); if(b) b.style.transform = `translateY(${-live.scrollTop}px)`;
+  const shade = doc.createElement('div'); Object.assign(shade.style, {position: 'fixed', inset: '0', background: 'rgba(0,0,0,.45)', zIndex: '9998'});
+  doc.body.appendChild(shade);
+}
+async function lensSend(p){
+  if(!sel) return;
+  const r = Object.assign({}, sel);
+  $('#lens').close();
+  $('#lensBusy').style.display = 'flex';
+  await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+  const text = extractText(r);
+  let att = {label: 'Selección', text};
+  try{
+    const h2c = await Promise.race([loadH2C(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000))]);
+    const scale = Math.min(2, window.devicePixelRatio || 1);
+    const canvas = await h2c(document.body, {useCORS: true, logging: false, scale,
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      x: window.scrollX, y: window.scrollY, width: innerWidth, height: innerHeight, windowWidth: innerWidth, windowHeight: innerHeight,
+      ignoreElements: el => ['lens', 'ai', 'dock', 'lensBusy'].includes(el.id), onclone: fixCloneDialogs});
+    const s = canvas.width / innerWidth;
+    const c = document.createElement('canvas'); c.width = Math.round(r.w * s); c.height = Math.round(r.h * s);
+    c.getContext('2d').drawImage(canvas, r.x * s, r.y * s, r.w * s, r.h * s, 0, 0, c.width, c.height);
+    const url = c.toDataURL('image/png');
+    att = Object.assign(att, {mime: 'image/png', data: url.split(',')[1], url});
+  }catch(e){ console.warn('Lens: captura de imagen no disponible, se envía solo el texto', e); }
+  $('#lensBusy').style.display = 'none';
+  if(!att.url && !att.text){ msg('No se pudo capturar esa zona.', 'err'); return; }
+  openAI({provider: p, att: [att]});
+}
+
+/* --- botones --- */
+$('#aiBtn').onclick = () => openAI({provider: 'claude'});
+$('#lensBtn').onclick = () => lensStart(false);
+$('#dlgAI').onclick = () => openAI({ctx: taskContext()});
+$('#dlgLens').onclick = () => lensStart(false);
+$('#aiLens').onclick = () => lensStart(true);
+$('#aiPhoto').onclick = () => { photoFor = null; $('#photoIn').click(); };
+$('#lensPhoto').onclick = () => { $('#lens').close(); photoFor = null; $('#photoIn').click(); };
+$('#lensCancel').onclick = lensCancel;
+$('#lensClaude').onclick = () => lensSend('claude');
+$('#lensGemini').onclick = () => lensSend('gemini');
+$('#aiClose').onclick = () => $('#ai').close();
+$('#aiNew').onclick = () => { if(ai.busy) return; ai.msgs = []; ai.att = []; renderAI(); };
+$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); renderAI(); });
+$('#aiSend').onclick = aiSend;
+$('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch()){ e.preventDefault(); aiSend(); } });
+$('#aiInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px'; });
+$('#ai').addEventListener('click', e => { if(e.target === $('#ai')) $('#ai').close(); });
+$('#aiSave').onclick = () => {
+  cfg.claudeKey = $('#cKey').value.trim(); cfg.claudeModel = $('#cModel').value;
+  cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value.trim() || 'gemini-3.5-flash';
+  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg();
+  $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000);
+};
+function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
+
+function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); }
+
+/* ---------- arranque ---------- */
+renderAll();
+window.addEventListener('load', () => sync(false));
+if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
