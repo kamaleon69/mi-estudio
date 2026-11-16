@@ -58,23 +58,21 @@ La app usa un **marcador**: lee tus tareas con la sesión que ya tienes abierta 
 - El botón **Abrir Electude** abre `https://clotfje.electude.eu/srestore`. En el PC se abre en una ventana lateral para usarlo junto a la app.
 - Electude no deja que otras apps lean tus tareas. Apúntalas en la pestaña **Electude** con título y fecha, y aparecerán en «Pendientes» junto al resto.
 
-## 5. Sincronizar en el móvil (app en el navegador o instalada)
+## 5. Sincronizar el móvil (con un QR)
 
-**Opción fácil:** sincroniza en el PC y ve a **Ajustes → 📲 Pasar a otro dispositivo → Enviar**. Mándate el enlace (WhatsApp, Telegram o correo) y ábrelo en el móvil. Si usas la app instalada, copia el enlace y pulsa **📋 Pegar sincronización** dentro de la app.
+En el móvil **no hace falta el marcador**:
 
-**Opción directa desde el móvil:**
+1. En el **ordenador**, sincroniza Moodle y Classroom con el marcador (paso 3).
+2. En **Ajustes → 📱 Sincronizar el móvil**, pulsa **📱 Mostrar QR**.
+3. En el **móvil**, abre la **cámara**, apunta al QR y toca el enlace. Se abre Mi Estudio con todas tus tareas.
 
-1. **Guarda el marcador en el navegador del móvil** (solo la primera vez). En la app, ve a **Ajustes → ⚡ Conectar Moodle y Classroom → ⓘ** y pulsa **Copiar código del marcador**.
-   - **Android (Chrome):** guarda cualquier web con ⋮ → ☆. Luego ve a ⋮ → Marcadores, mantén pulsado el nuevo marcador → **Editar**. Llámalo *Sincronizar* y pega el código como dirección.
-   - **iPhone/iPad (Safari):** Compartir (□↑) → **Añadir marcador** y llámalo *Sincronizar*. Luego abre Marcadores (📖) → **Editar**, toca el marcador y pega el código como dirección.
-2. **Abre Moodle o Classroom → Pendents en el navegador** (no en la app de Classroom) y lanza el marcador:
-   - **Android:** escribe *Sincronizar* en la barra de direcciones y toca el resultado con la ☆.
-   - **iPhone:** abre 📖 Marcadores y toca *Sincronizar*.
-3. **Abajo aparece un panel azul:**
-   - Si usas la app **en el navegador**, pulsa **🌐 Abrir en el navegador**.
-   - Si usas la app **instalada**, pulsa **📋 Copiar para la app instalada**, abre Mi Estudio y pulsa **📋 Pegar sincronización** (arriba en Pendientes). En el iPhone, toca «Pegar» si te lo pregunta.
+- **iPhone con la app instalada:** la cámara abre Safari, no la app. En Safari pulsa **📋 Copiar para la app instalada**, abre la app y pulsa **📋 Pegar sincronización**.
+- **Android:** la app instalada comparte los datos con Chrome, así que no hace falta nada más.
+- **Si no puedes escanear:** usa **💬 Enviar por WhatsApp** (envíatelo a ti mismo) o **🔗 Copiar enlace**, y abre el enlace en el móvil.
 
-> En Android la app instalada comparte los datos con Chrome, así que «Abrir en el navegador» también la actualiza. En el iPhone la app instalada tiene sus propios datos: usa «Copiar» y «Pegar». Si Classroom se abre en su app, mantén pulsado el enlace y elige «Abrir en el navegador». Si no ves la lista de Pendents, activa «Versión para ordenador» en el menú del navegador.
+Repítelo cuando vuelvas a sincronizar en el ordenador. El enlace no lleva contraseñas ni claves, pero sí tu lista de tareas: envíatelo solo a ti.
+
+*(Avanzado: también puedes usar el marcador directamente en el móvil; las instrucciones están en la ⓘ del marcador.)*
 
 ## 6. Asistente IA y Lens
 

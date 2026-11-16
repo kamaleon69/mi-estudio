@@ -184,13 +184,27 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   </section>
 
   <section id="cfg">
+    <div class="card" style="border-color:#7b3fe4">
+      <strong>📱 Sincronizar el móvil</strong>
+      <div id="mobSyncBox"></div>
+      <details class="help"><summary><span class="i">i</span> Cómo funciona</summary><div class="hb">
+        <ol>
+          <li>En el <b>ordenador</b>, sincroniza Moodle y Classroom con el marcador ⚡ (tarjeta de abajo).</li>
+          <li>Pulsa <b>Mostrar QR</b>.</li>
+          <li>En el <b>móvil</b>, abre la <b>cámara</b>, apunta al QR y toca el enlace que aparece. Se abre Mi Estudio con todas tus tareas.</li>
+          <li><b>¿Tienes la app instalada en el iPhone?</b> La cámara abre Safari, no la app. En Safari pulsa <b>📋 Copiar para la app instalada</b>, abre la app y pulsa <b>📋 Pegar sincronización</b>. En Android no hace falta: la app instalada comparte los datos con Chrome.</li>
+        </ol>
+        <div class="tip">Si no puedes escanear, usa <b>Enviar por WhatsApp</b> o <b>Copiar enlace</b> y abre el enlace en el móvil. Repítelo cuando vuelvas a sincronizar en el ordenador.</div>
+      </div></details>
+    </div>
+
     <div class="card" style="border-color:var(--accent)">
       <strong>⚡ Conectar Moodle y Classroom (marcador)</strong>
       <p class="meta small">El marcador lee tus tareas <b>con la sesión que ya tienes abierta</b> en Moodle y Classroom y las trae aquí. No pide ni guarda contraseñas. Antes, revisa las direcciones en <b>🔗 Tus plataformas</b>.</p>
       <div class="row" style="margin:10px 0"><a class="btn primary" id="bmLink" href="#" title="Arrástrame a la barra de marcadores">⚡ Sincronizar Mi Estudio</a><span class="meta small">← arrástralo a tu barra de marcadores</span></div>
       <div id="bmStatus" class="meta small"></div>
       <div class="row" style="margin-top:6px"><button class="btn small" id="bmCopy2" type="button">📋 Copiar código del marcador</button><button class="btn small" id="pasteBtn2" type="button">📋 Pegar sincronización</button></div>
-      <p class="meta small" style="margin-top:4px">En el móvil: copia el código para crear el marcador (ver ⓘ), y usa «Pegar sincronización» en la app instalada.</p>
+      <p class="meta small" style="margin-top:4px">Para el móvil es más fácil «📱 Sincronizar el móvil» (arriba).</p>
       <details class="help" id="bmHelp"><summary><span class="i">i</span> Cómo conectarte (paso a paso)</summary><div class="hb">
         <p><b>1. Guarda el marcador (solo la primera vez)</b></p>
         <ol>
@@ -211,24 +225,15 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
         </ol>
         <p><b>4. Para actualizar</b>, repite el paso 2 o el 3 cuando quieras (por ejemplo, una vez al día).</p>
         <div class="tip">El marcador no envía tu contraseña ni tu sesión a ningún sitio: lee la lista en tu navegador y la guarda solo en este dispositivo. Para <b>entregar</b>, usa el botón «Abrir en Moodle/Classroom» de cada tarea.</div>
-        <p style="margin-top:12px"><b>📱 5. Sincronizar en el móvil</b> (app en el navegador o instalada)</p>
-        <p class="small"><b>a) Guarda el marcador en el navegador del móvil</b> (solo la primera vez): <button class="btn small" type="button" id="bmCopy">Copiar código del marcador</button></p>
-        <ul class="small">
-          <li><b>Android (Chrome):</b> abre cualquier web, pulsa ⋮ → ☆ para guardarla, luego ⋮ → Marcadores → mantén pulsado el nuevo → <b>Editar</b>. Ponle de nombre <i>Sincronizar</i> y en la dirección <b>pega el código</b>.</li>
-          <li><b>iPhone/iPad (Safari):</b> en cualquier web, Compartir (□↑) → <b>Añadir marcador</b>, nombre <i>Sincronizar</i>. Después abre Marcadores (📖) → <b>Editar</b> → toca el marcador y en la dirección <b>pega el código</b>.</li>
-        </ul>
-        <p class="small"><b>b) Úsalo:</b> abre <a class="js-moodle" href="#" target="_blank" rel="noopener">Moodle</a> o <a class="js-classroom" href="#" target="_blank" rel="noopener">Classroom → Pendents</a> <b>en el navegador</b> (no en la app de Classroom) y lanza el marcador:</p>
-        <ul class="small">
-          <li>Android: escribe <i>Sincronizar</i> en la barra de direcciones y toca el resultado con la ☆.</li>
-          <li>iPhone: toca 📖 Marcadores → <i>Sincronizar</i>.</li>
-        </ul>
-        <p class="small"><b>c) Abajo aparece un panel azul:</b></p>
-        <ul class="small">
-          <li>Si usas la app <b>en el navegador</b>: pulsa <b>🌐 Abrir en el navegador</b>.</li>
-          <li>Si usas la app <b>instalada</b>: pulsa <b>📋 Copiar para la app instalada</b>, abre Mi Estudio y pulsa <b>📋 Pegar sincronización</b> (arriba en Pendientes). En el iPhone, toca «Pegar» si te lo pregunta.</li>
-        </ul>
-        <div class="tip">En Android la app instalada comparte los datos con Chrome, así que «Abrir en el navegador» también sirve. En el iPhone la app instalada tiene sus propios datos: usa «Copiar» y «Pegar». Si Classroom se abre en su app, mantén pulsado el enlace y elige «Abrir en el navegador». Si no ves la lista de Pendents, activa «Versión para ordenador» en el menú del navegador.</div>
-        <p class="small" style="margin-top:8px"><b>Más fácil todavía:</b> sincroniza en el PC y usa <b>📲 Pasar a otro dispositivo</b>.</p>
+        <p style="margin-top:12px"><b>📱 5. En el móvil</b>: usa <b>📱 Sincronizar el móvil</b> (arriba en Ajustes). Escaneas un QR desde el ordenador y listo, sin marcador en el móvil.</p>
+        <details style="margin-top:6px"><summary class="small">Avanzado: usar el marcador directamente en el móvil</summary>
+          <p class="small">Copia el código: <button class="btn small" type="button" id="bmCopy">Copiar código del marcador</button></p>
+          <ul class="small">
+            <li><b>Android (Chrome):</b> guarda cualquier web con ⋮ → ☆. En ⋮ → Marcadores, mantén pulsado el nuevo → Editar, llámalo <i>Sincronizar</i> y pega el código como dirección. Para usarlo, en Moodle escribe «Sincronizar» en la barra y toca el resultado con ☆.</li>
+            <li><b>iPhone (Safari):</b> Compartir → Añadir marcador (<i>Sincronizar</i>). En 📖 Marcadores → Editar, pega el código como dirección. Para usarlo, en Moodle abre 📖 y tócalo.</li>
+            <li>Al pulsarlo aparece un panel: «🌐 Abrir en el navegador» o «📋 Copiar para la app instalada» (y luego «Pegar sincronización» en la app).</li>
+          </ul>
+        </details>
       </div></details>
     </div>
 
@@ -242,20 +247,6 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
         <p><b>🪟 Windows</b> (Chrome o Edge): icono de <b>instalar</b> en la barra de direcciones (⊕ o 🖥↓), o menú ⋮ → <b>Enviar, guardar y compartir → Instalar página como app</b>. Aparecerá en el menú Inicio.</p>
         <p><b>💻 Mac</b>: en <b>Safari</b>, menú <b>Archivo → Añadir al Dock</b>. En Chrome o Edge, icono de instalar en la barra de direcciones. Aparecerá en el Launchpad.</p>
         <div class="tip">Cada dispositivo guarda sus datos aparte. Para no conectarlo todo en cada uno, usa «📲 Pasar a otro dispositivo».</div>
-      </div></details>
-    </div>
-
-    <div class="card">
-      <strong>📲 Pasar a otro dispositivo</strong>
-      <p class="meta small">Envía a tu móvil u otro ordenador las tareas sincronizadas, tus tareas de Electude y las direcciones de tus plataformas. <b>No se envían contraseñas, tokens ni claves de IA.</b></p>
-      <div class="row"><button class="btn primary" id="xferBtn" type="button">📲 Enviar a otro dispositivo</button><span id="xferOut" class="meta small"></span></div>
-      <details class="help"><summary><span class="i">i</span> Cómo funciona</summary><div class="hb">
-        <ol>
-          <li>Sincroniza aquí con el marcador ⚡ (Moodle, Classroom…).</li>
-          <li>Pulsa <b>Enviar a otro dispositivo</b>: en el móvil se abre «Compartir» y en el PC se copia un enlace. Mándatelo por WhatsApp, Telegram o correo.</li>
-          <li>Abre ese enlace en el otro dispositivo (en la app instalada o en el navegador) y las tareas aparecerán.</li>
-        </ol>
-        <div class="tip">El enlace contiene tu lista de tareas: envíatelo solo a ti. Repite el envío cuando vuelvas a sincronizar.</div>
       </div></details>
     </div>
 
@@ -334,6 +325,19 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <button class="fab lens" id="lensBtn" title="Seleccionar una zona de la pantalla y preguntar a la IA"><span class="ic">🔍</span><span class="lbl">Lens</span></button>
   <button class="fab claude" id="aiBtn" title="Asistente IA"><span class="ic">✳</span><span class="lbl">Claude</span></button>
 </div>
+
+<dialog id="qrDlg" style="width:min(680px,96vw)">
+  <div class="dlg-h"><h3>📱 Escanea con el móvil</h3><button class="btn small" id="qrClose" type="button">✕</button></div>
+  <div class="dlg-b" style="text-align:center">
+    <div id="qrBox" style="background:#fff;display:inline-block;padding:12px;border-radius:12px;max-width:100%"></div>
+    <p class="small" id="qrInfo"></p>
+    <ol class="small" style="text-align:left">
+      <li>Abre la <b>cámara</b> del móvil y apunta al código.</li>
+      <li>Toca el enlace que aparece: se abrirá Mi Estudio con tus tareas.</li>
+      <li>iPhone con la app instalada: en Safari pulsa «📋 Copiar para la app instalada» y luego «📋 Pegar sincronización» en la app.</li>
+    </ol>
+  </div>
+</dialog>
 
 <dialog id="updDlg" style="width:min(460px,94vw)">
   <div class="dlg-h"><h3>↻ Actualizar tareas</h3><button class="btn small" id="updClose" type="button">✕</button></div>
@@ -583,11 +587,11 @@ function gMaterialLinks(mats){
 }
 
 /* ---------- sincronizar ---------- */
-let syncing = false, syncNote = '';
+let syncing = false, syncNote = '', stickyMsg = false;
 const hasMarkerData = () => ['moodle', 'classroom', 'electude'].some(k => data[k] && data[k].via === 'marcador');
 async function sync(interactive = false){
   if(syncing) return; syncing = true;
-  $('#syncBtn').innerHTML = '<span class="spin"></span>'; msg('');
+  $('#syncBtn').innerHTML = '<span class="spin"></span>'; if(!stickyMsg) msg('');
   const errs = [];
   if(cfg.moodleUrl && cfg.moodleToken){ try{ await loadMoodle(); }catch(e){ errs.push('Moodle: ' + esc(e.message)); } }
   if(cfg.googleClientId && !isLocalFile() && (data.classroom.via !== 'marcador' || gToken)){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length && data.classroom.via !== 'marcador') errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
@@ -1242,7 +1246,7 @@ $('#aiSave').onclick = () => {
 };
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
 
-function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); }
+function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); }
 
 /* ---------- aviso al abrir cualquier enlace externo ---------- */
 document.addEventListener('click', e => {
@@ -1443,8 +1447,102 @@ function renderInstall(){
   box.innerHTML = `<div class="msg info">Estás en <b>${name}</b>. ${steps}</div>`;
 }
 
+/* ---------- sincronizar el móvil: enlace comprimido + QR ---------- */
+async function zipEncode(obj){
+  const json = JSON.stringify(obj);
+  if(!window.CompressionStream) return 'j' + b64u(obj);
+  const buf = await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();
+  let bin = ''; new Uint8Array(buf).forEach(b => bin += String.fromCharCode(b));
+  return 'z' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function zipDecode(code){
+  if(code[0] === 'j') return unb64u(code.slice(1));
+  let b = code.slice(1).replace(/-/g, '+').replace(/_/g, '/'); while(b.length % 4) b += '=';
+  const bin = atob(b), u8 = new Uint8Array(bin.length); for(let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  const txt = await new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+  return JSON.parse(txt);
+}
+function xferPayload(){
+  const slim = t => ({id: t.id, title: (t.title || '').slice(0, 90), course: (t.course || '').slice(0, 60), due: t.due || null, dueText: t.dueText || undefined, url: t.url, kind: t.kind || undefined, action: t.action || undefined, late: t.late || undefined});
+  const pick = k => data[k] && data[k].via === 'marcador' ? {at: data[k].at, tasks: data[k].tasks.map(slim), courses: (data[k].courses || []).map(c => ({id: c.id, name: (c.name || '').slice(0, 60), url: c.url}))} : null;
+  return {v: 2, at: Date.now(), cfg: {moodleUrl: cfg.moodleUrl, electudeUrl: cfg.electudeUrl, classroomUrl: cfg.classroomUrl},
+    moodle: pick('moodle'), classroom: pick('classroom'), electude: pick('electude'), manual: manual.map(t => ({id: t.id, title: t.title, due: t.due, note: t.note, done: t.done}))};
+}
+async function xferLink(){ return appUrl() + '#x=' + await zipEncode(xferPayload()); }
+let qrLibP = null;
+function loadQR(){
+  if(window.qrcode) return Promise.resolve(window.qrcode);
+  return qrLibP || (qrLibP = new Promise((res, rej) => {
+    const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+    sc.onload = () => window.qrcode ? res(window.qrcode) : rej(new Error('qr')); sc.onerror = () => { qrLibP = null; rej(new Error('qr')); };
+    document.head.appendChild(sc);
+  }));
+}
+function renderMobSync(){
+  const box = $('#mobSyncBox'); if(!box) return;
+  const n = ['moodle', 'classroom'].reduce((a, k) => a + (data[k] && data[k].via === 'marcador' ? data[k].tasks.length : 0), 0) + manual.length;
+  if(isTouch()){
+    box.innerHTML = `<p class="meta small">En el móvil no hace falta el marcador: sincroniza en el <b>ordenador</b>, pulsa allí «Mostrar QR» y escanéalo con la cámara de este móvil.</p>
+      <div class="row"><button class="btn primary" id="mobPaste" type="button">📋 Pegar sincronización</button></div>
+      <p class="meta small" style="margin-top:6px">«Pegar» sirve si te enviaste el enlace por WhatsApp o lo copiaste en Safari.</p>`;
+    $('#mobPaste').onclick = pasteSync;
+  } else {
+    box.innerHTML = `<p class="meta small">Pasa al móvil las tareas de este ordenador (${n} en total) escaneando un QR. No se envían contraseñas ni claves.</p>
+      <div class="row"><button class="btn primary" id="qrBtn" type="button">📱 Mostrar QR</button><button class="btn" id="waBtn" type="button">💬 Enviar por WhatsApp</button><button class="btn" id="xferBtn" type="button">🔗 Copiar enlace</button><span id="xferOut" class="meta small"></span></div>`;
+    $('#qrBtn').onclick = showQR; $('#waBtn').onclick = sendWA; $('#xferBtn').onclick = copyXfer;
+  }
+}
+async function showQR(){
+  if(!hasMarkerData() && !manual.length){ toast('Primero sincroniza con el marcador ⚡ en este ordenador', 'err'); return; }
+  const link = await xferLink();
+  $('#qrBox').innerHTML = '<span class="spin"></span>'; $('#qrInfo').textContent = '';
+  $('#qrDlg').showModal();
+  try{
+    const qrcode = await loadQR();
+    const qr = qrcode(0, link.length > 700 ? 'L' : 'M'); qr.addData(link, 'Byte'); qr.make();
+    const cells = qr.getModuleCount(), size = Math.min(620, innerWidth - 60, innerHeight - 260), cell = Math.max(3, Math.floor(size / (cells + 8)));
+    $('#qrBox').innerHTML = qr.createSvgTag({cellSize: cell, margin: cell * 4, scalable: false});
+    $('#qrInfo').textContent = 'QR listo · ' + link.length + ' caracteres';
+    toast('✅ QR listo: escanéalo con el móvil');
+  }catch(e){
+    $('#qrBox').innerHTML = '<p class="small" style="color:#333">No se pudo crear el QR (¿sin conexión?).</p>';
+    $('#qrInfo').innerHTML = 'Usa <b>💬 Enviar por WhatsApp</b> o <b>🔗 Copiar enlace</b>.';
+    toast('No se pudo crear el QR', 'err');
+  }
+}
+async function sendWA(){
+  if(!hasMarkerData() && !manual.length){ toast('Primero sincroniza con el marcador ⚡', 'err'); return; }
+  const link = await xferLink();
+  window.open('https://wa.me/?text=' + encodeURIComponent('Mis tareas de Mi Estudio: ' + link), '_blank', 'noopener');
+  toast('↗ Abriendo WhatsApp: envíatelo a ti mismo');
+}
+async function copyXfer(){
+  const link = await xferLink();
+  try{ await navigator.clipboard.writeText(link); $('#xferOut').textContent = 'Enlace copiado ✓'; toast('✅ Enlace copiado: ábrelo en el móvil'); }
+  catch(e){ toast('No se pudo copiar', 'err'); }
+}
+$('#qrClose').onclick = () => $('#qrDlg').close();
+let lastXferLink = '';
+async function importZ(){
+  const m = location.hash.match(/^#x=([jz][A-Za-z0-9_-]+)$/); if(!m) return false;
+  let d; try{ d = await zipDecode(m[1]); }catch(e){ history.replaceState(null, '', location.pathname); msg('El enlace está incompleto o dañado. Vuelve a generarlo en el ordenador.', 'err'); return false; }
+  history.replaceState(null, '', location.pathname + '#xfer=' + b64u(d));
+  const ok = importXfer();
+  if(ok && isTouch() && !(matchMedia('(display-mode: standalone)').matches || navigator.standalone)){
+    lastXferLink = appUrl() + '#x=' + m[1];
+    msg(syncNote + '<br><b>¿Tienes la app instalada?</b> <button class="btn small" id="copyForApp" type="button">📋 Copiar para la app instalada</button> y luego, en la app, pulsa «📋 Pegar sincronización».', 'ok');
+    syncNote = ''; stickyMsg = true;
+    $('#copyForApp').onclick = async () => { try{ await navigator.clipboard.writeText(lastXferLink); toast('✅ Copiado: abre la app y pulsa «Pegar sincronización»'); }catch(e){ toast('No se pudo copiar', 'err'); } };
+  }
+  if(ok) toast(syncNote || '✅ Tareas recibidas');
+  return ok;
+}
+window.addEventListener('hashchange', async () => { if(await importZ()) renderAll(); });
+
 /* ---------- pegar sincronización (móvil / app instalada) ---------- */
-function applySyncText(txt){
+async function applySyncText(txt){
+  const z = (txt || '').match(/#x=([jz][A-Za-z0-9_-]{20,})/);
+  if(z){ history.replaceState(null, '', location.pathname + '#x=' + z[1]); const ok = await importZ(); if(ok){ renderAll(); toast(syncNote || '✅ Sincronización importada'); } return ok; }
   const m = (txt || '').match(/#?(sync|xfer)=([A-Za-z0-9_-]{20,})/); if(!m) return false;
   history.replaceState(null, '', location.pathname + '#' + m[1] + '=' + m[2]);
   const ok = m[1] === 'xfer' ? importXfer() : importSync();
@@ -1454,29 +1552,19 @@ function applySyncText(txt){
 async function pasteSync(){
   let txt = '';
   try{ if(navigator.clipboard && navigator.clipboard.readText) txt = await navigator.clipboard.readText(); }catch(e){}
-  if(applySyncText(txt)){ $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend')); return; }
+  if(await applySyncText(txt)){ $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend')); return; }
   $('#pasteTxt').value = ''; $('#pasteOut').innerHTML = ''; $('#pasteDlg').showModal(); setTimeout(() => $('#pasteTxt').focus(), 80);
 }
 $('#pasteBtn').onclick = pasteSync; $('#pasteBtn2').onclick = pasteSync;
 $('#pasteClose').onclick = () => $('#pasteDlg').close();
-$('#pasteGo').onclick = () => {
-  if(applySyncText($('#pasteTxt').value.trim())){ $('#pasteDlg').close(); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend')); }
+$('#pasteGo').onclick = async () => {
+  if(await applySyncText($('#pasteTxt').value.trim())){ $('#pasteDlg').close(); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend')); }
   else { toast('No reconozco ese texto', 'err'); } if(!$('#pasteDlg').open) return; else $('#pasteOut').innerHTML = '<div class="msg err">No reconozco ese texto. Copia de nuevo con el marcador («📋 Copiar para la app instalada») y pégalo entero.</div>';
 };
 
 /* ---------- pasar a otro dispositivo ---------- */
 const b64u = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64u = t => { let b = t.replace(/-/g, '+').replace(/_/g, '/'); while(b.length % 4) b += '='; return JSON.parse(decodeURIComponent(escape(atob(b)))); };
-$('#xferBtn').onclick = async () => {
-  const pick = k => data[k] && data[k].via === 'marcador' ? {at: data[k].at, tasks: data[k].tasks, courses: data[k].courses} : null;
-  const payload = {v: 1, at: Date.now(), cfg: {moodleUrl: cfg.moodleUrl, electudeUrl: cfg.electudeUrl, classroomUrl: cfg.classroomUrl},
-    moodle: pick('moodle'), classroom: pick('classroom'), electude: pick('electude'), manual};
-  const link = appUrl() + '#xfer=' + b64u(payload);
-  try{
-    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'Mis tareas de Mi Estudio (ábrelo en tu otro dispositivo):', url: link}); $('#xferOut').textContent = 'Enviado ✓'; toast('✅ Enviado'); }
-    else { await navigator.clipboard.writeText(link); $('#xferOut').textContent = 'Enlace copiado ✓ — pégalo en WhatsApp, Telegram o un correo para ti.'; toast('✅ Enlace copiado'); }
-  }catch(e){ if(e.name !== 'AbortError'){ $('#xferOut').textContent = 'No se pudo copiar automáticamente.'; toast('No se pudo copiar', 'err'); } else toast('Envío cancelado', 'err'); }
-};
 function importXfer(){
   const m = location.hash.match(/^#xfer=([A-Za-z0-9_-]+)$/); if(!m) return false;
   history.replaceState(null, '', location.pathname);
@@ -1525,6 +1613,7 @@ $('#shareLink').onclick = async () => {
 })();
 
 /* ---------- arranque ---------- */
+importZ().then(ok => { if(ok) renderAll(); });
 try{ if(sessionStorage.getItem('me_wiped')){ sessionStorage.removeItem('me_wiped'); setTimeout(() => toast('🗑 Datos de este dispositivo borrados'), 300); } }catch(e){}
 importXfer() || importSync();
 renderAll();
