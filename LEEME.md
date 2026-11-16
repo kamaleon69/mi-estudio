@@ -1,119 +1,93 @@
-# Mi Estudio: Moodle + Google Classroom + Electude
+# Mi Estudio: Moodle + Classroom + Electude en una sola app
 
-Una web instalable (PWA) que funciona en el PC y en Android. Reúne en una sola lista
-las tareas pendientes de las tres plataformas y te deja hacer esto:
+**Web:** https://kamaleon69.github.io/mi-estudio/
 
-| | Ver tareas y fechas | Ver material de estudio | Escribir | Entregar |
-|---|---|---|---|---|
-| **Moodle** | ✅ | ✅ (temas, archivos y enlaces de cada curso) | ✅ texto en línea | ✅ texto y archivos, desde la app |
-| **Classroom** | ✅ | ✅ (materiales y adjuntos) | ✅ borrador para copiar | ↗ botón que abre la tarea en Classroom (Google no permite entregar desde apps externas) |
-| **Electude** | ✅ las tareas que apuntes | ↗ acceso directo | ✅ notas | ↗ en Electude |
+Reúne en una lista las tareas pendientes de **Moodle** (Jesuïtes Educació), **Google Classroom** y **Electude**, ordenadas por fecha. Incluye un asistente con **Claude o Gemini** y una herramienta tipo **Lens** para preguntar sobre cualquier parte de la pantalla.
 
-Todo se guarda solo en tu navegador: tokens, borradores y tareas de Electude. No hay ningún servidor intermedio.
+Funciona en **Android, iPhone/iPad, Windows y Mac**. Tus datos se guardan solo en tu dispositivo: en la web no hay nada tuyo.
 
 ---
 
-## 1. Publicarla gratis con GitHub Pages (≈5 min)
+## 1. Instalar la app
 
-Google solo permite iniciar sesión desde una dirección `https://` fija, así que la app necesita estar alojada en una web.
+Abre la web y pulsa el botón azul **⬇ Añadir** de arriba. Te dará los pasos exactos para tu dispositivo:
 
-1. Crea una cuenta en <https://github.com> si no tienes.
-2. Pulsa **New repository**, llámalo por ejemplo `mi-estudio` y márcalo como **Public**.
-3. Pulsa **Add file → Upload files** y sube los 6 archivos de la carpeta: `index.html`, `sw.js`, `manifest.json`, `icon-192.png`, `icon-512.png` y este `LEEME.md`.
-4. Ve a **Settings → Pages**, elige *Branch: main* y la carpeta `/ (root)`, y pulsa **Save**.
-5. Al minuto tendrás la app en `https://TU-USUARIO.github.io/mi-estudio/`.
+- **Android** (Chrome): menú ⋮ → **Instalar aplicación**.
+- **iPhone / iPad** (Safari): **Compartir** (□↑) → **Añadir a pantalla de inicio**.
+- **Windows** (Chrome o Edge): icono de **instalar** en la barra de direcciones. Marca «crear acceso directo en el escritorio».
+- **Mac**: en Safari, **Archivo → Añadir al Dock**. En Chrome o Edge, icono de instalar en la barra de direcciones.
 
-Los archivos no contienen ningún dato tuyo, así que puede ser un repositorio público.
+## 2. Conectar Moodle y Classroom (marcador ⚡)
 
-## 2. Conectar Moodle
+En Jesuïtes Educació, Moodle y Google bloquean las apps externas. Por eso la app usa un **marcador**: lee tus tareas con la sesión que ya tienes abierta en el navegador. No usa contraseñas.
 
-En la app, ve a **Ajustes → Moodle**:
-- Pon la dirección de tu Moodle, por ejemplo `https://campus.tucentro.es`.
-- Escribe tu usuario y contraseña y pulsa **Conectar Moodle**.
+**Guardar el marcador (solo la primera vez, en el ordenador)**
 
-La app usa el mismo acceso que la app oficial de Moodle, que ya me has dicho que en tu centro funciona.
+1. En la app, ve a **Ajustes → ⚡ Conectar Moodle y Classroom**.
+2. Pulsa **Ctrl + Shift + B** (en Mac **⌘ + Shift + B**) para ver la barra de marcadores.
+3. **Arrastra** el botón azul **⚡ Sincronizar Mi Estudio** hasta esa barra. No hagas clic en él.
 
-**Si sale «Inicio de sesión no válido»**, prueba el usuario **sin** el dominio (por ejemplo `447173.clot` en lugar de `447173.clot@fje.edu`). Escríbelo exactamente igual que en la app oficial de Moodle.
+**Moodle**
 
-**Si entras a Moodle con el botón de Google o Microsoft, o el usuario y la contraseña siguen sin funcionar**, usa el método de la app oficial de Moodle:
+1. Abre https://moodle4.net.fje.edu y entra con tu cuenta de Microsoft del centro, como siempre.
+2. En el «Tauler de control», pulsa el marcador **⚡ Sincronizar Mi Estudio**.
+3. Se abre Mi Estudio con «✅ Moodle sincronizado».
 
-1. En **Ajustes → Moodle**, escribe la dirección de tu Moodle y pulsa **🔐 Entrar con mi cuenta del centro**.
-2. Pulsa **📋 Copiar enlace**.
-3. Abre una **ventana privada**: Ctrl+Shift+P en Firefox o Zen, Ctrl+Shift+N en Chrome o Edge. Pega el enlace y pulsa Enter.
-   Tiene que ser privada: Moodle solo entrega el token si **acabas** de iniciar sesión. Si ya tenías la sesión abierta, sale el error *«Plugin no habilitat o configurat»*.
-4. Inicia sesión en Moodle como siempre.
-5. Al terminar verás una página de error cuya dirección empieza por `moodlemobile://token=…`. Es normal. Si sale un aviso para «abrir Moodle», pulsa Cancelar.
-6. Copia esa dirección entera desde la barra de direcciones (Ctrl+A, Ctrl+C), pégala en la app y pulsa **Conectar**.
-   En Chrome a veces no se ve esa dirección; si te pasa, haz este paso en Firefox, Zen o Edge.
+**Classroom**
 
-Otra opción, si tu centro la tiene activada: en Moodle, ve a *Preferencias → Claves de seguridad*, copia la clave de **Moodle mobile web service** y pégala en «Token manual». En el Moodle de Jesuïtes Educació esta página aparece vacía, así que allí usa el método anterior.
+1. Abre https://classroom.google.com/a/not-turned-in/all con tu cuenta **@fje.edu**. Si sale tu Gmail personal, pulsa tu foto (arriba a la derecha) y elige la cuenta del centro.
+2. En **Pendents**, pulsa el marcador. La página pasa sola a «Sense entregar» y vuelve, porque lee también las tareas vencidas. Espera unos segundos.
+3. Se abre Mi Estudio con «✅ Classroom sincronizado».
 
-> El token es como una contraseña para la app: no se lo pases a nadie. Si alguna vez quieres anularlo, cierra la sesión de Moodle en todos los dispositivos o cambia tu contraseña.
+**Para actualizar**, repite lo de Moodle o Classroom cuando quieras, por ejemplo una vez al día.
 
-## 2b. Si tu centro bloquea la conexión: el marcador «⚡ Sincronizar Mi Estudio»
+> Con el marcador **ves** las tareas, fechas y cursos. Para **entregar**, pulsa «Abrir en Moodle» o «Abrir en Classroom» en cada tarea.
 
-En algunos centros, como Jesuïtes Educació, Moodle y Google bloquean las apps externas. En ese caso usa el marcador. Lee tus tareas **con la sesión que ya tienes abierta** en Moodle o Classroom y las pasa a Mi Estudio.
+## 3. Electude
 
-1. En la app ve a **Ajustes → ⚡ Sincronizar con el marcador**.
-2. Pulsa **Ctrl+Shift+B** para mostrar la barra de marcadores y **arrastra** el botón «⚡ Sincronizar Mi Estudio» hasta ella.
-3. Para sincronizar:
-   - **Moodle:** entra en tu Moodle (cualquier página) y pulsa el marcador.
-   - **Classroom:** entra en **Classroom → Pendientes** con tu cuenta del centro y pulsa el marcador. Lee también la pestaña «Sin entregar».
-4. Se abre Mi Estudio con las tareas cargadas. Repite el paso 3 cada vez que quieras actualizar.
+- El botón **Abrir Electude** abre `https://clotfje.electude.eu/srestore`. En el PC se abre en una ventana lateral para usarlo junto a la app.
+- Electude no deja que otras apps lean tus tareas. Apúntalas en la pestaña **Electude** con título y fecha, y aparecerán en «Pendientes» junto al resto.
 
-Con el marcador **ves** las tareas, fechas y cursos. Para entregar, pulsa «Abrir en Moodle» o «Abrir en Classroom». El marcador no envía tu contraseña ni tu sesión a ningún sitio.
+## 4. Tenerlo también en el móvil (o en otro ordenador)
 
-## 3. Conectar Google Classroom (≈10 min, solo una vez)
+Cada dispositivo guarda sus datos aparte. Lo más fácil es sincronizar en el PC y enviar las tareas al móvil:
 
-Necesitas un "Client ID" gratuito de Google:
+1. En el PC, sincroniza con el marcador (paso 2).
+2. Ve a **Ajustes → 📲 Pasar a otro dispositivo** y pulsa **Enviar a otro dispositivo**. Se copia un enlace.
+3. Mándatelo a ti mismo (WhatsApp, Telegram o correo) y ábrelo en el móvil. Las tareas aparecen solas.
 
-1. Entra en <https://console.cloud.google.com> y crea un proyecto nuevo (por ejemplo, "Mi Estudio").
-   Si la cuenta del centro no te deja, usa tu Gmail personal: el proyecto puede ser de cualquier cuenta.
-2. Ve a **APIs y servicios → Biblioteca**, busca **Google Classroom API** y pulsa **Habilitar**.
-3. Ve a **APIs y servicios → Pantalla de consentimiento de OAuth** (o "Google Auth Platform"):
-   - Tipo de usuario: **Externo**.
-   - Nombre: Mi Estudio, y tu correo de contacto.
-   - En **Usuarios de prueba** (Audience → Test users), añade **tu correo del centro**.
-4. Ve a **Credenciales → Crear credenciales → ID de cliente de OAuth**:
-   - Tipo: **Aplicación web**.
-   - En **Orígenes de JavaScript autorizados**, añade `https://TU-USUARIO.github.io`, sin barra final ni `/mi-estudio`.
-5. Copia el **ID de cliente** (termina en `.apps.googleusercontent.com`) y pégalo en la app, en **Ajustes → Google Classroom**.
-6. Pulsa **Guardar y conectar** e inicia sesión con tu cuenta del centro.
-   Google avisará de que la app "no está verificada". Es normal, porque la app es tuya: pulsa *Continuar*.
+El enlace no lleva contraseñas, tokens ni claves de IA, pero sí tu lista de tareas: envíatelo solo a ti.
 
-> ⚠️ Con cuentas de un centro educativo, el administrador puede tener bloqueadas las apps externas.
-> Si al iniciar sesión sale *"Acceso bloqueado: tu administrador…"* o *"admin_policy_enforced"*, no hay nada que hacer desde tu lado.
-> Tendrías que pedir al coordinador TIC que autorice la app (el Client ID). Moodle y Electude seguirán funcionando igual.
+Si prefieres usar el marcador directamente en el móvil, las instrucciones para Android y iPhone están en la ⓘ de **⚡ Conectar Moodle y Classroom**.
 
-La sesión de Google dura una hora. Después, al pulsar «Actualizar», volverá a pedírtela con un clic.
+## 5. Asistente IA y Lens
 
-## 4. Asistente IA y Lens (Claude y Gemini)
+- **✳ Claude** (abajo a la derecha) o **✳ Ayuda** dentro de una tarea: abre un chat. Desde una tarea, la IA ya sabe cuál es. Con «Pegar en mi borrador» guardas la respuesta en tus notas de esa tarea.
+- **🔍 Lens**: arrastra sobre una zona de la pantalla y elige **Claude** o **Gemini**. Con **📷 Foto** envías una foto de tu libreta o tu libro.
 
-- **✳ Claude** (botón abajo a la derecha, o «✳ Ayuda» dentro de una tarea): abre un chat. Si lo abres desde una tarea, la IA ya conoce el enunciado y lo que llevas escrito. Con «Pegar en mi borrador» pasas la respuesta a tu entrega.
-- **🔍 Lens**: oscurece la pantalla. Arrastra con el dedo o el ratón sobre la zona que quieras y elige **Claude** o **Gemini**. La zona se envía como imagen y como texto. Con **📷 Foto** puedes enviar una foto de tu libreta, de un libro o de la pizarra.
+Dos formas de usarlo:
 
-Hay dos formas de usarlo:
+- **Con tu cuenta normal, sin configurar nada:** se abre claude.ai o Gemini con tu pregunta. En el móvil, a través de «Compartir».
+- **Chat dentro de la app:** pon una clave en **Ajustes → Asistentes IA**. La de Gemini es gratis en https://aistudio.google.com/apikey con tu Gmail personal. La de Claude se crea en https://console.anthropic.com/settings/keys y se paga por uso, aparte de Claude Pro.
 
-**A) Con tu cuenta normal, sin configurar nada.** La app no puede conectarse directamente a una suscripción de Claude ni de Gemini, así que les pasa tu pregunta:
-- En el móvil se abre el menú **Compartir**. Elige la app de Claude o la de Gemini y entra con tu cuenta, con la imagen y el texto ya incluidos.
-- En el PC se abre **claude.ai** con tu pregunta ya escrita, o **Gemini**, y la imagen queda copiada para pegarla con Ctrl+V.
+## 6. Compartir con compañeros
 
-**B) Chat dentro de la app, con clave de API.** Pon las claves en **Ajustes → Asistentes IA**:
-- **Gemini (gratis):** entra en <https://aistudio.google.com> con tu Gmail personal y pulsa **Get API key → Create API key**. Las cuentas del centro suelen tener AI Studio bloqueado.
-- **Claude:** entra en <https://console.anthropic.com>, ve a **API Keys → Create Key** y añade saldo. Se paga por uso (unos céntimos por pregunta) y es aparte de la suscripción Claude Pro.
+**Ajustes → Compartir con compañeros → Copiar enlace**. Tu compañero abre el enlace, ve la app vacía (nada tuyo), la instala con **⬇ Añadir** y sigue el paso 2 con **sus** cuentas.
 
-Las claves se guardan solo en tu dispositivo y van directamente de tu navegador a Anthropic o Google. No las compartas con nadie.
+## 7. Problemas frecuentes
 
-## 5. Instalarla
+- **No veo los últimos cambios:** pulsa **Ctrl + Shift + R**.
+- **El marcador dice «abre Moodle, Classroom o Electude»:** lo has pulsado en otra página. Ábrelo dentro de Moodle o de Classroom → Pendents.
+- **Classroom no carga tareas:** comprueba que estás con la cuenta **@fje.edu** y en la página **Pendents**.
+- **Al pulsar el marcador no se abre la app:** el navegador ha bloqueado la ventana. Permite las ventanas emergentes para Moodle y Classroom, o pulsa el marcador otra vez.
+- **En el móvil no aparece nada:** cada dispositivo es independiente. Usa «📲 Pasar a otro dispositivo» desde el PC.
 
-- **Android (Chrome):** abre tu dirección de GitHub Pages, entra en el menú ⋮ y pulsa **Añadir a pantalla de inicio / Instalar app**. Tendrás un icono como si fuera una app.
-- **PC (Chrome o Edge):** pulsa el icono de instalar que aparece en la barra de direcciones.
+---
 
-Los datos se guardan en cada dispositivo por separado, así que tendrás que conectarte una vez en el PC y otra en el móvil.
+### Conexión directa (avanzado, desactivada en tu centro)
 
-## Problemas frecuentes
+La app también puede conectarse directamente a Moodle (usuario y contraseña o token) y a Classroom (Google Cloud). Con eso se podría entregar desde la app. En Jesuïtes Educació está bloqueada: Moodle responde «Plugin no habilitat» y Classroom necesita la aprobación del administrador. Si algún día la activan, se configura en **Ajustes → 🔧 Conexión directa**.
 
-- **Moodle: "Failed to fetch".** Revisa la dirección del Moodle (que empiece por `https://` y no termine en `/login`).
-- **Moodle: "invalidlogin".** El usuario o la contraseña no son correctos, o tu centro usa inicio de sesión con Google (usa el token manual).
-- **Classroom: "redirect_uri_mismatch" u "origin".** El origen autorizado del paso 3.4 no coincide exactamente con tu dirección de GitHub Pages.
-- **Classroom: "access_denied".** No te añadiste como usuario de prueba en el paso 3.3.
+### Actualizar la web (solo el propietario)
+
+Sube los archivos nuevos a https://github.com/kamaleon69/mi-estudio con **Add file → Upload files** y pulsa **Commit changes**. En un par de minutos estará en la web.

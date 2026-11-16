@@ -8,6 +8,10 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#1f3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Estudio">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#f4f6f9;--card:#fff;--ink:#1c2430;--muted:#667085;--line:#e3e7ee;--brand:#1f3a5f;--accent:#2f6fde;
@@ -127,7 +131,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #lensBar button{border:0;border-radius:999px;padding:9px 14px;font:600 14px system-ui,sans-serif;cursor:pointer;color:#fff;background:#3a3f47;white-space:nowrap}
 #lensBar button.cl{background:#d97757}#lensBar button.ge{background:#4b7bec}
 #lensBar button:disabled{opacity:.4;cursor:default}
-@media (max-width:520px){#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
+@media (max-width:520px){#syncInfo{display:none}#hdrInstall .lbl{display:none}#ai .ai-h strong{display:none}#lensBar{gap:5px;padding:6px;max-width:96vw}#lensBar button{padding:8px 10px;font-size:13px}}
 #lensBusy{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:50;color:#fff;font-weight:600}
 </style>
 </head>
@@ -135,6 +139,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 <header>
   <h1>📚 Mi Estudio</h1>
   <span id="syncInfo" class="meta"></span>
+  <button class="btn small primary" id="hdrInstall" type="button" hidden>⬇ <span class="lbl">Añadir al escritorio</span></button>
   <button class="btn small" id="syncBtn">↻ Actualizar</button>
 </header>
 <nav>
@@ -176,28 +181,70 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 
   <section id="cfg">
     <div class="card" style="border-color:var(--accent)">
-      <strong>⚡ Sincronizar con el marcador</strong>
-      <p class="meta small">Si tu centro bloquea la conexión directa (como Jesuïtes Educació), usa este botón: lee tus tareas <b>con la sesión que ya tienes abierta</b> en Moodle, Classroom o Electude y las trae aquí.</p>
+      <strong>⚡ Conectar Moodle y Classroom (marcador)</strong>
+      <p class="meta small">Es la forma que funciona en Jesuïtes Educació. El marcador lee tus tareas <b>con la sesión que ya tienes abierta</b> en Moodle y Classroom y las trae aquí. No usa contraseñas.</p>
       <div class="row" style="margin:10px 0"><a class="btn primary" id="bmLink" href="#" title="Arrástrame a la barra de marcadores">⚡ Sincronizar Mi Estudio</a><span class="meta small">← arrástralo a tu barra de marcadores</span></div>
       <div id="bmStatus" class="meta small"></div>
-      <details class="help"><summary><span class="i">i</span> Cómo usarlo</summary><div class="hb">
+      <details class="help" id="bmHelp"><summary><span class="i">i</span> Cómo conectarte (paso a paso)</summary><div class="hb">
+        <p><b>1. Guarda el marcador (solo la primera vez)</b></p>
         <ol>
-          <li>Muestra la barra de marcadores: <b>Ctrl + Shift + B</b>.</li>
-          <li><b>Arrastra</b> el botón «⚡ Sincronizar Mi Estudio» hasta esa barra. No hagas clic en él aquí: tiene que quedar guardado como marcador.</li>
-          <li>Entra en tu web y pulsa el marcador:
-            <ul>
-              <li><b>Moodle</b>: en cualquier página de <a href="https://moodle4.net.fje.edu/my/" target="_blank" rel="noopener">tu Moodle</a> con la sesión iniciada.</li>
-              <li><b>Classroom</b>: en <a href="https://classroom.google.com/a/not-turned-in/all" target="_blank" rel="noopener">Classroom → Pendientes</a>, con tu cuenta del centro (@fje.edu). El marcador lee también las tareas «Sin entregar».</li>
-              <li><b>Electude</b>: en tu página de Electude con la sesión iniciada.</li>
-            </ul></li>
-          <li>Se abrirá Mi Estudio con las tareas cargadas. Repite el paso 3 cuando quieras actualizar.</li>
+          <li>Pulsa <b>Ctrl + Shift + B</b> (en Mac <b>⌘ + Shift + B</b>) para ver la barra de marcadores.</li>
+          <li><b>Arrastra</b> el botón azul «⚡ Sincronizar Mi Estudio» hasta esa barra. No hagas clic en él aquí.</li>
         </ol>
-        <div class="tip">El marcador no envía tu contraseña ni tu sesión a ningún sitio: lee la lista de tareas en tu navegador y se la pasa a esta app, que la guarda solo en este dispositivo. Desde aquí no se puede entregar: usa «Abrir en Moodle/Classroom».</div>
-        <p class="small"><b>En el móvil:</b> guarda cualquier página como marcador, edítalo, cambia su dirección por el código del botón (pulsa «Copiar código») y llámalo <i>Sincronizar</i>. Después, estando en Moodle o Classroom, escribe «Sincronizar» en la barra de direcciones y elige el marcador. <button class="btn small" type="button" id="bmCopy">Copiar código</button></p>
+        <p><b>2. Moodle</b></p>
+        <ol>
+          <li>Abre <a href="https://moodle4.net.fje.edu/my/" target="_blank" rel="noopener">moodle4.net.fje.edu</a> y entra con tu cuenta de Microsoft del centro, como siempre.</li>
+          <li>En el «Tauler de control», pulsa el marcador <b>⚡ Sincronizar Mi Estudio</b>.</li>
+          <li>Se abre Mi Estudio con el mensaje verde «Moodle sincronizado».</li>
+        </ol>
+        <p><b>3. Classroom</b></p>
+        <ol>
+          <li>Abre <a href="https://classroom.google.com/a/not-turned-in/all" target="_blank" rel="noopener">Classroom → Pendents</a> con tu cuenta <b>@fje.edu</b>. Si sale tu Gmail personal, pulsa tu foto (arriba a la derecha) y elige la cuenta del centro.</li>
+          <li>En «Pendents», pulsa el marcador. La página cambiará sola a «Sense entregar» y volverá: está leyendo también las vencidas. Espera unos segundos.</li>
+          <li>Se abre Mi Estudio con «Classroom sincronizado».</li>
+        </ol>
+        <p><b>4. Para actualizar</b>, repite el paso 2 o el 3 cuando quieras (por ejemplo, una vez al día).</p>
+        <div class="tip">El marcador no envía tu contraseña ni tu sesión a ningún sitio: lee la lista en tu navegador y la guarda solo en este dispositivo. Para <b>entregar</b>, usa el botón «Abrir en Moodle/Classroom» de cada tarea.</div>
+        <p class="small" style="margin-top:10px"><b>En el móvil</b>, lo más fácil es sincronizar en el PC y usar <b>📲 Pasar a otro dispositivo</b>. Si quieres el marcador también en el móvil: <button class="btn small" type="button" id="bmCopy">Copiar código</button></p>
+        <ul class="small">
+          <li><b>Android (Chrome):</b> guarda cualquier página como marcador (☆), edítalo, llámalo <i>Sincronizar</i> y pega el código como dirección. Para usarlo, en Moodle o Classroom escribe «Sincronizar» en la barra de direcciones y toca el marcador.</li>
+          <li><b>iPhone/iPad (Safari):</b> Compartir → Añadir marcador, llámalo <i>Sincronizar</i>. Luego en Marcadores → Editar, ábrelo y pega el código como dirección. Para usarlo, en Moodle o Classroom abre Marcadores y tócalo.</li>
+          <li>Classroom tiene que estar abierto en el <b>navegador</b> (<code>classroom.google.com</code>), no en la app de Classroom.</li>
+        </ul>
       </div></details>
     </div>
 
     <div class="card">
+      <strong>📱 Instalar la app</strong>
+      <p class="meta small">Funciona en Android, iPhone/iPad, Windows y Mac. Una vez instalada tiene su propio icono, se abre en su ventana y se actualiza sola.</p>
+      <div id="instBox"></div>
+      <details class="help"><summary><span class="i">i</span> Instrucciones para cada sistema</summary><div class="hb">
+        <p><b>🤖 Android</b> (Chrome): menú <b>⋮</b> → <b>Instalar aplicación</b> (o «Añadir a pantalla de inicio»).</p>
+        <p><b>🍎 iPhone / iPad</b>: abre la web en <b>Safari</b> → botón <b>Compartir</b> (□↑) → <b>Añadir a pantalla de inicio</b> → Añadir.</p>
+        <p><b>🪟 Windows</b> (Chrome o Edge): icono de <b>instalar</b> en la barra de direcciones (⊕ o 🖥↓), o menú ⋮ → <b>Enviar, guardar y compartir → Instalar página como app</b>. Aparecerá en el menú Inicio.</p>
+        <p><b>💻 Mac</b>: en <b>Safari</b>, menú <b>Archivo → Añadir al Dock</b>. En Chrome o Edge, icono de instalar en la barra de direcciones. Aparecerá en el Launchpad.</p>
+        <div class="tip">Cada dispositivo guarda sus datos aparte. Para no conectarlo todo en cada uno, usa «📲 Pasar a otro dispositivo».</div>
+      </div></details>
+    </div>
+
+    <div class="card">
+      <strong>📲 Pasar a otro dispositivo</strong>
+      <p class="meta small">Envía a tu móvil u otro ordenador las tareas sincronizadas, tus tareas de Electude y las direcciones de tus plataformas. <b>No se envían contraseñas, tokens ni claves de IA.</b></p>
+      <div class="row"><button class="btn primary" id="xferBtn" type="button">📲 Enviar a otro dispositivo</button><span id="xferOut" class="meta small"></span></div>
+      <details class="help"><summary><span class="i">i</span> Cómo funciona</summary><div class="hb">
+        <ol>
+          <li>Sincroniza aquí con el marcador ⚡ (Moodle, Classroom…).</li>
+          <li>Pulsa <b>Enviar a otro dispositivo</b>: en el móvil se abre «Compartir» y en el PC se copia un enlace. Mándatelo por WhatsApp, Telegram o correo.</li>
+          <li>Abre ese enlace en el otro dispositivo (en la app instalada o en el navegador) y las tareas aparecerán.</li>
+        </ol>
+        <div class="tip">El enlace contiene tu lista de tareas: envíatelo solo a ti. Repite el envío cuando vuelvas a sincronizar.</div>
+      </div></details>
+    </div>
+
+    <details class="card" id="advConn">
+      <summary style="cursor:pointer"><strong>🔧 Conexión directa (avanzado)</strong> <span class="meta small">— solo si tu centro lo permite. En Jesuïtes Educació está bloqueada: usa el marcador ⚡.</span></summary>
+      <p class="meta small">Con la conexión directa podrías entregar desde la app, pero tu centro la tiene desactivada en Moodle («Plugin no habilitat») y pendiente de aprobación en Classroom. Si algún día la activan, se configura aquí.</p>
+    <div class="card" style="background:var(--bg)">
       <strong>Moodle</strong>
       <label>Dirección de tu Moodle</label>
       <input id="mUrl" placeholder="https://campus.tucentro.es" autocomplete="url">
@@ -251,7 +298,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <div class="tip">Para comprobar que tu centro lo permite: si puedes entrar con la <a href="https://download.moodle.org/mobile/" target="_blank" rel="noopener">app oficial de Moodle</a>, esta app también funciona.</div></div></details>
     </div>
 
-    <div class="card">
+    <div class="card" style="background:var(--bg)">
       <strong>Google Classroom</strong>
       <label>Google OAuth Client ID</label>
       <input id="gCid" placeholder="123456-abc.apps.googleusercontent.com">
@@ -271,6 +318,8 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       </ol>
       <div class="tip">Google avisará de que la app «no está verificada»: es normal, porque la app es tuya. Pulsa <i>Continuar</i>. Si sale «Acceso bloqueado por tu administrador», es tu centro el que lo impide y hay que pedírselo al coordinador TIC.</div></div></details>
     </div>
+
+    </details>
 
     <div class="card">
       <strong>Electude</strong>
@@ -316,13 +365,11 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 
     <div class="card">
       <strong>Compartir con compañeros</strong>
-      <p class="meta small">Genera un enlace que ya trae la dirección de Moodle, la de Electude y la configuración de Classroom. <b>No incluye tus sesiones, tokens, claves ni tareas</b>: cada compañero ve la app vacía hasta que inicia sesión con sus propias cuentas.</p>
+      <p class="meta small">Genera un enlace con la dirección de Moodle y de Electude ya puestas. <b>No incluye tus tareas, sesiones ni claves</b>: cada compañero ve la app vacía hasta que sincroniza con sus propias cuentas.</p>
       <div class="row"><button class="btn primary" id="shareLink">🔗 Copiar enlace para compañeros</button><span id="shareOut" class="meta small"></span></div>
-      <details class="help"><summary><span class="i">i</span> Cómo conectarte</summary><div class="hb"><ol>
-        <li>Conecta primero tu Moodle y tu Classroom (así el enlace lleva la dirección y el Client ID correctos).</li>
+      <details class="help"><summary><span class="i">i</span> Cómo compartirla</summary><div class="hb"><ol>
         <li>Pulsa <b>Copiar enlace para compañeros</b> y envíaselo por WhatsApp, correo, etc.</li>
-        <li>Para Classroom, añade el correo del centro de cada compañero en <a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google Cloud → Audiencia → Usuarios de prueba</a> (hasta 100).</li>
-        <li>Tu compañero abre el enlace, va a <b>Ajustes</b> e inicia sesión con <b>sus</b> cuentas. No verá nada tuyo.</li>
+        <li>Tu compañero abre el enlace (lo verá vacío: no hay nada tuyo), pulsa <b>⬇ Añadir</b> para instalarla y sigue <b>⚡ Conectar Moodle y Classroom</b> con <b>sus</b> cuentas.</li>
       </ol></div></details>
     </div>
 
@@ -343,6 +390,11 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
   <button class="fab lens" id="lensBtn" title="Seleccionar una zona de la pantalla y preguntar a la IA"><span class="ic">🔍</span><span class="lbl">Lens</span></button>
   <button class="fab claude" id="aiBtn" title="Asistente IA"><span class="ic">✳</span><span class="lbl">Claude</span></button>
 </div>
+
+<dialog id="instDlg" style="width:min(460px,94vw)">
+  <div class="dlg-h"><h3 id="instTitle">Añadir Mi Estudio</h3><button class="btn small" id="instClose" type="button">✕</button></div>
+  <div class="dlg-b" id="instBody"></div>
+</dialog>
 
 <dialog id="ai">
   <div class="ai-h">
@@ -557,10 +609,11 @@ async function sync(interactive = false){
   $('#syncBtn').innerHTML = '<span class="spin"></span>'; msg('');
   const errs = [];
   if(cfg.moodleUrl && cfg.moodleToken){ try{ await loadMoodle(); }catch(e){ errs.push('Moodle: ' + esc(e.message)); } }
-  if(cfg.googleClientId && !isLocalFile()){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length && data.classroom.via !== 'marcador') errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
+  if(cfg.googleClientId && !isLocalFile() && (data.classroom.via !== 'marcador' || gToken)){ try{ const ok = await loadClassroom(interactive); if(!ok && !data.classroom.tasks.length && data.classroom.via !== 'marcador') errs.push('Classroom: pulsa «Actualizar» para iniciar sesión con Google.'); }catch(e){ errs.push('Classroom: ' + esc(e.message)); } }
   data.at = Date.now(); store.set('cache', data);
   if(errs.length) msg(errs.join('<br>'), 'err'); else if(syncNote){ msg(syncNote, 'ok'); syncNote = ''; }
-  if(!cfg.moodleToken && !cfg.googleClientId && !hasMarkerData()) msg('Empieza en <b>Ajustes</b>: conecta Moodle y pon tu Client ID de Google para Classroom.', 'info');
+  if(interactive && !errs.length && !cfg.moodleToken && hasMarkerData()) msg('Para actualizar, abre Moodle o Classroom y pulsa tu marcador <b>⚡ Sincronizar Mi Estudio</b>: <a href="https://moodle4.net.fje.edu/my/" target="_blank" rel="noopener">Moodle</a> · <a href="https://classroom.google.com/a/not-turned-in/all" target="_blank" rel="noopener">Classroom</a>', 'info');
+  if(!cfg.moodleToken && !cfg.googleClientId && !hasMarkerData()) msg('👋 Para empezar ve a <b>Ajustes → ⚡ Conectar Moodle y Classroom</b> y sigue la ⓘ. Son 2 minutos.', 'info');
   syncing = false; $('#syncBtn').textContent = '↻ Actualizar';
   renderAll();
 }
@@ -1188,7 +1241,7 @@ $('#aiSave').onclick = () => {
 };
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; $('#aiSys').value = cfg.aiSystem; }
 
-function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); }
+function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); }
 
 /* ---------- Electude en ventana lateral (PC) ----------
    Electude no permite abrirse dentro de otra web, así que en el PC se abre
@@ -1276,6 +1329,7 @@ const appUrl = () => isLocalFile() ? WEB_URL : location.origin + location.pathna
 const bookmarkletCode = () => 'javascript:' + encodeURIComponent('(' + __msSync.toString() + ')(' + JSON.stringify(appUrl()) + ');void 0');
 function renderBookmarklet(){
   const a = $('#bmLink'); if(!a) return;
+  if(!hasMarkerData() && !cfg.moodleToken) $('#bmHelp').open = true;
   a.href = bookmarkletCode();
   a.onclick = e => { e.preventDefault(); $('#bmStatus').innerHTML = '<span style="color:var(--warn)">Arrástralo a la barra de marcadores (no hagas clic aquí).</span>'; };
   const parts = ['moodle', 'classroom', 'electude'].filter(k => data[k] && data[k].via === 'marcador').map(k => `${SRC[k]}: ${data[k].tasks.length} tareas · ${new Date(data[k].at).toLocaleString('es-ES', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'})}`);
@@ -1302,6 +1356,102 @@ function importSync(){
 }
 window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 
+/* ---------- instalar (PWA) ---------- */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; renderInstall(); });
+window.addEventListener('appinstalled', () => { installEvt = null; renderInstall(); });
+function platform(){
+  const ua = navigator.userAgent;
+  if(/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+  if(/Android/.test(ua)) return 'android';
+  if(/Macintosh/.test(ua)) return 'mac';
+  if(/Windows/.test(ua)) return 'windows';
+  return 'otro';
+}
+function installInfo(){
+  const pl = platform(), ua = navigator.userAgent, safari = /Safari/.test(ua) && !/Chrome|CriOS|Edg|FxiOS|Firefox/.test(ua);
+  const mobile = pl === 'ios' || pl === 'android';
+  const label = mobile ? 'Añadir a la pantalla de inicio' : 'Añadir al escritorio';
+  const steps = {
+    ios: safari ? ['Pulsa el botón <b>Compartir</b> (□↑), abajo en el iPhone o arriba en el iPad.', 'Baja y elige <b>Añadir a pantalla de inicio</b>.', 'Pulsa <b>Añadir</b>. El icono de Mi Estudio aparecerá con tus apps.']
+                 : ['Copia esta dirección y ábrela en <b>Safari</b>: <code>' + WEB_URL + '</code>', 'En Safari pulsa <b>Compartir</b> (□↑).', 'Elige <b>Añadir a pantalla de inicio</b> y pulsa <b>Añadir</b>.'],
+    android: ['Toca el menú <b>⋮</b> de Chrome (arriba a la derecha).', 'Elige <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b>.', 'Confirma con <b>Instalar</b>. El icono aparecerá en tu pantalla de inicio.'],
+    mac: safari ? ['En la barra de menús, abre <b>Archivo</b>.', 'Elige <b>Añadir al Dock</b> y pulsa <b>Añadir</b>.', 'Mi Estudio aparecerá en el Dock y en el Launchpad.']
+               : ['Pulsa el icono de <b>instalar</b> (🖥↓) a la derecha de la barra de direcciones, o menú ⋮ → <b>Enviar, guardar y compartir → Instalar página como app</b>.', 'Confirma con <b>Instalar</b>.', 'La tendrás en el Launchpad; arrástrala al Dock o al escritorio si quieres.'],
+    windows: ['Pulsa el icono de <b>instalar</b> (🖥↓) a la derecha de la barra de direcciones. En Edge: menú … → <b>Aplicaciones → Instalar este sitio como aplicación</b>.', 'Confirma con <b>Instalar</b> y marca <b>Crear acceso directo en el escritorio</b> si te lo pregunta.', 'Mi Estudio aparecerá en el menú Inicio y en el escritorio.'],
+    otro: ['Busca en el menú de tu navegador <b>Instalar</b> o <b>Añadir a pantalla de inicio</b>.']}[pl];
+  return {pl, label, steps};
+}
+function openInstall(){
+  if(installEvt){ installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; renderInstall(); }); return; }
+  const {label, steps} = installInfo();
+  $('#instTitle').textContent = label;
+  $('#instBody').innerHTML = (isLocalFile() ? `<div class="msg info">Primero abre la web: <a href="${WEB_URL}" target="_blank" rel="noopener">${WEB_URL}</a></div>` : '') +
+    '<ol>' + steps.map(x => '<li style="margin:8px 0">' + x + '</li>').join('') + '</ol>' +
+    '<p class="meta small">Así se abre como una app, en su propia ventana y sin barra del navegador. Se actualiza sola.</p>';
+  $('#instDlg').showModal();
+}
+$('#hdrInstall').onclick = openInstall;
+$('#instClose').onclick = () => $('#instDlg').close();
+function renderInstall(){
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const hb = $('#hdrInstall');
+  if(hb){ hb.hidden = !!standalone; hb.querySelector('.lbl').textContent = installInfo().label; hb.title = installInfo().label; }
+  const box = $('#instBox'); if(!box) return;
+  const pl = platform(), ua = navigator.userAgent, safari = /Safari/.test(ua) && !/Chrome|CriOS|Edg|FxiOS|Firefox/.test(ua);
+  const name = {ios: 'iPhone/iPad', android: 'Android', mac: 'Mac', windows: 'Windows', otro: 'este dispositivo'}[pl];
+  if(standalone){ box.innerHTML = `<div class="msg ok">✅ Ya la estás usando como app instalada en ${name}.</div>`; return; }
+  if(isLocalFile()){ box.innerHTML = `<div class="msg info">Para instalarla, ábrela desde la web: <a href="${WEB_URL}" target="_blank" rel="noopener">${WEB_URL}</a></div>`; return; }
+  if(installEvt){ box.innerHTML = `<button class="btn primary" id="instBtn" type="button">⬇ ${installInfo().label}</button>`; $('#instBtn').onclick = openInstall; return; }
+  const steps = {
+    ios: safari ? 'Pulsa <b>Compartir</b> (□↑) abajo y elige <b>Añadir a pantalla de inicio</b>.' : 'Abre esta web en <b>Safari</b>, pulsa <b>Compartir</b> (□↑) y elige <b>Añadir a pantalla de inicio</b>.',
+    android: 'Menú <b>⋮</b> de Chrome → <b>Instalar aplicación</b> o «Añadir a pantalla de inicio».',
+    mac: safari ? 'Menú <b>Archivo → Añadir al Dock</b>.' : 'Pulsa el icono de <b>instalar</b> en la barra de direcciones, o usa Safari → Archivo → Añadir al Dock.',
+    windows: 'Pulsa el icono de <b>instalar</b> en la barra de direcciones (Chrome o Edge), o menú ⋮ → Enviar, guardar y compartir → Instalar página como app.',
+    otro: 'Usa la opción «Instalar» o «Añadir a pantalla de inicio» de tu navegador.'}[pl];
+  box.innerHTML = `<div class="msg info">Estás en <b>${name}</b>. ${steps}</div>`;
+}
+
+/* ---------- pasar a otro dispositivo ---------- */
+const b64u = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64u = t => { let b = t.replace(/-/g, '+').replace(/_/g, '/'); while(b.length % 4) b += '='; return JSON.parse(decodeURIComponent(escape(atob(b)))); };
+$('#xferBtn').onclick = async () => {
+  const pick = k => data[k] && data[k].via === 'marcador' ? {at: data[k].at, tasks: data[k].tasks, courses: data[k].courses} : null;
+  const payload = {v: 1, at: Date.now(), cfg: {moodleUrl: cfg.moodleUrl, electudeUrl: cfg.electudeUrl, googleClientId: cfg.googleClientId},
+    moodle: pick('moodle'), classroom: pick('classroom'), electude: pick('electude'), manual};
+  const link = appUrl() + '#xfer=' + b64u(payload);
+  try{
+    if(isTouch() && navigator.share){ await navigator.share({title: 'Mi Estudio', text: 'Mis tareas de Mi Estudio (ábrelo en tu otro dispositivo):', url: link}); $('#xferOut').textContent = 'Enviado ✓'; }
+    else { await navigator.clipboard.writeText(link); $('#xferOut').textContent = 'Enlace copiado ✓ — pégalo en WhatsApp, Telegram o un correo para ti.'; }
+  }catch(e){ if(e.name !== 'AbortError') $('#xferOut').textContent = 'No se pudo copiar automáticamente.'; }
+};
+function importXfer(){
+  const m = location.hash.match(/^#xfer=([A-Za-z0-9_-]+)$/); if(!m) return false;
+  history.replaceState(null, '', location.pathname);
+  let d; try{ d = unb64u(m[1]); }catch(e){ msg('El enlace de transferencia está incompleto o dañado.', 'err'); return false; }
+  const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
+  const c = d.cfg || {};
+  if(okUrl(c.moodleUrl) && !cfg.moodleUrl) cfg.moodleUrl = c.moodleUrl;
+  if(okUrl(c.electudeUrl)) cfg.electudeUrl = c.electudeUrl;
+  if(/\.apps\.googleusercontent\.com$/.test(c.googleClientId || '') && !cfg.googleClientId) cfg.googleClientId = c.googleClientId;
+  saveCfg();
+  let n = 0;
+  ['moodle', 'classroom', 'electude'].forEach(k => {
+    const x = d[k]; if(!x || !Array.isArray(x.tasks)) return;
+    // reutiliza la validación del marcador
+    const enc = b64u({src: k, at: x.at, tasks: x.tasks.map(t => Object.assign({}, t, {id: String(t.id).replace(/^[mce]s/, '')})), courses: x.courses || []});
+    location.hash = ''; history.replaceState(null, '', location.pathname + '#sync=' + enc); importSync(); n += data[k].tasks.length;
+  });
+  if(Array.isArray(d.manual)){
+    const have = new Set(manual.map(t => t.id));
+    d.manual.slice(0, 200).forEach(t => { if(t && t.id && !have.has(t.id)) manual.push({id: String(t.id).slice(0, 40), title: String(t.title || '').slice(0, 300), due: typeof t.due === 'number' ? t.due : null, note: String(t.note || '').slice(0, 500), done: !!t.done}); });
+    store.set('manual', manual);
+  }
+  syncNote = `✅ Datos recibidos: ${n} tareas sincronizadas${Array.isArray(d.manual) && d.manual.length ? ' y ' + d.manual.length + ' de Electude' : ''}.`; msg(syncNote, 'ok');
+  return true;
+}
+window.addEventListener('hashchange', () => { if(importXfer()) renderAll(); });
+
 /* ---------- compartir ---------- */
 $('#shareLink').onclick = async () => {
   const qp = new URLSearchParams();
@@ -1325,7 +1475,7 @@ $('#shareLink').onclick = async () => {
 })();
 
 /* ---------- arranque ---------- */
-importSync();
+importXfer() || importSync();
 renderAll();
 window.addEventListener('load', () => sync(false));
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
