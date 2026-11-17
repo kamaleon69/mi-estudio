@@ -1,5 +1,25 @@
 # Análisis y cambios
 
+## Versión 1.10.0
+
+- Corregida la detección de cuestionarios con campo de respuesta y sin botón Comprovar.
+- Eliminada la búsqueda global de opciones: las etiquetas numéricas de la figura no se resaltan como respuestas.
+- Las preguntas de identificación en una imagen requieren captura y usan Preciso. Se conserva más resolución en la captura.
+- Si una salida numérica corresponde a un único campo, se interpreta como valor del campo; se rechaza la repetición de un valor que ya recibió Incorrecte.
+- Las preguntas completadas, marcadas o corregidas se omiten antes de capturar o consultar la IA.
+- Una petición por análisis, sin respuesta rápida provisional paralela.
+- Gestión de límites diarios, temporales y de facturación; pausa persistente por proveedor, clave y modelo.
+- Gemini admite clave principal y alternativa con cambio manual.
+- OpenAI / ChatGPT se incorpora al chat, Lens y Electude mediante Responses con texto e imágenes. Modelo inicial: gpt-5.5, editable.
+- Las claves se sincronizan con la extensión y quedan fuera de los enlaces de transferencia.
+- Encabezado con versión visible y diagnóstico de errores con etapa y traza.
+- Web 2026.11.17.7 y extensión 1.10.0.
+
+Se ejecutaron **56 pruebas automáticas** con proveedores, controles y respuestas simulados. La sintaxis y los paquetes también se validaron. La prueba visual y la comprobación dentro de una sesión real de Electude siguen pendientes; no se han utilizado claves reales ni medido un porcentaje de acierto de los modelos.
+
+Referencias: [límites de Gemini](https://ai.google.dev/gemini-api/docs/rate-limits), [OpenAI Responses](https://developers.openai.com/api/reference/resources/responses/methods/create), [imágenes de OpenAI](https://developers.openai.com/api/docs/guides/images-vision) y [modelo GPT-5.5](https://developers.openai.com/api/docs/models/gpt-5.5).
+
+
 ## Corrección 1.9.1
 
 - Corregido «Illegal invocation»: el temporizador nativo se invocaba con el objeto de la cuenta atrás como receptor. Ahora conserva el receptor del navegador al iniciar y cancelar. Se reprodujo el fallo antes de corregirlo y se añadieron pruebas de regresión.

@@ -1,13 +1,13 @@
 # Actualizar Mi Estudio y la extensión
 
-Web: **2026.11.17.6** · Extensión: **1.9.1**
+Web: **2026.11.17.7** · Extensión: **1.10.0**
 
 ## Subir la web a GitHub
 
 1. Descomprime el ZIP completo.
 2. Abre tu repositorio `kamaleon69/mi-estudio`.
 3. Sube el contenido de la carpeta en la raíz del repositorio, donde ya está `index.html`, reemplazando los archivos existentes. No metas toda la web dentro de una subcarpeta adicional.
-4. Incluye `index.html`, `version.json`, `mi-estudio-extension.zip` y `mi-estudio-extension-firefox.zip`. Son necesarios para publicar la actualización y ofrecer las descargas nuevas. Los iconos, `manifest.json` y `sw.js` también están incluidos.
+4. Incluye `ai-providers.js`, `index.html`, `version.json`, `mi-estudio-extension.zip` y `mi-estudio-extension-firefox.zip`. Son necesarios para publicar la actualización y ofrecer las descargas nuevas. Los iconos, `manifest.json` y `sw.js` también están incluidos.
 5. Las carpetas `extension-chrome` y `extension-firefox` contienen el código editable. `tests` contiene las pruebas y `tools` el empaquetador. Puedes subirlas también.
 6. Confirma los cambios y espera a que termine GitHub Pages. Recarga Mi Estudio con Ctrl+Mayús+R.
 
@@ -17,8 +17,8 @@ Publicar la web no actualiza por sí solo una extensión instalada manualmente.
 
 1. Descomprime `mi-estudio-extension.zip` en la misma carpeta que ya cargaste como extensión, reemplazando los archivos. También puedes usar directamente `extension-chrome`.
 2. Abre `chrome://extensions` o `edge://extensions` y pulsa el botón de recarga de Mi Estudio.
-3. Recarga Mi Estudio y Electude.
-4. Abre Mi Estudio para que la clave de Gemini o Claude guardada en sus ajustes llegue a la extensión.
+3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v1.10.0**. Si no aparece, ese panel todavía es de una versión anterior.
+4. Abre Mi Estudio y guarda los ajustes de IA para sincronizar las claves de Gemini, Claude u OpenAI con la extensión. Al añadir OpenAI, el navegador puede pedir permiso para acceder a `api.openai.com`.
 
 ## Actualizar Firefox o Zen
 
@@ -41,8 +41,22 @@ Los dibujos y arrastres siguen siendo manuales. Los controles dentro de un ifram
 
 ## Comprobaciones incluidas
 
-- `node --test tests/electude.test.cjs`: pruebas de rangos, formatos, cancelación, respuestas incompletas, capturas y proveedores simulados.
+- `node --test tests/*.test.cjs`: pruebas de rangos, formatos, cancelación, respuestas incompletas, capturas y proveedores simulados.
 - `tests/browser/index.html`: abre este archivo en el navegador y pulsa **Ejecutar pruebas de integración**. Utiliza respuestas simuladas y no necesita una clave de IA. También permite comprobar ON/OFF y Cancelar manualmente.
 - `python3 tools/empaquetar.py`: regenera los ZIP de las dos extensiones y el ZIP completo a partir del código editable.
 
-Se han ejecutado 28 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
+Se han ejecutado 56 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
+
+
+## Clave alternativa de Gemini y OpenAI
+
+En Mi Estudio → Ajustes → Asistentes IA:
+
+1. Guarda la clave Gemini principal y, si quieres, una alternativa de otra cuenta/proyecto tuyo.
+2. En **Clave de Gemini activa**, elige **Principal** o **Alternativa** y pulsa **Guardar**. El cambio no es automático. Dos claves del mismo proyecto comparten los límites de Google.
+3. Para OpenAI, pega tu clave en **Clave de API de OpenAI / ChatGPT**. El modelo inicial es `gpt-5.5`; puedes escribir otro ID compatible con texto e imágenes.
+4. En **Proveedor para el asistente y Electude**, elige OpenAI / ChatGPT, Gemini o Claude y guarda.
+
+Las preguntas respondidas o corregidas se omiten antes de capturar o consultar la IA. Esto incluye respuestas hechas sin ayuda.
+
+Una consulta que ya había empezado antes de tu respuesta puede haber consumido cuota; su resultado no se aplica. No se promete una tasa de acierto: los fallos de la IA siguen siendo posibles.

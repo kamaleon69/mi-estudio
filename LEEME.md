@@ -2,7 +2,7 @@
 
 **Web:** https://kamaleon69.github.io/mi-estudio/
 
-Reúne en una lista las tareas pendientes de **Moodle** (Jesuïtes Educació), **Google Classroom** y **Electude**, ordenadas por fecha. Incluye un asistente con **Claude o Gemini** y una herramienta tipo **Lens** para preguntar sobre cualquier parte de la pantalla.
+Reúne en una lista las tareas pendientes de **Moodle** (Jesuïtes Educació), **Google Classroom** y **Electude**, ordenadas por fecha. Incluye un asistente con **Claude, Gemini u OpenAI / ChatGPT** y una herramienta tipo **Lens** para preguntar sobre cualquier parte de la pantalla.
 
 Funciona en **Android, iPhone/iPad, Windows y Mac**. Tus datos se guardan solo en tu dispositivo: en la web no hay nada tuyo.
 
@@ -32,7 +32,7 @@ Comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.
 
 Con la extensión, pulsa **↻ Actualizar**: verás cuánto hace de la última sincronización de cada plataforma y un único botón, **⚡ Sincronizar**. Al pulsarlo se abre una ventanita con Moodle y Classroom unos segundos, se leen tus tareas con tu sesión y se muestran en la app. Si la sesión ha caducado, inicias sesión en esa ventanita y continúa sola.
 
-La extensión tiene permisos para Moodle, Classroom, Mi Estudio, los subdominios de `electude.eu` y las APIs de Gemini y Claude. Puede solicitar de forma opcional acceso a todos los sitios para la captura de pantalla. No guarda ni envía contraseñas. El enunciado y, si la captura está autorizada, la imagen se envían al proveedor de IA que hayas configurado.
+La extensión tiene permisos para Moodle, Classroom, Mi Estudio, los subdominios de `electude.eu` y las APIs de Gemini, Claude y OpenAI. Puede solicitar de forma opcional acceso a todos los sitios para la captura de pantalla. No guarda ni envía contraseñas. El enunciado y, si la captura está autorizada, la imagen se envían al proveedor de IA que hayas configurado.
 
 **Chrome / Edge:**
 
@@ -112,7 +112,7 @@ Si la app tiene una versión nueva, sale **«↻ Actualizar ahora»**.
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
 
-**💡 Ayuda dentro de Electude (extensión v1.9.1):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
+**💡 Ayuda dentro de Electude (extensión v1.10.0):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
 1. Ábrelo: sale un panel lateral **Ayuda IA**.
 2. Pulsa **🔍 Analizar la pregunta**. La IA lee el enunciado y te muestra la **opción sugerida** con la explicación. Además, la opción se **marca en verde** en la página.
 3. Léete la explicación y marca tú la respuesta, o activa **Autocompletar: ON**. La IA puede equivocarse; revisa lo rellenado antes de comprobarlo.
@@ -121,15 +121,18 @@ La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.e
   - **Verdadero/falso (✗ / ✓):** marca cada afirmación con su botón, verde ✓ o rojo ✗.
   - **Hacer clic o localizar piezas en el dibujo:** pone un círculo verde con el nombre de la pieza donde hay que hacer clic. Si pide localizar una lista de componentes, los numera todos a la vez en el orden de la lista (1, 2, 3…): haz clic en el 1, luego en el 2… Los círculos no bloquean el clic.
 - Para las preguntas del dibujo, la IA tiene que **ver la pantalla**. La primera vez el panel te ofrece **«Permitir que vea la pantalla de Electude»**: acéptalo una vez y ya funciona siempre. Si prefieres no darlo, pulsa el icono de la extensión en la pestaña de Electude cada vez que la abras.
-- **🎯 Preciso / ⚡ Rápido:** en «Preciso» salen a la vez dos respuestas: en 1-3 s una **provisional** del modelo rápido, y poco después la del modelo preciso, que la **confirma** o la **corrige** (te lo indica). En «Rápido» solo se usa el modelo ligero: responde enseguida pero falla más en verdadero/falso y en el dibujo. Las preguntas ya analizadas salen al instante (Mayús + clic en Analizar para repetir).
+- **🎯 Preciso / ⚡ Rápido:** en «Preciso» se hace una única consulta al modelo preciso, sin gastar otra petición en una respuesta rápida provisional. En «Rápido» solo se usa el modelo ligero: responde enseguida pero falla más en verdadero/falso y en el dibujo. Las preguntas ya analizadas salen al instante (Mayús + clic en Analizar para repetir).
 - **Automático (interruptor del panel):** si lo activas, el 💡 se abre y analiza solo cada vez que cambias de ejercicio, sin pulsar nada. El botón 💡 muestra una «A» verde mientras está activado. Se recuerda aunque cierres Electude; para apagarlo, vuelve a pulsar el interruptor.
 - **Autocompletar: ON / OFF (nuevo):** viene apagado. Al activarlo, analiza cada ejercicio y rellena los controles compatibles: opciones únicas, varias casillas, verdadero/falso, números, texto y desplegables. En **Mínimo** y **Máximo** eliges el intervalo de espera, **7–15 segundos por defecto**. Admite de 0 a 3600 segundos, decimales y un tiempo fijo poniendo el mismo valor en ambos campos. El tiempo se elige de nuevo para cada ejercicio y empieza cuando llega la respuesta **final** de la IA; el tiempo de análisis se suma a esa espera. Autocompletar usa siempre **Preciso**: al activarlo se selecciona ese modo y se deshabilita Rápido. Al acabar la espera, hace clic en la opción de Electude. Si la respuesta precisa falla, no se rellena con una rápida. Los ajustes se recuerdan en el navegador.
 - **Cancelar esta respuesta:** detiene la cuenta atrás del ejercicio actual. También se cancela al apagar ON/OFF, cambiar de pregunta, ocultar la pestaña o intervenir manualmente. Si regresas a la pestaña sin cambiar de ejercicio, puede empezar una nueva cuenta completa. Una intervención manual impide que la IA sobrescriba esa respuesta hasta que vuelvas a pulsar Analizar.
 - **Pasar solo (interruptor del panel):** tú pulsas **Comprovar** después de revisar la respuesta. Si sale «Correcte», a los 2 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa. Autocompletar no pulsa **Comprovar**.
 - **Dibujos y otras actividades:** las marcas de localización se mantienen como ayuda manual. El autocompletado no hace clic en el dibujo ni arrastra piezas. Si los controles están en un iframe de otro origen o en un lienzo sin controles accesibles, hay que responder manualmente.
+- **Ahorrar cuota:** si ya hay una respuesta marcada, todos los campos están rellenados, todas las filas de verdadero/falso están respondidas o aparece «Correcte/Incorrecte», no se vuelve a analizar ni se hace otra petición. Se aplica tanto a respuestas tuyas como a las del autocompletado. Una petición que ya estaba en curso cuando respondiste puede haber consumido cuota; se descarta su resultado.
+- **Preguntas con números en la imagen:** necesitan una captura y utilizan Preciso. Los números del dibujo son etiquetas; el valor se propone para el campo numérico, sin resaltar la etiqueta como opción de test.
+- **Cuota de Gemini:** si se agota un límite diario o temporal, la extensión pausa ese modelo y muestra el próximo reintento cuando Google lo informa. Puedes elegir la clave alternativa manualmente. Dos claves del mismo proyecto comparten cuota.
 - **Respuestas incompletas:** si faltan afirmaciones, campos o grupos de opciones, hay IDs desconocidos, o la IA declara poca fiabilidad, no se rellena la actividad. El panel explica el motivo. Esto valida la estructura; no garantiza que el contenido técnico de la respuesta sea correcto.
 - **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador. La primera vez Chrome descarga el modelo (2-4 GB, de 5 a 30 minutos; el progreso se ve en `chrome://on-device-internals`); mientras tanto se usa la nube. Es bastante menos precisa: solo se usa en preguntas tipo test sencillas; verdadero/falso, campos, dibujo y autocompletado van a la nube.
-- Necesita una clave de IA en **Ajustes → Asistentes IA** (la de Gemini es gratis). Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
+- Necesita una clave de IA en **Ajustes → Asistentes IA**. Puedes elegir Claude, Gemini u OpenAI / ChatGPT. Gemini permite guardar una clave principal y otra alternativa y seleccionar cuál se usa. Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
 
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
 - **En el ordenador, desde la app:** el navegador te pide elegir la pestaña o ventana de Electude.
@@ -177,3 +180,16 @@ Escribe tu pregunta y pulsa **➤**. Tu mensaje se queda en el chat:
 ### Actualizar la web (solo el propietario)
 
 Sube los archivos nuevos a https://github.com/kamaleon69/mi-estudio con **Add file → Upload files** y pulsa **Commit changes**. En un par de minutos estará en la web.
+
+
+## Nuevos ajustes de IA en 1.10.0
+
+En **Ajustes → Asistentes IA** tienes:
+
+- **Gemini principal** y **Gemini alternativa**, con el selector **Clave de Gemini activa**. Puedes poner una clave de otra cuenta/proyecto tuyo. El cambio es manual; pulsa **Guardar** después de seleccionar la que quieres usar. Las cuotas son del proyecto, no del correo ni de la clave individual.
+- **OpenAI / ChatGPT**: pega una clave de OpenAI Platform, elige el modelo (por defecto `gpt-5.5`) y selecciona OpenAI en **Proveedor para el asistente y Electude**. Funciona en el chat, Lens y la ayuda de Electude con texto e imágenes.
+- **Claude** mantiene sus ajustes.
+
+Abre Mi Estudio y guarda los cambios para sincronizarlos con la extensión. Las claves nuevas tampoco se incluyen en los enlaces para compañeros ni para transferir tareas.
+
+Después de actualizar, recarga la extensión y Electude. El encabezado del panel debe mostrar **v1.10.0**. Si no aparece ese número, todavía está abierto un panel de la versión anterior.
