@@ -30,7 +30,7 @@ Comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.
 
 ## 3. Sincronizar con 1 clic: extensión (recomendado)
 
-Con la extensión, pulsa **↻ Actualizar**: verás cuánto hace de la última sincronización de cada plataforma y un único botón, **⚡ Sincronizar**. Al pulsarlo, Moodle se lee en segundo plano (sin abrir ventana) y Classroom en una ventanita unos segundos; tus tareas se leen con tu sesión y se muestran en la app. Si la sesión de Moodle ha caducado, también se abre la ventanita para que inicies sesión, y continúa sola. Además, la extensión actualiza Moodle sola cada 2 horas mientras el navegador está abierto.
+Con la extensión, pulsa **↻ Actualizar**: verás cuánto hace de la última sincronización de cada plataforma y un único botón, **⚡ Sincronizar**. Al pulsarlo se abre una ventanita con Moodle y Classroom unos segundos, se leen tus tareas con tu sesión y se muestran en la app. Si la sesión ha caducado, inicias sesión en esa ventanita y continúa sola.
 
 La extensión solo tiene permiso para `moodle4.net.fje.edu`, `classroom.google.com` y la web de Mi Estudio. No guarda ni envía contraseñas.
 
@@ -112,14 +112,19 @@ Si la app tiene una versión nueva, sale **«↻ Actualizar ahora»**.
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
 
-**🎓 Tutor dentro de Electude (extensión v1.9):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha (puedes arrastrarlo). Ábrelo y sale el panel **Tutor IA**. El tutor **no te da la respuesta**: te ayuda a razonarla.
-1. **Intenta el ejercicio tú primero.** Si te atascas, pulsa **💡 Dame una pista**. Te explica qué concepto trabaja el ejercicio, dónde mirar en la teoría y te hace una pregunta para que pienses.
-2. ¿Sigues atascado? Pulsa **💡 Otra pista, más concreta** (hay 2 pistas por ejercicio). Te da los pasos para razonarlo, pero el último lo das tú.
-3. Marca tu respuesta y pulsa **Comprovar** en Electude:
-   - Si sale **«Incorrecte»**, aparece **🤔 He fallado: ¿qué se me escapa?**. Te explica qué confusión suele llevar a fallar y qué repasar, sin decirte cuál es la buena.
-   - Si sale **«Correcte»**, aparece **📘 Explícame por qué es correcta**. Te explica el porqué citando la lección, te da la idea clave para recordar y una pregunta parecida para practicar.
-- La extensión no marca, no pulsa y no pasa ejercicios por ti. Si la IA se le escapa la respuesta en una pista, el panel quita esa frase.
-- Para los ejercicios con dibujos, el tutor tiene que **ver la pantalla**. La primera vez el panel te ofrece **«Permitir que vea la pantalla de Electude»**: acéptalo una vez y ya funciona siempre.
+**💡 Ayuda dentro de Electude (extensión v1.3):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
+1. Ábrelo: sale un panel lateral **Ayuda IA**.
+2. Pulsa **🔍 Analizar la pregunta**. La IA lee el enunciado y te muestra la **opción sugerida** con la explicación. Además, la opción se **marca en verde** en la página.
+3. Léete la explicación y marca tú la respuesta. La extensión no pulsa nada por ti, y la IA puede equivocarse.
+- Sabe responder:
+  - **Tipo test:** resalta en verde la opción correcta.
+  - **Verdadero/falso (✗ / ✓):** marca cada afirmación con su botón, verde ✓ o rojo ✗.
+  - **Hacer clic o localizar piezas en el dibujo:** pone un círculo verde con el nombre de la pieza donde hay que hacer clic. Si pide localizar una lista de componentes, los numera todos a la vez en el orden de la lista (1, 2, 3…): haz clic en el 1, luego en el 2… Los círculos no bloquean el clic.
+- Para las preguntas del dibujo, la IA tiene que **ver la pantalla**. La primera vez el panel te ofrece **«Permitir que vea la pantalla de Electude»**: acéptalo una vez y ya funciona siempre. Si prefieres no darlo, pulsa el icono de la extensión en la pestaña de Electude cada vez que la abras.
+- **🎯 Preciso / ⚡ Rápido:** en «Preciso» salen a la vez dos respuestas: en 1-3 s una **provisional** del modelo rápido, y poco después la del modelo preciso, que la **confirma** o la **corrige** (te lo indica). En «Rápido» solo se usa el modelo ligero: responde enseguida pero falla más en verdadero/falso y en el dibujo. Las preguntas ya analizadas salen al instante (Mayús + clic en Analizar para repetir).
+- **Automático (interruptor del panel):** si lo activas, el 💡 se abre y analiza solo cada vez que cambias de ejercicio, sin pulsar nada. El botón 💡 muestra una «A» verde mientras está activado. Se recuerda aunque cierres Electude; para apagarlo, vuelve a pulsar el interruptor.
+- **Pasar solo (interruptor del panel):** tú eliges la respuesta y pulsas **Comprovar**. Si sale «Correcte», a los 2 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa, para que lo revises. Nunca elige ni comprueba respuestas por ti.
+- **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador. La primera vez Chrome descarga el modelo (2-4 GB, de 5 a 30 minutos; el progreso se ve en `chrome://on-device-internals`); mientras tanto se usa la nube. Es bastante menos precisa: solo se usa en preguntas tipo test sencillas; verdadero/falso y dibujo siempre van a la nube.
 - Necesita una clave de IA en **Ajustes → Asistentes IA** (la de Gemini es gratis). Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
 
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.

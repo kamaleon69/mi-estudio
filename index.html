@@ -1524,13 +1524,7 @@ window.addEventListener('message', e => {
   if(m.type === 'MS_EXT_RESULT'){
     const r = m.result || {};
     if(r.error){ extNotes.push('⚠️ ' + (r.src ? SRC[r.src] + ': ' : '') + r.error.replace(/^Mi Estudio: /, '')); }
-    else if(importData(r)){ extNotes.push(syncNote.replace(/ <button[\s\S]*$/, '') + (r.bg ? ' (sin abrir ventana)' : '')); renderAll(); if($('#updDlg').open) renderUpd(); }
-    if(!r.error && typeof r.warn === 'string' && r.warn) extNotes.push('⚠️ ' + SRC[r.src] + ': ' + r.warn.slice(0, 200));
-  }
-  // Moodle sincronizado solo por la extensión (cada 2 h): se carga si es más nuevo que lo que ya tienes
-  if(m.type === 'MS_EXT_BG'){
-    const r = m.result || {};
-    if(r.src === 'moodle' && !r.error && !extBusy && (r.at || 0) > ((data.moodle && data.moodle.at) || 0) && importData(r, true)){ renderAll(); if($('#updDlg').open) renderUpd(); }
+    else if(importData(r)){ extNotes.push(syncNote.replace(/ <button[\s\S]*$/, '')); renderAll(); if($('#updDlg').open) renderUpd(); }
   }
   if(m.type === 'MS_EXT_DONE'){
     extBusy = false; $('#syncBtn').textContent = '↻ Actualizar';
@@ -1619,29 +1613,19 @@ function __msSync(APP, OPTS){
         const call = async (n, a) => { const r = await fetch(root + '/lib/ajax/service.php?sesskey=' + sk + '&info=' + n, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify([{index: 0, methodname: n, args: a}])}); const j = await r.json(); if(j[0].error) throw new Error((j[0].exception && j[0].exception.message) || n); return j[0].data; };
         const now = Math.floor(Date.now() / 1000);
         prog('leyendo tareas pendientes…');
-        /* Moodle devuelve como mucho 50 eventos por llamada: se piden páginas hasta que no lleguen más */
-        const evs = []; let after = 0;
-        for(let pg = 0; pg < 20; pg++){
-          const a = {timesortfrom: Math.floor(FROM / 1000), limitnum: 50}; if(after) a.aftereventid = after;
-          const ev = await call('core_calendar_get_action_events_by_timesort', a), got = ev.events || [];
-          evs.push(...got);
-          const last = ev.lastid || (got.length && got[got.length - 1].id);
-          if(got.length < 50 || !last || last === after) break;
-          after = last; prog('leyendo tareas pendientes (' + evs.length + ')…');
-        }
+        const ev = await call('core_calendar_get_action_events_by_timesort', {timesortfrom: Math.floor(FROM / 1000), limitnum: 50});
         let cs = {courses: []}; try{ cs = await call('core_course_get_enrolled_courses_by_timeline_classification', {classification: 'inprogress', limit: 0, offset: 0}); }catch(e){}
-        const failed = new Set();
-        const tasks = evs.map(e => ({id: (String(e.url || '').match(/id=(\d+)/) || [])[1] || ('e' + e.id), title: e.activityname || e.name, course: e.course ? e.course.fullname : '', due: e.timesort * 1000, url: e.url || e.viewurl, kind: e.modulename, action: e.action ? e.action.name : '', late: !!e.overdue, status: e.overdue || e.timesort < now ? 'missing' : 'pending'}));
+        const tasks = (ev.events || []).map(e => ({id: (String(e.url || '').match(/id=(\d+)/) || [])[1] || ('e' + e.id), title: e.activityname || e.name, course: e.course ? e.course.fullname : '', due: e.timesort * 1000, url: e.url || e.viewurl, kind: e.modulename, action: e.action ? e.action.name : '', late: !!e.overdue, status: e.overdue || e.timesort < now ? 'missing' : 'pending'}));
         const seen = new Set(tasks.map(t => String(t.id)));
         /* tareas entregadas / calificadas / no presentadas: estado de cada tarea del curso */
         const todo = [];
         for(const c of (cs.courses || [])){
           try{ const st = await call('core_courseformat_get_state', {courseid: c.id}); const S = typeof st === 'string' ? JSON.parse(st) : st;
-            (S.cm || []).filter(m => m.module === 'assign' && m.uservisible !== false && !seen.has(String(m.id))).forEach(m => todo.push({cm: m, course: c.fullname})); }catch(e){ failed.add(c.fullname); }
+            (S.cm || []).filter(m => m.module === 'assign' && m.uservisible !== false && !seen.has(String(m.id))).forEach(m => todo.push({cm: m, course: c.fullname})); }catch(e){}
         }
         let done = 0;
         const worker = async () => { for(;;){ const it = todo.shift(); if(!it) return; try{
-          const html = await fetch(it.cm.url, {credentials: 'include'}).then(r => { if(!r.ok) throw new Error(r.status); return r.text(); });
+          const html = await fetch(it.cm.url, {credentials: 'include'}).then(r => r.text());
           const d = new DOMParser().parseFromString(html, 'text/html');
           const sub = !!d.querySelector('td.submissionstatussubmitted, .submissionstatussubmitted');
           const graded = !!d.querySelector('td.submissiongraded, .submissiongraded');
@@ -1653,12 +1637,11 @@ function __msSync(APP, OPTS){
           d.querySelectorAll('table.generaltable td.cell.c1, table.generaltable td').forEach(td => { const t = td.textContent.trim(); if(!grade && /^-?\d+([.,]\d+)?\s*\/\s*\d+([.,]\d+)?$/.test(t)) grade = t.replace(/,00\b/g, '').replace(/\s+/g, ' '); });
           const status = graded ? 'graded' : sub ? 'submitted' : overdue ? 'missing' : 'pending';
           if(!(due && due < FROM)) tasks.push({id: it.cm.id, title: it.cm.name, course: it.course, due, url: it.cm.url, kind: 'assign', status, grade: graded ? grade : '', late: status === 'missing'});
-        }catch(e){ failed.add(it.course); } done++; prog('leyendo tareas ' + done + '/' + total + '…'); } };
+        }catch(e){} done++; prog('leyendo tareas ' + done + '/' + total + '…'); } };
         const total = todo.length;
         await Promise.all([worker(), worker(), worker(), worker()]);
         progDone();
         return go({src: 'moodle', at: Date.now(), site: root, tasks,
-          warn: failed.size ? 'no se pudieron leer del todo ' + failed.size + ' curso(s): ' + [...failed].slice(0, 3).join(', ') + (failed.size > 3 ? '…' : '') : '',
           courses: (cs.courses || []).map(c => ({id: c.id, name: c.fullname, url: c.viewurl}))});
       }
       /* ---------- CLASSROOM ---------- */
@@ -1677,28 +1660,7 @@ function __msSync(APP, OPTS){
           const status = gm && !missingTxt ? 'graded' : turned ? 'submitted' : (missingTxt || (due && due < now)) ? 'missing' : 'pending';
           return {id: (href.match(/\/(?:a|sa|mc|q)\/([^/]+)/) || [])[1] || href, title: leaves[0] || '', course: leaves[1] || '', due, dueText: /publica|posted/i.test(dueTxt) ? '' : dueTxt, url: 'https://classroom.google.com' + href, kind: 'classroom', status, grade: gm ? gm[1] + '/' + gm[2] : '', late: status === 'missing'};
         });
-        const waitFor = async (re) => { for(let i = 0; i < 30; i++){ if(re.test(location.pathname)) { await sleep(1200); return true; } await sleep(200); } return false; };
-        /* Classroom pliega algunas secciones («Más adelante», «Anteriores»…) y carga más tareas al bajar:
-           se despliegan, se baja hasta el final y se espera a que la lista deje de crecer */
-        const opened = new WeakSet();
-        const MORE = /^(veure'n més|veure més|mostra'n més|mostrar més|ver más|mostrar más|view more|show more|load more)$/i;
-        const settle = async () => {
-          let last = -1, same = 0;
-          for(let i = 0; i < 40 && same < 3; i++){
-            document.querySelectorAll('[aria-expanded="false"]').forEach(b => {
-              const hp = b.getAttribute('aria-haspopup');
-              if(opened.has(b) || (hp && hp !== 'false') || b.closest('header,nav,[role=navigation],[role=banner],[role=dialog],[role=menu]')) return;
-              opened.add(b); try{ b.click(); }catch(e){}
-            });
-            [...document.querySelectorAll('button,[role=button]')].filter(b => !opened.has(b) && MORE.test((b.innerText || '').trim())).forEach(b => { opened.add(b); try{ b.click(); }catch(e){} });
-            [...document.querySelectorAll('main *, [role=main] *')].filter(e => e.scrollHeight > e.clientHeight + 20 && /(auto|scroll)/.test(getComputedStyle(e).overflowY)).forEach(e => { e.scrollTop = e.scrollHeight; });
-            window.scrollTo(0, document.documentElement.scrollHeight);
-            await sleep(500);
-            const n = document.querySelectorAll('li a[href*="/details"]').length;
-            if(n === last) same++; else { same = 0; last = n; }
-          }
-          window.scrollTo(0, 0);
-        };
+        const waitFor = async (re) => { for(let i = 0; i < 30; i++){ if(re.test(location.pathname)) { await sleep(1800); return true; } await sleep(200); } return false; };
         const tab = re => [...document.querySelectorAll('a[href]')].find(x => re.test(x.getAttribute('href')));
         if(!/\/a\/(not-turned-in|missing|turned-in)\//.test(location.pathname)){
           const t = tab(/\/a\/not-turned-in\//); if(!t){ say('Mi Estudio: abre Classroom → «Pendientes» (menú de la izquierda) y pulsa el marcador allí.'); return; }
@@ -1708,7 +1670,6 @@ function __msSync(APP, OPTS){
         for(const [re, label] of [[/\/a\/not-turned-in\//, 'asignadas'], [/\/a\/missing\//, 'sin entregar'], [/\/a\/turned-in\//, 'hechas']]){
           prog('leyendo ' + label + '…');
           if(!re.test(location.pathname)){ const t = tab(re); if(!t) continue; t.click(); await waitFor(re); }
-          await settle();
           all.push(...read());
         }
         progDone();
@@ -1746,7 +1707,7 @@ function importSync(){
   catch(e){ msg('No se pudo leer la sincronización.', 'err'); return false; }
   return importData(d);
 }
-function importData(d, quiet){
+function importData(d){
   if(!d || !['moodle', 'classroom', 'electude'].includes(d.src) || !Array.isArray(d.tasks)) return false;
   const clean = v => typeof v === 'string' ? v.slice(0, 500) : v;
   const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
@@ -1760,7 +1721,6 @@ function importData(d, quiet){
   const cnt = {pending: 0, missing: 0, done: 0}; data[d.src].tasks.forEach(t => { const st = statusOf(t); cnt[st === 'graded' || st === 'submitted' ? 'done' : st]++; });
   syncNote = `✅ ${SRC[d.src]} sincronizado: ${cnt.pending} pendientes · ${cnt.missing} sin presentar · ${cnt.done} entregadas.`;
   if(!isTouch()) syncNote += ' <button class="btn small primary" type="button" onclick="showQR()">📱 Pasar al móvil</button>';
-  if(quiet) return true;   // sincronización en segundo plano: actualiza la lista sin cambiarte de pestaña
   msg(syncNote, 'ok');
   $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'pend')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'pend'));
   return true;
@@ -1770,8 +1730,8 @@ window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 const isGecko = () => /Firefox\//.test(navigator.userAgent);
 const extZip = () => isGecko() ? 'mi-estudio-extension-firefox.zip' : 'mi-estudio-extension.zip';
 /* ---------- avisos de versión nueva (lee version.json de GitHub) ---------- */
-const APP_VERSION = '2026.11.17.5';
-let LATEST = {app: APP_VERSION, extension: '1.9.1'};
+const APP_VERSION = '2026.11.17.4';
+let LATEST = {app: APP_VERSION, extension: '1.9.0'};
 const vLess = (a, b) => String(a || '0').localeCompare(String(b || '0'), undefined, {numeric: true}) < 0;
 const extOutdated = () => !!extVersion && vLess(extVersion, LATEST.extension);
 async function checkVersions(){
