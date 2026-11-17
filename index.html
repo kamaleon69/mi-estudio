@@ -196,7 +196,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <a class="btn primary" id="elecOpen" target="_blank" rel="noopener" style="font-size:17px;padding:13px 26px;margin-top:8px">Abrir Electude ↗</a>
       <div style="margin-top:14px"><button class="btn" id="elecAsk" type="button" style="font-size:16px;padding:12px 20px">📸 Preguntar a la IA por la pantalla de Electude</button></div>
       <p class="meta small" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
-      <div class="msg info" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (con la extensión v1.3):</b> en la página de Electude aparece un botón 💡 abajo a la derecha. Ábrelo y pulsa <b>🔍 Analizar la pregunta</b>: se abre un panel lateral con la opción sugerida y la explicación, y la opción se marca en verde en la página. Para que la IA vea también las imágenes, pulsa una vez el icono de la extensión estando en Electude. Necesita una clave de Gemini (gratis) o de Claude en Ajustes → Asistentes IA.</div>
+      <div class="msg info" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (extensión v1.9.0):</b> abre el botón 💡 y pulsa <b>🔍 Analizar la pregunta</b> para ver la sugerencia y la explicación. Activa <b>Autocompletar: ON</b> para analizar y rellenar opciones, verdadero/falso y campos compatibles. Ajusta el mínimo y el máximo: por defecto espera <b>entre 7 y 15 segundos</b> después de recibir la respuesta final de la IA. Puedes apagarlo o cancelar la respuesta durante la cuenta atrás. Después pulsa tú <b>Comprovar</b>; en los dibujos, sigue las marcas y haz clic tú. Necesita una clave de Gemini o Claude en Ajustes → Asistentes IA. Para ver imágenes, pulsa el icono de la extensión estando en Electude o acepta el permiso de captura.</div>
     </div>
   </section>
 
@@ -1730,7 +1730,7 @@ window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 const isGecko = () => /Firefox\//.test(navigator.userAgent);
 const extZip = () => isGecko() ? 'mi-estudio-extension-firefox.zip' : 'mi-estudio-extension.zip';
 /* ---------- avisos de versión nueva (lee version.json de GitHub) ---------- */
-const APP_VERSION = '2026.11.17.4';
+const APP_VERSION = '2026.11.17.5';
 let LATEST = {app: APP_VERSION, extension: '1.9.0'};
 const vLess = (a, b) => String(a || '0').localeCompare(String(b || '0'), undefined, {numeric: true}) < 0;
 const extOutdated = () => !!extVersion && vLess(extVersion, LATEST.extension);

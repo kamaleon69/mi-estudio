@@ -32,7 +32,7 @@ Comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.
 
 Con la extensión, pulsa **↻ Actualizar**: verás cuánto hace de la última sincronización de cada plataforma y un único botón, **⚡ Sincronizar**. Al pulsarlo se abre una ventanita con Moodle y Classroom unos segundos, se leen tus tareas con tu sesión y se muestran en la app. Si la sesión ha caducado, inicias sesión en esa ventanita y continúa sola.
 
-La extensión solo tiene permiso para `moodle4.net.fje.edu`, `classroom.google.com` y la web de Mi Estudio. No guarda ni envía contraseñas.
+La extensión tiene permisos para Moodle, Classroom, Mi Estudio, los subdominios de `electude.eu` y las APIs de Gemini y Claude. Puede solicitar de forma opcional acceso a todos los sitios para la captura de pantalla. No guarda ni envía contraseñas. El enunciado y, si la captura está autorizada, la imagen se envían al proveedor de IA que hayas configurado.
 
 **Chrome / Edge:**
 
@@ -112,10 +112,10 @@ Si la app tiene una versión nueva, sale **«↻ Actualizar ahora»**.
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
 
-**💡 Ayuda dentro de Electude (extensión v1.3):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
+**💡 Ayuda dentro de Electude (extensión v1.9.0):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
 1. Ábrelo: sale un panel lateral **Ayuda IA**.
 2. Pulsa **🔍 Analizar la pregunta**. La IA lee el enunciado y te muestra la **opción sugerida** con la explicación. Además, la opción se **marca en verde** en la página.
-3. Léete la explicación y marca tú la respuesta. La extensión no pulsa nada por ti, y la IA puede equivocarse.
+3. Léete la explicación y marca tú la respuesta, o activa **Autocompletar: ON**. La IA puede equivocarse; revisa lo rellenado antes de comprobarlo.
 - Sabe responder:
   - **Tipo test:** resalta en verde la opción correcta.
   - **Verdadero/falso (✗ / ✓):** marca cada afirmación con su botón, verde ✓ o rojo ✗.
@@ -123,8 +123,12 @@ La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.e
 - Para las preguntas del dibujo, la IA tiene que **ver la pantalla**. La primera vez el panel te ofrece **«Permitir que vea la pantalla de Electude»**: acéptalo una vez y ya funciona siempre. Si prefieres no darlo, pulsa el icono de la extensión en la pestaña de Electude cada vez que la abras.
 - **🎯 Preciso / ⚡ Rápido:** en «Preciso» salen a la vez dos respuestas: en 1-3 s una **provisional** del modelo rápido, y poco después la del modelo preciso, que la **confirma** o la **corrige** (te lo indica). En «Rápido» solo se usa el modelo ligero: responde enseguida pero falla más en verdadero/falso y en el dibujo. Las preguntas ya analizadas salen al instante (Mayús + clic en Analizar para repetir).
 - **Automático (interruptor del panel):** si lo activas, el 💡 se abre y analiza solo cada vez que cambias de ejercicio, sin pulsar nada. El botón 💡 muestra una «A» verde mientras está activado. Se recuerda aunque cierres Electude; para apagarlo, vuelve a pulsar el interruptor.
-- **Pasar solo (interruptor del panel):** tú eliges la respuesta y pulsas **Comprovar**. Si sale «Correcte», a los 2 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa, para que lo revises. Nunca elige ni comprueba respuestas por ti.
-- **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador. La primera vez Chrome descarga el modelo (2-4 GB, de 5 a 30 minutos; el progreso se ve en `chrome://on-device-internals`); mientras tanto se usa la nube. Es bastante menos precisa: solo se usa en preguntas tipo test sencillas; verdadero/falso y dibujo siempre van a la nube.
+- **Autocompletar: ON / OFF (nuevo):** viene apagado. Al activarlo, analiza cada ejercicio y rellena los controles compatibles: opciones únicas, varias casillas, verdadero/falso, números, texto y desplegables. En **Mínimo** y **Máximo** eliges el intervalo de espera, **7–15 segundos por defecto**. Admite de 0 a 3600 segundos, decimales y un tiempo fijo poniendo el mismo valor en ambos campos. El tiempo se elige de nuevo para cada ejercicio y empieza cuando llega la respuesta **final** de la IA; el tiempo de análisis se suma a esa espera. El modo preciso espera a su resultado final. Los ajustes se recuerdan en el navegador.
+- **Cancelar esta respuesta:** detiene la cuenta atrás del ejercicio actual. También se cancela al apagar ON/OFF, cambiar de pregunta, ocultar la pestaña o intervenir manualmente. Si regresas a la pestaña sin cambiar de ejercicio, puede empezar una nueva cuenta completa. Una intervención manual impide que la IA sobrescriba esa respuesta hasta que vuelvas a pulsar Analizar.
+- **Pasar solo (interruptor del panel):** tú pulsas **Comprovar** después de revisar la respuesta. Si sale «Correcte», a los 2 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa. Autocompletar no pulsa **Comprovar**.
+- **Dibujos y otras actividades:** las marcas de localización se mantienen como ayuda manual. El autocompletado no hace clic en el dibujo ni arrastra piezas. Si los controles están en un iframe de otro origen o en un lienzo sin controles accesibles, hay que responder manualmente.
+- **Respuestas incompletas:** si faltan afirmaciones, campos o grupos de opciones, hay IDs desconocidos, o la IA declara poca fiabilidad, no se rellena la actividad. El panel explica el motivo. Esto valida la estructura; no garantiza que el contenido técnico de la respuesta sea correcto.
+- **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador. La primera vez Chrome descarga el modelo (2-4 GB, de 5 a 30 minutos; el progreso se ve en `chrome://on-device-internals`); mientras tanto se usa la nube. Es bastante menos precisa: solo se usa en preguntas tipo test sencillas; verdadero/falso, campos, dibujo y autocompletado van a la nube.
 - Necesita una clave de IA en **Ajustes → Asistentes IA** (la de Gemini es gratis). Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
 
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
