@@ -100,8 +100,14 @@ En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (ve
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
 
+**💡 Ayuda dentro de Electude (extensión v1.3):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
+1. Ábrelo: sale un panel lateral **Ayuda IA**.
+2. Pulsa **🔍 Analizar la pregunta**. La IA lee el enunciado y te muestra la **opción sugerida** con la explicación. Además, la opción se **marca en verde** en la página.
+3. Léete la explicación y marca tú la respuesta. La extensión no pulsa nada por ti, y la IA puede equivocarse.
+- Para que la IA vea también las imágenes (esquemas, fotos, gráficas), pulsa **una vez** el icono de la extensión estando en Electude: así se abre el panel y queda permitida la captura de esa pestaña.
+- Necesita una clave de IA en **Ajustes → Asistentes IA** (la de Gemini es gratis). Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
+
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
-- **Con la extensión (lo más rápido):** estando en la pestaña de Electude, pulsa el icono 🧩 de «Mi Estudio · Sincronizar». La captura llega sola al asistente.
 - **En el ordenador, desde la app:** el navegador te pide elegir la pestaña o ventana de Electude.
 - **En el móvil:** haz una captura de pantalla del enunciado y elígela cuando la app te lo pida.
 

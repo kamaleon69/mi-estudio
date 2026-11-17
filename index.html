@@ -196,6 +196,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <a class="btn primary" id="elecOpen" target="_blank" rel="noopener" style="font-size:17px;padding:13px 26px;margin-top:8px">Abrir Electude ↗</a>
       <div style="margin-top:14px"><button class="btn" id="elecAsk" type="button" style="font-size:16px;padding:12px 20px">📸 Preguntar a la IA por la pantalla de Electude</button></div>
       <p class="meta small" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
+      <div class="msg info" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (con la extensión v1.3):</b> en la página de Electude aparece un botón 💡 abajo a la derecha. Ábrelo y pulsa <b>🔍 Analizar la pregunta</b>: se abre un panel lateral con la opción sugerida y la explicación, y la opción se marca en verde en la página. Para que la IA vea también las imágenes, pulsa una vez el icono de la extensión estando en Electude. Necesita una clave de Gemini (gratis) o de Claude en Ajustes → Asistentes IA.</div>
     </div>
   </section>
 
@@ -1148,7 +1149,7 @@ function renderMsgs(){
   $$('#aiMsgs [data-keysave]').forEach(b => b.onclick = () => {
     const i = +b.dataset.keysave, v = $('#keyIn' + i).value.trim();
     if(!/^AIza[0-9A-Za-z_\-]{20,}$/.test(v)){ toast('Esa clave no parece de Gemini (empieza por AIza…)', 'err'); return; }
-    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); renderAICfg(); renderAIBtn();
+    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); pushKeys(); renderAICfg(); renderAIBtn();
     ai.msgs.splice(i, 1); toast('✅ Clave guardada: enviando a Gemini');
     aiRun('gemini');
   });
@@ -1477,7 +1478,7 @@ $('#lensClaude').onclick = () => lensSend('claude');
 $('#lensGemini').onclick = () => lensSend('gemini');
 $('#aiClose').onclick = () => $('#ai').close();
 $('#aiNew').onclick = () => { if(ai.busy) return toast('Espera a que termine la respuesta', 'err'); ai.msgs = []; ai.att = []; renderAI(); toast('✅ Nueva conversación'); };
-$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); renderAI(); toast('Usando ' + AI_NAME[b.dataset.p]); });
+$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); pushKeys(); renderAI(); toast('Usando ' + AI_NAME[b.dataset.p]); });
 $('#aiSend').onclick = aiSend;
 $('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch()){ e.preventDefault(); aiSend(); } });
 $('#aiInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px'; });
@@ -1485,7 +1486,7 @@ $('#ai').addEventListener('click', e => { if(e.target === $('#ai')) $('#ai').clo
 $('#aiSave').onclick = () => {
   cfg.claudeKey = $('#cKey').value.trim(); cfg.claudeModel = $('#cModel').value;
   cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value || 'gemini-3.5-flash-lite'; cfg.geminiModelChosen = true;
-  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg();
+  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg(); pushKeys();
   $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000); toast('✅ Ajustes de IA guardados'); renderAIBtn();
 };
 function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
@@ -1504,10 +1505,12 @@ document.addEventListener('click', e => {
 
 /* ---------- extensión «Mi Estudio · Sincronizar» (1 clic en el ordenador) ---------- */
 let extVersion = null, extBusy = false, extNotes = [];
+// pasa tus claves de IA a tu extensión (se guardan solo en tu navegador) para la ayuda dentro de Electude
+function pushKeys(){ if(!extVersion) return; window.postMessage({type: 'MS_EXT_KEYS', claudeKey: cfg.claudeKey || '', claudeModel: cfg.claudeModel || '', geminiKey: cfg.geminiKey || '', geminiModel: cfg.geminiModel || '', aiProvider: cfg.aiProvider || ''}, location.origin); }
 window.addEventListener('message', e => {
   if(e.source !== window || !e.data || typeof e.data.type !== 'string') return;
   const m = e.data;
-  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
+  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first) pushKeys(); if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
   if(m.type === 'MS_EXT_START') extSync();
   if(m.type === 'MS_EXT_IMAGE' && typeof m.dataUrl === 'string' && /^data:image\/(jpeg|png);base64,/.test(m.dataUrl)){ $$('dialog[open]').forEach(d => { if(d.id !== 'ai') d.close(); }); askWithImage(m.dataUrl); }
   if(m.type === 'MS_EXT_CAPERR') toast(m.text || 'Abre Electude con el enunciado y vuelve a probar', 'err');
@@ -2006,6 +2009,7 @@ importXfer() || importSync();
 renderAll();
 window.addEventListener('load', () => sync(false));
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
+if(location.hash === '#cfg-ai'){ history.replaceState(null, '', location.pathname); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'cfg')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'cfg')); const k = $('#gKey'); if(k) setTimeout(() => { k.scrollIntoView({block: 'center'}); k.focus(); }, 300); }
 </script>
 </body>
 </html>
