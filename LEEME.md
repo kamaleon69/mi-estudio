@@ -96,6 +96,18 @@ En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (ve
 
 > Con el marcador **ves** las tareas, fechas y cursos. Para **entregar**, pulsa «Abrir en Moodle» o «Abrir en Classroom» en cada tarea.
 
+## Actualizar la extensión
+
+**No hace falta borrarla.** Cuando haya una versión nueva en GitHub, Mi Estudio te avisa con un aviso arriba y el panel 💡 de Electude también. El icono de la extensión muestra **NEW**. Pulsa **«Cómo actualizarla»** y sigue los pasos:
+1. Descarga el zip nuevo (el botón ya trae el enlace).
+2. Descomprímelo en la **misma carpeta** de antes y acepta reemplazar los archivos.
+3. Abre `chrome://extensions` (o `edge://extensions`) y pulsa **↻** en «Mi Estudio · Sincronizar».
+4. Recarga Mi Estudio y Electude (F5).
+
+Si la app tiene una versión nueva, sale **«↻ Actualizar ahora»**.
+
+**Para el propietario:** al publicar cambios, sube también `version.json` con los números nuevos (`app` y `extension`); así es como se detecta la versión nueva.
+
 ## 4. Electude
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
@@ -107,9 +119,11 @@ La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.e
 - Sabe responder:
   - **Tipo test:** resalta en verde la opción correcta.
   - **Verdadero/falso (✗ / ✓):** marca cada afirmación con su botón, verde ✓ o rojo ✗.
-  - **Hacer clic o localizar piezas en el dibujo:** pone un círculo verde con el nombre de la pieza donde hay que hacer clic.
+  - **Hacer clic o localizar piezas en el dibujo:** pone un círculo verde con el nombre de la pieza donde hay que hacer clic. Si pide localizar una lista de componentes, los numera todos a la vez en el orden de la lista (1, 2, 3…): haz clic en el 1, luego en el 2… Los círculos no bloquean el clic.
 - Para las preguntas del dibujo, la IA tiene que **ver la pantalla**. La primera vez el panel te ofrece **«Permitir que vea la pantalla de Electude»**: acéptalo una vez y ya funciona siempre. Si prefieres no darlo, pulsa el icono de la extensión en la pestaña de Electude cada vez que la abras.
+- **🎯 Preciso / ⚡ Rápido:** «Preciso» (por defecto) usa un modelo más potente y razona con la teoría de la misma página; tarda unos segundos más pero se equivoca menos. «Rápido» usa el modelo ligero. En verdadero/falso, cada afirmación lleva su motivo y la explicación cita la frase de la lección.
 - **Automático (interruptor del panel):** si lo activas, el 💡 se abre y analiza solo cada vez que cambias de ejercicio, sin pulsar nada. El botón 💡 muestra una «A» verde mientras está activado. Se recuerda aunque cierres Electude; para apagarlo, vuelve a pulsar el interruptor.
+- **Pasar solo (interruptor del panel):** tú eliges la respuesta y pulsas **Comprovar**. Si sale «Correcte», a los 2 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa, para que lo revises. Nunca elige ni comprueba respuestas por ti.
 - **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador; la primera vez descarga el modelo. Es menos precisa: si falla, o si la pregunta es del dibujo, se usa la IA en la nube.
 - Necesita una clave de IA en **Ajustes → Asistentes IA** (la de Gemini es gratis). Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
 
