@@ -1,7 +1,7 @@
 // Guarda solo la "carcasa" de la app para que abra rápido y sin conexión.
 // Nunca guarda llamadas a Moodle ni a Google.
-const CACHE = 'mi-estudio-v3';
-const SHELL = ['./', './index.html', './manifest.json', './ai-providers.js', './icon-192.png', './icon-512.png'];
+const CACHE = 'mi-estudio-v4';
+const SHELL = ['./', './index.html', './manifest.json', './ai-providers.js', './device.js', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

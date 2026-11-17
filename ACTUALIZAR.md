@@ -1,13 +1,13 @@
 # Actualizar Mi Estudio y la extensión
 
-Web: **2026.11.17.7** · Extensión: **1.10.0**
+Web: **2026.11.17.8** · Extensión: **1.11.0**
 
 ## Subir la web a GitHub
 
 1. Descomprime el ZIP completo.
 2. Abre tu repositorio `kamaleon69/mi-estudio`.
 3. Sube el contenido de la carpeta en la raíz del repositorio, donde ya está `index.html`, reemplazando los archivos existentes. No metas toda la web dentro de una subcarpeta adicional.
-4. Incluye `ai-providers.js`, `index.html`, `version.json`, `mi-estudio-extension.zip` y `mi-estudio-extension-firefox.zip`. Son necesarios para publicar la actualización y ofrecer las descargas nuevas. Los iconos, `manifest.json` y `sw.js` también están incluidos.
+4. Incluye `ai-providers.js`, `device.js`, `index.html`, `version.json`, `mi-estudio-extension.zip` y `mi-estudio-extension-firefox.zip`. Son necesarios para publicar la actualización y ofrecer las descargas nuevas. Los iconos, `manifest.json` y `sw.js` también están incluidos.
 5. Las carpetas `extension-chrome` y `extension-firefox` contienen el código editable. `tests` contiene las pruebas y `tools` el empaquetador. Puedes subirlas también.
 6. Confirma los cambios y espera a que termine GitHub Pages. Recarga Mi Estudio con Ctrl+Mayús+R.
 
@@ -17,8 +17,8 @@ Publicar la web no actualiza por sí solo una extensión instalada manualmente.
 
 1. Descomprime `mi-estudio-extension.zip` en la misma carpeta que ya cargaste como extensión, reemplazando los archivos. También puedes usar directamente `extension-chrome`.
 2. Abre `chrome://extensions` o `edge://extensions` y pulsa el botón de recarga de Mi Estudio.
-3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v1.10.0**. Si no aparece, ese panel todavía es de una versión anterior.
-4. Abre Mi Estudio y guarda los ajustes de IA para sincronizar las claves de Gemini, Claude u OpenAI con la extensión. Al añadir OpenAI, el navegador puede pedir permiso para acceder a `api.openai.com`.
+3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v1.11.0**. Si no aparece, ese panel todavía es de una versión anterior.
+4. Abre Mi Estudio y guarda los ajustes de IA para sincronizar las claves de Gemini, Groq, OpenRouter Free, Claude u OpenAI con la extensión. El navegador puede pedir permiso para los nuevos dominios `api.groq.com` y `openrouter.ai`.
 
 ## Actualizar Firefox o Zen
 
@@ -45,7 +45,7 @@ Los dibujos y arrastres siguen siendo manuales. Los controles dentro de un ifram
 - `tests/browser/index.html`: abre este archivo en el navegador y pulsa **Ejecutar pruebas de integración**. Utiliza respuestas simuladas y no necesita una clave de IA. También permite comprobar ON/OFF y Cancelar manualmente.
 - `python3 tools/empaquetar.py`: regenera los ZIP de las dos extensiones y el ZIP completo a partir del código editable.
 
-Se han ejecutado 56 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
+Se han ejecutado 98 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
 
 
 ## Clave alternativa de Gemini y OpenAI
@@ -60,3 +60,16 @@ En Mi Estudio → Ajustes → Asistentes IA:
 Las preguntas respondidas o corregidas se omiten antes de capturar o consultar la IA. Esto incluye respuestas hechas sin ayuda.
 
 Una consulta que ya había empezado antes de tu respuesta puede haber consumido cuota; su resultado no se aplica. No se promete una tasa de acierto: los fallos de la IA siguen siendo posibles.
+
+
+## Novedades de esta entrega
+
+- Selección directa de API y de clave Gemini desde el panel de Electude. La selección se conserva al abrir de nuevo la web; Guardar en Ajustes permite volver a cambiarla.
+- Groq y OpenRouter Free: pega los tokens en Ajustes y guarda. En OpenRouter solo se admiten modelos gratuitos; en Groq conserva el plan Free.
+- Sobre los dibujos solo aparecen números anclados a puntos detectados. Si una ubicación no se puede vincular, no se dibuja una marca aproximada. La identificación técnica sigue dependiendo de la respuesta de la IA.
+- Automático observa el cambio de pregunta, también con estilos y animaciones. Las respuestas de preguntas anteriores se descartan y sus solicitudes se cancelan cuando es posible.
+- Pasar solo espera **0,50 segundos** desde que detecta «Correcte». Puedes cancelarlo; no avanza si cambia la pregunta o deja de aparecer la confirmación correcta.
+- IA local: **Preparar / probar IA local** → **Preparar / descargar** → **Probar el modelo**. Mantén abierta su pestaña. Se usa en modo Rápido para texto sencillo; los ejercicios precisos usan la API.
+- Web adaptada a móvil: selector de API, botones táctiles, navegación y ajuste del chat al teclado. Aviso de que el ayudante integrado de Electude no funciona en móvil; ese aviso no se muestra en ordenador.
+
+La prueba de navegador no pudo ejecutarse por restricciones del entorno. Las pruebas automáticas utilizan controles y proveedores simulados; no se ha verificado esta entrega con tu sesión real de Electude, tokens reales ni una descarga real de Gemini Nano.

@@ -112,7 +112,7 @@ Si la app tiene una versión nueva, sale **«↻ Actualizar ahora»**.
 
 La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
 
-**💡 Ayuda dentro de Electude (extensión v1.10.0):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
+**💡 Ayuda dentro de Electude (extensión v1.11.0):** con la extensión instalada, en cualquier página de Electude aparece un botón **💡** abajo a la derecha.
 1. Ábrelo: sale un panel lateral **Ayuda IA**.
 2. Pulsa **🔍 Analizar la pregunta**. La IA lee el enunciado y te muestra la **opción sugerida** con la explicación. Además, la opción se **marca en verde** en la página.
 3. Léete la explicación y marca tú la respuesta, o activa **Autocompletar: ON**. La IA puede equivocarse; revisa lo rellenado antes de comprobarlo.
@@ -125,14 +125,16 @@ La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.e
 - **Automático (interruptor del panel):** si lo activas, el 💡 se abre y analiza solo cada vez que cambias de ejercicio, sin pulsar nada. El botón 💡 muestra una «A» verde mientras está activado. Se recuerda aunque cierres Electude; para apagarlo, vuelve a pulsar el interruptor.
 - **Autocompletar: ON / OFF (nuevo):** viene apagado. Al activarlo, analiza cada ejercicio y rellena los controles compatibles: opciones únicas, varias casillas, verdadero/falso, números, texto y desplegables. En **Mínimo** y **Máximo** eliges el intervalo de espera, **7–15 segundos por defecto**. Admite de 0 a 3600 segundos, decimales y un tiempo fijo poniendo el mismo valor en ambos campos. El tiempo se elige de nuevo para cada ejercicio y empieza cuando llega la respuesta **final** de la IA; el tiempo de análisis se suma a esa espera. Autocompletar usa siempre **Preciso**: al activarlo se selecciona ese modo y se deshabilita Rápido. Al acabar la espera, hace clic en la opción de Electude. Si la respuesta precisa falla, no se rellena con una rápida. Los ajustes se recuerdan en el navegador.
 - **Cancelar esta respuesta:** detiene la cuenta atrás del ejercicio actual. También se cancela al apagar ON/OFF, cambiar de pregunta, ocultar la pestaña o intervenir manualmente. Si regresas a la pestaña sin cambiar de ejercicio, puede empezar una nueva cuenta completa. Una intervención manual impide que la IA sobrescriba esa respuesta hasta que vuelvas a pulsar Analizar.
-- **Pasar solo (interruptor del panel):** tú pulsas **Comprovar** después de revisar la respuesta. Si sale «Correcte», a los 2 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa. Autocompletar no pulsa **Comprovar**.
-- **Dibujos y otras actividades:** las marcas de localización se mantienen como ayuda manual. El autocompletado no hace clic en el dibujo ni arrastra piezas. Si los controles están en un iframe de otro origen o en un lienzo sin controles accesibles, hay que responder manualmente.
+- **Pasar solo (interruptor del panel):** tú pulsas **Comprovar** después de revisar la respuesta. Si sale «Correcte», a los 0,50 segundos pasa a la siguiente pregunta (puedes **Cancelar** en el aviso de abajo). Si sale «Incorrecte», no pasa. Autocompletar no pulsa **Comprovar**.
+- **Dibujos y otras actividades:** se detectan puntos reales dentro de las figuras. La IA recibe sus referencias H y debe escogerlas en el orden solicitado. Sobre el dibujo aparecen únicamente números pequeños, sin nombres; los nombres permanecen en el panel. Las marcas se anclan a la figura o al control real y siguen el desplazamiento y el tamaño. Se omiten referencias desconocidas, repetidas, ambiguas o con fiabilidad baja. Esto valida la posición del marcador, no garantiza que la IA haya identificado correctamente cada pieza. Las marcas se mantienen como ayuda manual. El autocompletado no hace clic en el dibujo ni arrastra piezas. Si los controles están en un iframe de otro origen o en un lienzo sin controles accesibles, hay que responder manualmente.
+- **Automático al navegar:** detecta cambios en el recuadro activo y en el indicador de pregunta, observa cambios de estilo y comprueba periódicamente el estado. Las animaciones de la teoría no reinician sin fin el temporizador. Cambiar de ejercicio cancela la petición anterior cuando sea posible y descarta su resultado.
 - **Ahorrar cuota:** si ya hay una respuesta marcada, todos los campos están rellenados, todas las filas de verdadero/falso están respondidas o aparece «Correcte/Incorrecte», no se vuelve a analizar ni se hace otra petición. Se aplica tanto a respuestas tuyas como a las del autocompletado. Una petición que ya estaba en curso cuando respondiste puede haber consumido cuota; se descarta su resultado.
 - **Preguntas con números en la imagen:** necesitan una captura y utilizan Preciso. Los números del dibujo son etiquetas; el valor se propone para el campo numérico, sin resaltar la etiqueta como opción de test.
 - **Cuota de Gemini:** si se agota un límite diario o temporal, la extensión pausa ese modelo y muestra el próximo reintento cuando Google lo informa. Puedes elegir la clave alternativa manualmente. Dos claves del mismo proyecto comparten cuota.
 - **Respuestas incompletas:** si faltan afirmaciones, campos o grupos de opciones, hay IDs desconocidos, o la IA declara poca fiabilidad, no se rellena la actividad. El panel explica el motivo. Esto valida la estructura; no garantiza que el contenido técnico de la respuesta sea correcto.
-- **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador. La primera vez Chrome descarga el modelo (2-4 GB, de 5 a 30 minutos; el progreso se ve en `chrome://on-device-internals`); mientras tanto se usa la nube. Es bastante menos precisa: solo se usa en preguntas tipo test sencillas; verdadero/falso, campos, dibujo y autocompletado van a la nube.
-- Necesita una clave de IA en **Ajustes → Asistentes IA**. Puedes elegir Claude, Gemini u OpenAI / ChatGPT. Gemini permite guardar una clave principal y otra alternativa y seleccionar cuál se usa. Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
+- **⚡ IA de tu ordenador (opcional, Chrome de escritorio):** pulsa **Preparar / probar IA local** en el panel. Se abre una página propia de la extensión: pulsa **Preparar / descargar**, espera a que aparezca **IA local lista** y pulsa **Probar el modelo** para comprobar una respuesta real en tu ordenador. La descarga muestra su progreso; el 100 % todavía puede necesitar preparación. Mantén esa pestaña abierta. Se utiliza en modo **Rápido**, solo para preguntas sencillas de texto. Preciso, dibujos, verdadero/falso, campos y Autocompletar usan la API. Si la sesión local no está lista o falla, el panel avisa y utiliza la API seleccionada. Firefox no ofrece esta API. Consulta los [requisitos de Chrome](https://developer.chrome.com/docs/ai/get-started) y el botón de diagnóstico de la página local; no se anuncia como activada una descarga que aún no ha terminado.
+
+- Necesita una clave de IA en **Ajustes → Asistentes IA**. Puedes elegir Gemini, Groq, OpenRouter Free, Claude u OpenAI / ChatGPT. En el propio panel de Electude puedes cambiar el proveedor y la clave Gemini activa sin volver a Ajustes. Las opciones sin token aparecen deshabilitadas. Gemini permite guardar una clave principal y otra alternativa y seleccionar cuál se usa. Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
 
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
 - **En el ordenador, desde la app:** el navegador te pide elegir la pestaña o ventana de Electude.
@@ -182,7 +184,7 @@ Escribe tu pregunta y pulsa **➤**. Tu mensaje se queda en el chat:
 Sube los archivos nuevos a https://github.com/kamaleon69/mi-estudio con **Add file → Upload files** y pulsa **Commit changes**. En un par de minutos estará en la web.
 
 
-## Nuevos ajustes de IA en 1.10.0
+## Nuevos ajustes de IA en 1.11.0
 
 En **Ajustes → Asistentes IA** tienes:
 
@@ -192,4 +194,23 @@ En **Ajustes → Asistentes IA** tienes:
 
 Abre Mi Estudio y guarda los cambios para sincronizarlos con la extensión. Las claves nuevas tampoco se incluyen en los enlaces para compañeros ni para transferir tareas.
 
-Después de actualizar, recarga la extensión y Electude. El encabezado del panel debe mostrar **v1.10.0**. Si no aparece ese número, todavía está abierto un panel de la versión anterior.
+Después de actualizar, recarga la extensión y Electude. El encabezado del panel debe mostrar **v1.11.0**. Si no aparece ese número, todavía está abierto un panel de la versión anterior.
+
+
+## APIs con acceso gratuito
+
+Se mantienen Gemini, Claude y OpenAI. Se añaden **Groq** y **OpenRouter Free**; no se añade Grok. Cada servicio requiere su propio token y aplica límites de disponibilidad y de solicitudes.
+
+| Servicio | Configuración inicial | Crear token / límites |
+| --- | --- | --- |
+| Gemini | Clave principal o alternativa elegida manualmente | [AI Studio](https://aistudio.google.com/apikey) · [límites](https://ai.google.dev/gemini-api/docs/rate-limits) |
+| Groq, plan Free | `qwen/qwen3.8-27b`, texto e imágenes; GPT OSS opcional solo para texto | [Crear token](https://console.groq.com/keys) · [cuotas](https://console.groq.com/docs/rate-limits) |
+| OpenRouter Free | `openrouter/free`, elige un modelo gratuito compatible con texto o imágenes | [Crear token](https://openrouter.ai/settings/keys) · [modelos gratuitos](https://openrouter.ai/collections/free-models/) |
+
+En Groq mantén el plan **Free** si quieres utilizar su cuota gratuita. Activar Developer implica tarifas de pago. En OpenRouter esta integración solo permite `openrouter/free` o IDs terminados en `:free`; no cambia a modelos de pago. Si escoges un modelo concreto, comprueba que admita imágenes para usar dibujos. Los límites de estos servicios pueden cambiar: los enlaces muestran las condiciones vigentes. No hay cambio automático a otro proveedor de pago.
+
+## Uso en móvil
+
+La navegación se adapta a pantallas pequeñas, los controles permiten pulsación táctil y el chat tiene un selector de API para móvil. La altura del chat se ajusta al teclado cuando el navegador informa de su tamaño.
+
+En la pestaña Electude aparece **solo en móvil**: «El ayudante integrado de Electude no funciona en móvil». El panel lateral de la extensión, el automático, las marcas sobre Electude y Autocompletar requieren ordenador. Puedes seguir abriendo Electude y consultando capturas mediante el chat de la web. La subida de una captura no selecciona respuestas dentro de Electude.

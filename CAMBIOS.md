@@ -1,5 +1,20 @@
 # Análisis y cambios
 
+## Versión 1.11.0 · web 2026.11.17.8
+
+- Dos nuevas APIs con nivel gratuito: Groq y OpenRouter Free. Tokens y modelos en Ajustes, chat y Lens compatibles, y selector de API directamente dentro de Electude. Se conserva la selección de la extensión al sincronizar la web. No se añade Grok ni se hace rotación automática de cuentas.
+- OpenRouter solo admite el enrutador gratuito o variantes `:free`. Groq ofrece modelos de texto e imágenes; las preguntas visuales rechazan un modelo que solo admita texto.
+- Puntos de dibujo: detección de centros de clic en figuras, inventario H y etiquetas H en la captura que recibe la IA. Marcadores visibles pequeños con solo números; anclajes al DOM/figura, escala de iframe y actualización con scroll/resize. Se rechazan IDs inventados, duplicados, destinos sin punto detectado y baja fiabilidad. No se garantiza que la IA identifique bien la pieza.
+- Automático: temporizador que no se reinicia con cada animación, identidad centrada en la pregunta activa, observación de estilos y sondeo de cambios. Se abortan las solicitudes antiguas al navegar y se descartan respuestas obsoletas.
+- Pasar solo: temporizador de 500 ms, con validación de pregunta y feedback antes del clic.
+- IA local: nueva página de extensión para iniciar la descarga con un clic real, mostrar progreso, comprobar compatibilidad y probar el modelo. Sesiones independientes por consulta, cancelación y plazos. Se utiliza en Rápido para texto sencillo; Preciso y Autocompletar usan la API.
+- Móvil: navegación y botones táctiles, selector de API, controles sin zoom al escribir y chat adaptado al teclado. Aviso de Electude integrado solo en Android/iPhone/iPad; se conserva la consulta manual de capturas.
+- Se mantienen ON/OFF, intervalo predeterminado 7–15 s y omisión de respuestas ya completadas.
+
+**98 pruebas automáticas aprobadas** con controles y APIs simulados. Sintaxis, HTML y manifiestos verificados. Prueba visual bloqueada por las restricciones del entorno; pendientes la comprobación en Electude real, las APIs con tokens reales y la descarga local en un equipo compatible.
+
+Fuentes oficiales: [Groq: nivel gratuito y cuotas](https://console.groq.com/docs/rate-limits), [Groq: visión](https://console.groq.com/docs/vision), [OpenRouter Free](https://openrouter.ai/docs/guides/routing/routers/free-router), [OpenRouter: límites](https://openrouter.ai/docs/api-reference/limits), [Chrome: Prompt API](https://developer.chrome.com/docs/ai/prompt-api) y [requisitos locales](https://developer.chrome.com/docs/ai/get-started). Condiciones consultadas el 17 de noviembre de 2026.
+
 ## Versión 1.10.0
 
 - Corregida la detección de cuestionarios con campo de respuesta y sin botón Comprovar.

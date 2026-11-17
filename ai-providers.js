@@ -1,10 +1,11 @@
 // Utilidades compartidas por la web y la extensión. No contiene claves.
 ((scope) => {
   'use strict';
-  const KEY_FIELDS = ['claudeKey', 'claudeModel', 'geminiKey', 'geminiKey2', 'geminiSlot', 'geminiModel', 'openaiKey', 'openaiModel', 'aiProvider'];
+  const KEY_FIELDS = ['claudeKey', 'claudeModel', 'geminiKey', 'geminiKey2', 'geminiSlot', 'geminiModel', 'openaiKey', 'openaiModel', 'groqKey', 'groqModel', 'openrouterKey', 'openrouterModel', 'aiProvider'];
+  const NAMES = {gemini: 'Gemini', claude: 'Claude', openai: 'OpenAI', groq: 'Groq · nivel gratuito', openrouter: 'OpenRouter Free'};
   const geminiKey = cfg => cfg.geminiSlot === 'secondary' ? cfg.geminiKey2 || '' : cfg.geminiKey || '';
-  const hasKey = (cfg, provider) => !!(provider === 'gemini' ? geminiKey(cfg) : provider === 'openai' ? cfg.openaiKey : provider === 'claude' ? cfg.claudeKey : '');
-  const provider = cfg => hasKey(cfg, cfg.aiProvider) ? cfg.aiProvider : ['gemini', 'claude', 'openai'].find(p => hasKey(cfg, p)) || cfg.aiProvider || 'gemini';
+  const hasKey = (cfg, provider) => !!(provider === 'gemini' ? geminiKey(cfg) : Object.hasOwn(NAMES, provider) ? cfg[provider + 'Key'] : '');
+  const provider = cfg => ['gemini', 'groq', 'openrouter'].includes(cfg.aiProvider) || hasKey(cfg, cfg.aiProvider) ? cfg.aiProvider : ['gemini', 'groq', 'openrouter', 'claude', 'openai'].find(p => hasKey(cfg, p)) || cfg.aiProvider || 'gemini';
   function cleanKeys(source){
     const result = {};
     for(const field of KEY_FIELDS) if(typeof source[field] === 'string') result[field] = source[field].slice(0, /Key/.test(field) ? 1024 : 160);
@@ -42,7 +43,7 @@
     if(!delay && retryHeader && Number.isFinite(Date.parse(retryHeader))) delay = Math.max(0, (Date.parse(retryHeader) - now) / 1000);
     const retryAt = billing ? 0 : delay ? now + Math.max(1000, Math.ceil(delay * 1000)) : daily ? nextDailyReset(now) : now + 60000;
     const provider = options.provider || 'gemini', model = options.model || '';
-    const name = {gemini: 'Gemini', openai: 'OpenAI', claude: 'Claude'}[provider] || provider;
+    const name = NAMES[provider] || provider;
     const message = billing ? name + ': revisa el saldo o la facturación de tu API. No se harán reintentos automáticos.'
       : daily ? name + ': se ha agotado la cuota diaria de ' + model + '. Espera a que se restablezca o elige otra clave/proveedor que tenga disponibilidad en Ajustes.'
       : name + ': se ha alcanzado el límite temporal de solicitudes. El modelo queda en pausa hasta el próximo reintento permitido.';
@@ -57,7 +58,34 @@
       })};
   }
   const outputText = response => (response.output || []).filter(item => item.type === 'message').flatMap(item => item.content || []).filter(part => part.type === 'output_text').map(part => part.text || '').join('\n');
-  const exported = {KEY_FIELDS, geminiKey, hasKey, provider, cleanKeys, fingerprint, quotaKey, seconds, nextDailyReset, quota, openaiBody, outputText};
+  function chatConfig(cfg, p){
+    if(p === 'openrouter'){
+      const model = (cfg.openrouterModel || 'openrouter/free').trim();
+      if(model !== 'openrouter/free' && !/^[a-z0-9._/-]+:free$/i.test(model)) throw new Error('OpenRouter: elige openrouter/free o un modelo terminado en :free. Los modelos de pago están desactivados.');
+      return {url: 'https://openrouter.ai/api/v1/chat/completions', key: cfg.openrouterKey, model};
+    }
+    if(p === 'groq') return {url: 'https://api.groq.com/openai/v1/chat/completions', key: cfg.groqKey, model: cfg.groqModel || 'qwen/qwen3.8-27b'};
+    throw new Error('Proveedor de chat no válido');
+  }
+  function chatBody(turns, options = {}){
+    return {model: options.model, max_tokens: options.maxOutputTokens || 4096, stream: options.stream === true,
+      messages: [...(options.instructions ? [{role: 'system', content: options.instructions}] : []), ...turns.map(turn => ({role: turn.role,
+        content: turn.role === 'assistant' || !(turn.images || []).length ? String(turn.text || '') : [{type: 'text', text: String(turn.text || '(imagen)')},
+          ...turn.images.map(image => ({type: 'image_url', image_url: {url: image.url || 'data:' + image.mime + ';base64,' + image.data}}))]
+      }))]};
+  }
+  // Una selección hecha en Electude persiste al abrir la web con preferencias antiguas.
+  function mergeSelection(incoming, override, explicit){
+    const result = cleanKeys(incoming);
+    if(!explicit && override && Object.hasOwn(NAMES, override.aiProvider)){
+      const selected = {...result, aiProvider: override.aiProvider, geminiSlot: override.geminiSlot || result.geminiSlot};
+      if(hasKey(selected, selected.aiProvider)) return selected;
+    }
+    return result;
+  }
+  const publicSettings = cfg => ({provider: provider(cfg), geminiSlot: cfg.geminiSlot || 'primary',
+    available: Object.fromEntries(Object.keys(NAMES).map(p => [p, hasKey(cfg, p)])), primary: !!cfg.geminiKey, secondary: !!cfg.geminiKey2});
+  const exported = {KEY_FIELDS, NAMES, geminiKey, hasKey, provider, cleanKeys, fingerprint, quotaKey, seconds, nextDailyReset, quota, openaiBody, outputText, chatConfig, chatBody, mergeSelection, publicSettings};
   scope.MiEstudioAI = exported;
   if(typeof module !== 'undefined' && module.exports) module.exports = exported;
 })(globalThis);
