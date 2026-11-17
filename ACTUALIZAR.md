@@ -1,6 +1,6 @@
 # Actualizar Mi Estudio y la extensión
 
-Web: **2026.11.17.8** · Extensión: **1.11.0**
+Web: **2026.11.17.9** · Extensión: **1.11.1**
 
 ## Subir la web a GitHub
 
@@ -17,7 +17,7 @@ Publicar la web no actualiza por sí solo una extensión instalada manualmente.
 
 1. Descomprime `mi-estudio-extension.zip` en la misma carpeta que ya cargaste como extensión, reemplazando los archivos. También puedes usar directamente `extension-chrome`.
 2. Abre `chrome://extensions` o `edge://extensions` y pulsa el botón de recarga de Mi Estudio.
-3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v1.11.0**. Si no aparece, ese panel todavía es de una versión anterior.
+3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v1.11.1**. Si no aparece, ese panel todavía es de una versión anterior.
 4. Abre Mi Estudio y guarda los ajustes de IA para sincronizar las claves de Gemini, Groq, OpenRouter Free, Claude u OpenAI con la extensión. El navegador puede pedir permiso para los nuevos dominios `api.groq.com` y `openrouter.ai`.
 
 ## Actualizar Firefox o Zen
@@ -29,9 +29,9 @@ Para una prueba temporal: `about:debugging#/runtime/this-firefox` → Cargar com
 ## Usar el nuevo autocompletado
 
 1. Dentro de Electude abre el botón 💡.
-2. Activa **Autocompletar: ON**. Inicialmente está en **OFF**. Al activarlo se selecciona **Preciso** y se deshabilita **Rápido**.
+2. Activa **Autocompletar: ON**. Inicialmente está en **OFF**. Al activarlo se conserva el modo elegido: **Preciso o Rápido**. Puedes cambiarlo con ON.
 3. Ajusta **Mínimo** y **Máximo**. Por defecto son **7 y 15 segundos**. Puedes elegir entre 0 y 3600 segundos, usar decimales o fijar ambos al mismo número.
-4. La extensión pide la respuesta **precisa**, espera su resultado y después comienza la cuenta atrás. Al terminar, **hace clic en la opción real de Electude**. Si no se consigue una respuesta precisa, no aplica una rápida como sustitución.
+4. La extensión pide la respuesta del **modo elegido**, espera su resultado y después comienza la cuenta atrás. Al terminar, **hace clic en la opción real de Electude**. Si falla el modo elegido, no cambia silenciosamente al otro.
 5. Puedes pulsar **Cancelar esta respuesta** o poner el botón en **OFF**.
 6. Revisa la respuesta rellenada y pulsa tú **Comprovar**.
 
@@ -45,7 +45,7 @@ Los dibujos y arrastres siguen siendo manuales. Los controles dentro de un ifram
 - `tests/browser/index.html`: abre este archivo en el navegador y pulsa **Ejecutar pruebas de integración**. Utiliza respuestas simuladas y no necesita una clave de IA. También permite comprobar ON/OFF y Cancelar manualmente.
 - `python3 tools/empaquetar.py`: regenera los ZIP de las dos extensiones y el ZIP completo a partir del código editable.
 
-Se han ejecutado 98 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
+Se han ejecutado 102 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
 
 
 ## Clave alternativa de Gemini y OpenAI
@@ -73,3 +73,6 @@ Una consulta que ya había empezado antes de tu respuesta puede haber consumido 
 - Web adaptada a móvil: selector de API, botones táctiles, navegación y ajuste del chat al teclado. Aviso de que el ayudante integrado de Electude no funciona en móvil; ese aviso no se muestra en ordenador.
 
 La prueba de navegador no pudo ejecutarse por restricciones del entorno. Las pruebas automáticas utilizan controles y proveedores simulados; no se ha verificado esta entrega con tu sesión real de Electude, tokens reales ni una descarga real de Gemini Nano.
+
+
+En 1.11.1, selecciona Rápido y activa Autocompletar. Cambiar de modo durante una cuenta atrás cancela esa respuesta y vuelve a analizar con el nuevo modo.

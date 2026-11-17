@@ -221,7 +221,7 @@ button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visi
       <div style="margin-top:14px"><button class="btn" id="elecAsk" type="button" style="font-size:16px;padding:12px 20px">📸 Preguntar a la IA por la pantalla de Electude</button></div>
       <p class="meta small" id="elecCaptureHelp" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
       <div class="msg info" id="elecMobileNotice" hidden style="text-align:left;margin-top:12px" role="note"><b>El ayudante integrado de Electude no funciona en móvil.</b> El panel lateral, las marcas sobre el dibujo, el automático y Autocompletar requieren la extensión en un ordenador. En este móvil puedes abrir Electude y consultar una captura con el chat de Mi Estudio.</div>
-      <div class="msg info" id="elecDesktopHelp" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (extensión v1.11.0):</b> abre el botón 💡 y pulsa <b>🔍 Analizar la pregunta</b> para ver la sugerencia y la explicación. Activa <b>Autocompletar: ON</b> para usar siempre el modo <b>Preciso</b> y hacer clic en las opciones, verdadero/falso y campos compatibles. Mientras esté activado, Rápido queda deshabilitado. Si falla la respuesta precisa, no se usa una rápida para rellenar. Ajusta el mínimo y el máximo: por defecto espera <b>entre 7 y 15 segundos</b> después de recibir la respuesta final de la IA. Puedes apagarlo o cancelar la respuesta durante la cuenta atrás. Después pulsa tú <b>Comprovar</b>; en los dibujos, sigue las marcas y haz clic tú. Necesita una clave de Gemini, Groq, OpenRouter Free, Claude u OpenAI en Ajustes → Asistentes IA. Para ver imágenes, pulsa el icono de la extensión estando en Electude o acepta el permiso de captura.</div>
+      <div class="msg info" id="elecDesktopHelp" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (extensión v1.11.1):</b> abre el botón 💡 y pulsa <b>🔍 Analizar la pregunta</b> para ver la sugerencia y la explicación. Activa <b>Autocompletar: ON</b> para usar el modo elegido, <b>Preciso o Rápido</b>, y hacer clic en las opciones, verdadero/falso y campos compatibles. Puedes cambiar de modo con Autocompletar activado. El cambio cancela la respuesta pendiente y vuelve a analizar con el modo elegido. Ajusta el mínimo y el máximo: por defecto espera <b>entre 7 y 15 segundos</b> después de recibir la respuesta final de la IA. Puedes apagarlo o cancelar la respuesta durante la cuenta atrás. Después pulsa tú <b>Comprovar</b>; en los dibujos, sigue las marcas y haz clic tú. Necesita una clave de Gemini, Groq, OpenRouter Free, Claude u OpenAI en Ajustes → Asistentes IA. Para ver imágenes, pulsa el icono de la extensión estando en Electude o acepta el permiso de captura.</div>
     </div>
   </section>
 
@@ -1853,8 +1853,8 @@ window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 const isGecko = () => /Firefox\//.test(navigator.userAgent);
 const extZip = () => isGecko() ? 'mi-estudio-extension-firefox.zip' : 'mi-estudio-extension.zip';
 /* ---------- avisos de versión nueva (lee version.json de GitHub) ---------- */
-const APP_VERSION = '2026.11.17.8';
-let LATEST = {app: APP_VERSION, extension: '1.11.0'};
+const APP_VERSION = '2026.11.17.9';
+let LATEST = {app: APP_VERSION, extension: '1.11.1'};
 const vLess = (a, b) => String(a || '0').localeCompare(String(b || '0'), undefined, {numeric: true}) < 0;
 const extOutdated = () => !!extVersion && vLess(extVersion, LATEST.extension);
 async function checkVersions(){

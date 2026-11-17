@@ -1,5 +1,13 @@
 # Análisis y cambios
 
+## Versión 1.11.1 · web 2026.11.17.9
+
+- Autocompletar permite Preciso y Rápido, conserva el modo elegido al activar ON y deja ambos botones disponibles.
+- Cambiar de modo cancela la cuenta o petición pendiente y analiza con el nuevo modo. Cada resultado debe corresponder al modo solicitado.
+- Se mantiene la espera editable 7–15 s por defecto, la validación de respuestas completas y las cancelaciones por intervención manual o cambio de pregunta.
+- Las preguntas visuales requieren captura en ambos modos; los dibujos conservan sus marcas numéricas y se pulsan manualmente.
+- 102 pruebas automáticas aprobadas con controles y APIs simulados. Pendiente comprobar en una sesión real de Electude.
+
 ## Versión 1.11.0 · web 2026.11.17.8
 
 - Dos nuevas APIs con nivel gratuito: Groq y OpenRouter Free. Tokens y modelos en Ajustes, chat y Lens compatibles, y selector de API directamente dentro de Electude. Se conserva la selección de la extensión al sincronizar la web. No se añade Grok ni se hace rotación automática de cuentas.
