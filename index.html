@@ -1513,6 +1513,7 @@ window.addEventListener('message', e => {
   if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first) pushKeys(); if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
   if(m.type === 'MS_EXT_START') extSync();
   if(m.type === 'MS_EXT_IMAGE' && typeof m.dataUrl === 'string' && /^data:image\/(jpeg|png);base64,/.test(m.dataUrl)){ $$('dialog[open]').forEach(d => { if(d.id !== 'ai') d.close(); }); askWithImage(m.dataUrl); }
+  if(m.type === 'MS_EXT_ELEC_OPENED') toast(m.existing ? '↗ Electude ya estaba abierto: te llevo a esa pestaña' : '↗ Abriendo Electude…');
   if(m.type === 'MS_EXT_CAPERR') toast(m.text || 'Abre Electude con el enunciado y vuelve a probar', 'err');
   if(m.type === 'MS_EXT_PROGRESS'){ msg('<span class="spin"></span> ' + esc(m.text), m.login ? 'err' : 'info'); if($('#updProg')) $('#updProg').innerHTML = '<span class="spin"></span> ' + esc(m.text); if(m.login) toast(m.text, 'err'); }
   if(m.type === 'MS_EXT_RESULT'){
@@ -2010,6 +2011,12 @@ renderAll();
 window.addEventListener('load', () => sync(false));
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
 if(location.hash === '#cfg-ai'){ history.replaceState(null, '', location.pathname); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'cfg')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'cfg')); const k = $('#gKey'); if(k) setTimeout(() => { k.scrollIntoView({block: 'center'}); k.focus(); }, 300); }
+// Electude: si ya está abierto, ir a esa pestaña en vez de abrir otra (abrir otra sesión hace que la anterior «caduque»)
+document.addEventListener('click', e => {
+  const a = e.target.closest('#elecOpen'); if(!a || !extVersion || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  e.preventDefault(); e.stopPropagation();
+  window.postMessage({type: 'MS_EXT_OPEN_ELEC', url: a.href}, location.origin);
+}, true);
 </script>
 </body>
 </html>
