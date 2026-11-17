@@ -1,6 +1,6 @@
 # Actualizar Mi Estudio y la extensión
 
-Web: **2026.11.17.5** · Extensión: **1.9.0**
+Web: **2026.11.17.6** · Extensión: **1.9.1**
 
 ## Subir la web a GitHub
 
@@ -29,9 +29,9 @@ Para una prueba temporal: `about:debugging#/runtime/this-firefox` → Cargar com
 ## Usar el nuevo autocompletado
 
 1. Dentro de Electude abre el botón 💡.
-2. Activa **Autocompletar: ON**. Inicialmente está en **OFF**.
+2. Activa **Autocompletar: ON**. Inicialmente está en **OFF**. Al activarlo se selecciona **Preciso** y se deshabilita **Rápido**.
 3. Ajusta **Mínimo** y **Máximo**. Por defecto son **7 y 15 segundos**. Puedes elegir entre 0 y 3600 segundos, usar decimales o fijar ambos al mismo número.
-4. La extensión analiza la actividad, espera la respuesta final de la IA y después comienza una cuenta atrás con un tiempo elegido dentro de tu intervalo.
+4. La extensión pide la respuesta **precisa**, espera su resultado y después comienza la cuenta atrás. Al terminar, **hace clic en la opción real de Electude**. Si no se consigue una respuesta precisa, no aplica una rápida como sustitución.
 5. Puedes pulsar **Cancelar esta respuesta** o poner el botón en **OFF**.
 6. Revisa la respuesta rellenada y pulsa tú **Comprovar**.
 
@@ -45,4 +45,4 @@ Los dibujos y arrastres siguen siendo manuales. Los controles dentro de un ifram
 - `tests/browser/index.html`: abre este archivo en el navegador y pulsa **Ejecutar pruebas de integración**. Utiliza respuestas simuladas y no necesita una clave de IA. También permite comprobar ON/OFF y Cancelar manualmente.
 - `python3 tools/empaquetar.py`: regenera los ZIP de las dos extensiones y el ZIP completo a partir del código editable.
 
-Las pruebas automáticas se han ejecutado. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.
+Se han ejecutado 28 pruebas automáticas, incluidas la reproducción del fallo del temporizador y la aplicación mediante clic de una respuesta precisa con controles simulados. La prueba visual no se pudo ejecutar en el entorno de preparación y no se ha accedido a tu sesión de Electude; comprueba primero un ejercicio conocido.

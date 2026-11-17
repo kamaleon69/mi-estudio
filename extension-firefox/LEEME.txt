@@ -1,0 +1,20 @@
+Mi Estudio · Sincronizar (Zen / Firefox / Firefox para Android)
+
+Zen y Firefox solo instalan de forma permanente extensiones firmadas por Mozilla (gratis):
+1. Entra en https://addons.mozilla.org/developers/addon/submit/distribution con una cuenta de Mozilla.
+2. Elige «On your own» (no se publica), sube este zip tal cual y espera unos minutos.
+3. Descarga el archivo .xpi firmado.
+4. Zen/Firefox: about:addons -> engranaje -> «Instalar complemento desde archivo...» -> elige el .xpi y acepta los permisos.
+
+Probar sin firmar (temporal, se borra al cerrar): about:debugging#/runtime/this-firefox -> «Cargar complemento temporal...» -> manifest.json.
+
+
+Electude · versión 1.9.1
+1. Abre Mi Estudio con tu clave de Gemini o Claude guardada para sincronizarla.
+2. En Electude abre el panel 💡. Autocompletar viene en OFF.
+3. Activa «Autocompletar: ON»: se selecciona Preciso y se deshabilita Rápido. Al terminar la espera, hace clic en la respuesta de Electude. Si falla Preciso, no se rellena con una respuesta rápida.
+4. Cambia Mínimo y Máximo; el valor inicial es 7–15 segundos. Puedes poner 0–3600 s, decimales, o el mismo valor en ambos para una espera fija.
+5. La espera empieza al llegar la respuesta final de la IA. Puedes Cancelar o apagarlo durante la cuenta atrás.
+6. Revisa lo rellenado y pulsa tú Comprovar. Los dibujos y arrastres se responden manualmente.
+
+Actualizar: sustituye los archivos, recarga la extensión y recarga Mi Estudio y Electude. En Firefox/Zen debes volver a firmar el ZIP para una instalación permanente.

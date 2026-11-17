@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es"><meta charset="utf-8"><title>Pruebas de integración de Electude</title>
+<style>
+body{font:16px system-ui;margin:24px;color:#172033;max-width:800px;background:#edf2f7}h1{font-size:22px}.theory{background:white;padding:16px;border-radius:12px}.task{background:#e3e5e8;padding:22px;margin:18px 0;border-radius:12px;min-height:160px}.options{display:grid;gap:12px}.option,.vfrow{display:flex;align-items:center;gap:12px;padding:8px;background:#fff;border-radius:7px;min-height:40px}input[type=radio],input[type=checkbox]{width:22px;height:22px}.vfrow button,.custom{height:26px;width:26px;min-width:26px;padding:0;border:1px solid #9aa6b4;cursor:pointer;border-radius:50%;display:inline-block}.vfrow button[aria-checked=true],.custom[aria-checked=true]{background:#27b482;color:white}button{cursor:pointer;padding:10px;margin:5px}#results{white-space:pre-wrap;font-size:13px;background:white;padding:14px;max-width:420px}label.field{display:block;margin:10px}label.field input{width:120px;font:inherit;padding:8px}iframe{width:100%;height:300px;border:0}#testStatus{background:#fff3c4;padding:8px}
+</style>
+<h1>Electude · comprobación de autocompletado</h1>
+<p>Pruebas locales con respuestas simuladas, sin claves ni llamadas a la IA.</p>
+<div class="theory">Lección de electricidad. Una batería de 12,5 V alimenta un circuito. Al abrir el interruptor, la corriente deja de circular.</div>
+<button id="run">Ejecutar pruebas de integración</button><button id="manual">Preparar prueba manual ON/OFF</button>
+<div id="testStatus">Listo. Abre el botón 💡 para revisar el panel.</div>
+<div id="stage"></div><pre id="results"></pre>
+<script>
+const store = {elecMode: 'fast'}, changes = [], requests = [];
+let stageName = 'radio', sequence = 0, submitCount = 0, fastDelay = 50, preciseDelay = 800;
+window.__qa = {store, requests};
+window.browser = {
+  runtime: {
+    getManifest: () => ({version: '1.9.1'}),
+    onMessage: {addListener(){}},
+    sendMessage: async message => {
+      if(message.type === 'elecShot') return {dataUrl: null};
+      if(message.type === 'checkUpdate') return {};
+      if(message.type === 'elecAsk'){
+        const structure = JSON.parse((message.text.match(/\n(\{[^\n]+\})\n/) || [])[1] || '{}');
+        const scenario = stageName, snapshot = ++sequence;
+        requests.push({scenario, mode: message.mode, structure, snapshot});
+        await new Promise(resolve => setTimeout(resolve, message.mode === 'fast' ? fastDelay : preciseDelay));
+        if(scenario === 'precise-unavailable' && message.mode === 'precise') return {error: 'Modelo preciso no disponible (simulado)'};
+        let answer = '';
+        if(scenario === 'vf' || scenario === 'native-vf') answer = 'VF: [V1] => V\nVF: [V2] => F';
+        else if(scenario === 'fields') answer = 'CAMPO: C1 => 12.5\nCAMPO: C2 => serie\nCAMPO: C3 => abierto';
+        else if(scenario === 'checkbox') answer = 'RESPUESTA: [O1]\nRESPUESTA: [O3]';
+        else if(scenario === 'incomplete') answer = 'VF: [V1] => V';
+        else answer = 'RESPUESTA: [' + (message.mode === 'fast' ? 'O1' : 'O2') + ']';
+        return {text: 'ANÁLISIS: Evidencia de prueba.\n' + answer + '\nFIABILIDAD: ALTA\nPOR QUÉ: Según la lección de prueba.', model: message.mode === 'fast' ? 'simulado-lite' : 'simulado-preciso', precise: message.mode === 'precise'};
+      }
+      return {};
+    }
+  },
+  storage: {
+    local: {
+      get: async key => typeof key === 'string' ? {[key]: store[key]} : {...store},
+      set: async values => {const diff = {}; for(const [key,value] of Object.entries(values)){diff[key] = {oldValue: store[key], newValue: value}; store[key] = value;} changes.forEach(fn => fn(diff, 'local'));}
+    },
+    onChanged: {addListener(fn){changes.push(fn);}}
+  }
+};
+function show(name, number = 1){
+  stageName = name; submitCount = 0;
+  const title = '<h2>Actividad ' + number + ' · ' + name + '</h2>';
+  let content;
+  if(name === 'vf' || name === 'incomplete'){
+    content = '<p>Indica si las afirmaciones son verdaderas o falsas.</p><div class="options">' + ['El circuito está abierto', 'Hay corriente'].map((text,i) => '<div class="vfrow" data-row="'+i+'"><button type="button" data-value="false" aria-label="Falso" aria-checked="false">✗</button><button type="button" data-value="true" aria-label="Verdadero" aria-checked="false">✓</button><span>'+text+'</span></div>').join('') + '</div>';
+  }else if(name === 'native-vf'){
+    content = '<p>Marca verdadero o falso.</p><div class="options">' + ['El circuito está abierto', 'Hay corriente'].map((text,i) => '<div class="vfrow"><span>'+text+'</span><label><input type="radio" name="v'+i+'" value="false">Falso</label><label><input type="radio" name="v'+i+'" value="true">Verdadero</label></div>').join('') + '</div>';
+  }else if(name === 'fields'){
+    content = '<p>Escribe la tensión y completa los campos.</p><label class="field">Tensión (V): <input id="volts" type="number" min="0" max="100" step="0.1"></label><label class="field">Conexión: <select id="connection"><option value="">Elige</option><option value="serie">En serie</option><option value="paralelo">En paralelo</option></select></label><label class="field">Estado: <input id="state" type="text"></label>';
+  }else if(name === 'custom'){
+    content = '<p>¿Qué ocurre con la tensión?</p><div class="options">' + ['Aumenta','Disminuye'].map((text,i) => '<div class="option"><span class="custom" role="button" aria-checked="false" data-option="'+i+'"></span><span>'+text+'</span></div>').join('')+'</div>';
+  }else{
+    const type = name === 'checkbox' ? 'checkbox' : 'radio';
+    content = '<p>¿Qué opciones son correctas?</p><div class="options">'+['Aumenta','Disminuye', ...(type === 'checkbox' ? ['Permanece igual'] : [])].map((text,i)=>'<label class="option"><input type="'+type+'" name="q" value="'+i+'" '+(type==='checkbox' && i===1 ? 'checked' : '')+'>'+text+'</label>').join('')+'</div>';
+  }
+  document.querySelector('#stage').innerHTML = '<div class="task">'+title+content+'<button id="check" type="button">Comprovar</button><div id="feedback"></div></div>';
+  document.querySelector('#check').onclick = () => {submitCount++; document.querySelector('#feedback').textContent='Correcte';};
+  document.querySelectorAll('.vfrow button').forEach(b => b.onclick = () => {b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-checked',String(x===b)));});
+  document.querySelectorAll('.custom').forEach(b => b.onclick = () => {document.querySelectorAll('.custom').forEach(x => x.setAttribute('aria-checked',String(x===b)));});
+}
+show('radio');
+const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+const panel = () => document.querySelector('#__msElecHost').shadowRoot;
+const status = () => panel().querySelector('.fillStatus').textContent;
+const setRange = (min, max) => {for(const [selector,value] of [['.fillMin',min],['.fillMax',max]]){const input = panel().querySelector(selector); input.value = value; input.dispatchEvent(new Event('input', {bubbles:true}));}};
+const enabled = () => panel().querySelector('.fillToggle').getAttribute('aria-pressed') === 'true';
+const toggle = value => {if(enabled() !== value) panel().querySelector('.fillToggle').click();};
+const analyze = () => panel().querySelector('.go').click();
+const record = (name, condition, extra) => {document.querySelector('#results').textContent += (condition ? 'PASS ' : 'FAIL ') + name + (condition ? '' : '\n  '+(extra||status())) + '\n';};
+document.querySelector('#manual').onclick = () => {toggle(false); show('radio', Date.now()); setRange(7,15); panel().querySelector('.fab').click(); document.querySelector('#testStatus').textContent = 'Activa ON y prueba OFF o Cancelar durante la cuenta atrás.';};
+document.querySelector('#run').onclick = async () => {
+  document.querySelector('#run').disabled = true;
+  document.querySelector('#results').textContent = '';
+  document.querySelector('#testStatus').textContent = 'Ejecutando pruebas…';
+  try{
+    toggle(false); setRange(0.3,0.3);
+    show('radio', 10); toggle(true);
+    record('ON fuerza Preciso y deshabilita Rápido', panel().querySelector('[data-m=precise]').classList.contains('on') && panel().querySelector('[data-m=fast]').disabled);
+    await pause(650);
+    record('no rellena la sugerencia rápida provisional', !document.querySelector('input:checked'));
+    await pause(1500);
+    record('radio final O2 y ninguna comprobación automática', document.querySelector('input:checked')?.value === '1' && submitCount === 0);
+    toggle(false); show('radio', 11); analyze(); await pause(1500);
+    record('OFF conserva las sugerencias sin rellenarlas', !document.querySelector('input:checked'));
+    toggle(true); await pause(650); toggle(false);
+    show('checkbox', 12); toggle(true); await pause(4800);
+    record('varias casillas y desmarcado de la casilla incorrecta', [...document.querySelectorAll('input:checked')].map(x=>x.value).join(',') === '0,2');
+    toggle(false); show('vf', 13); toggle(true); await pause(4800);
+    record('verdadero/falso con controles personalizados', [...document.querySelectorAll('.vfrow [aria-checked=true]')].map(x=>x.dataset.value).join(',') === 'true,false');
+    toggle(false); show('fields', 14); toggle(true); await pause(4800);
+    record('número decimal, desplegable y campo de texto', document.querySelector('#volts').value === '12.5' && document.querySelector('#connection').value === 'serie' && document.querySelector('#state').value === 'abierto');
+    toggle(false); show('custom', 15); toggle(true); await pause(4800);
+    record('opciones con controles dibujados', document.querySelector('.custom[aria-checked=true]')?.dataset.option === '1');
+    toggle(false); show('native-vf', 16); toggle(true); await pause(4800);
+    record('verdadero/falso con radios nativos', [...document.querySelectorAll('input:checked')].map(x=>x.value).join(',') === 'true,false');
+    toggle(false); show('incomplete', 17); toggle(true); await pause(4800);
+    record('no rellena una lista VF incompleta', !document.querySelector('[aria-checked=true]') && /incompleta/.test(status()));
+    toggle(false); show('radio', 18); setRange(3,3); toggle(true); await pause(4000); panel().querySelector('.fillCancel').click(); await pause(3500);
+    record('Cancelar detiene la respuesta pendiente', !document.querySelector('input:checked'));
+    toggle(false); show('radio', 19); setRange(3,3); toggle(true); await pause(4000); toggle(false); await pause(3500);
+    record('OFF detiene la respuesta pendiente', !document.querySelector('input:checked'));
+    show('radio', 20); setRange(0.3,0.3); toggle(true); await pause(400); show('radio', 21); toggle(false); await pause(1300);
+    record('descarta una respuesta que llega tras cambiar la pregunta', !document.querySelector('input:checked') && !panel().querySelector('.out').textContent.includes('Disminuye'));
+    record('no pulsa nunca Comprovar', submitCount === 0);
+    show('precise-unavailable', 22); toggle(true); await pause(4800);
+    record('si falla Preciso no usa respuestas rápidas para pulsar', !document.querySelector('input:checked') && requests.filter(r => r.scenario === 'precise-unavailable').every(r => r.mode === 'precise'));
+    document.querySelector('#testStatus').textContent = 'Pruebas terminadas. Revisa PASS / FAIL.';
+  }catch(error){document.querySelector('#results').textContent += 'ERROR ' + error.stack;}
+  finally{toggle(false); document.querySelector('#run').disabled = false;}
+};
+</script>
+<script src="../../extension-chrome/electude-core.js"></script><script src="../../extension-chrome/electude.js"></script>
+</html>

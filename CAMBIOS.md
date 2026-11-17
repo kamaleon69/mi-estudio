@@ -1,5 +1,14 @@
 # Análisis y cambios
 
+## Corrección 1.9.1
+
+- Corregido «Illegal invocation»: el temporizador nativo se invocaba con el objeto de la cuenta atrás como receptor. Ahora conserva el receptor del navegador al iniciar y cancelar. Se reprodujo el fallo antes de corregirlo y se añadieron pruebas de regresión.
+- Autocompletar selecciona y mantiene Preciso. Rápido queda deshabilitado mientras esté en ON.
+- La petición precisa del autocompletado no cambia a modelos ligeros si hay un error. El resultado debe estar confirmado como preciso antes de iniciar la cuenta y antes de hacer clic.
+- Las opciones se pulsan mediante el control real; también se admiten controles SVG sin método click.
+- Si un temporizador no se puede iniciar, se conserva la sugerencia y se muestra el error en el estado del autocompletado.
+- Se incorporaron pruebas de aplicación mediante clic, modo Preciso obligatorio y cancelación con controles simulados.
+
 ## Qué había
 
 La web es una aplicación estática con almacenamiento local, un service worker para abrir sin conexión y un puente de mensajes a la extensión. La extensión sincroniza Moodle/Classroom y consulta Gemini o Claude desde su proceso de fondo.
@@ -10,12 +19,12 @@ Al revisar el código se encontraron estos puntos:
 
 - Las coincidencias de texto podían confundir una opción con una frase parecida de la teoría.
 - Las respuestas llegadas después de cambiar de pregunta podían mostrarse en el ejercicio nuevo.
-- El modo preciso mostraba primero una respuesta rápida provisional. Era necesario distinguirla del resultado final antes de añadir el rellenado.
+- El modo preciso manual puede mostrar primero una respuesta rápida provisional. Autocompletar solicita únicamente el resultado preciso.
 - La selección del modelo preciso podía ignorar un modelo potente elegido en la web.
 - Una captura podía corresponder a otra pestaña si el usuario cambiaba de pestaña durante la petición.
 - El prompt incluía un ejemplo muy concreto de una lección, capaz de condicionar respuestas de otras actividades.
 
-## Qué cambia en 1.9.0
+## Qué cambia en 1.9.1
 
 | Cambio | Comportamiento |
 | --- | --- |
@@ -26,7 +35,7 @@ Al revisar el código se encontraron estos puntos:
 | Opciones y campos | Soporte para radios, casillas, parejas verdadero/falso, texto, números y desplegables identificables en el DOM accesible. |
 | Correspondencia | Se envían a la IA IDs de los controles reales. El autocompletado exige una respuesta completa y sin referencias desconocidas o repetidas. |
 | Respuestas antiguas | Se comprueba la pregunta, la URL y la petición antes de presentar o aplicar el resultado. |
-| Precisión | Se elimina el ejemplo sesgado del prompt, se da prioridad a la evidencia de la lección y se espera el resultado final del modo preciso. |
+| Precisión | Autocompletar exige una respuesta precisa, sin sustitución por una rápida, y da prioridad a la evidencia de la lección. |
 | Modelos | Se respeta el modelo potente seleccionado; Claude rápido y preciso utilizan peticiones diferenciadas. |
 | Peticiones | Límite de tiempo y detección de salidas vacías o truncadas. |
 | Capturas | Se comprueba que la pestaña solicitante siga activa antes y después de capturar. |
@@ -40,7 +49,7 @@ El autocompletado selecciona controles y escribe valores. **Comprovar sigue sien
 | Archivo | Cambio |
 | --- | --- |
 | `index.html` | Ayuda de Electude y versión de la aplicación. |
-| `version.json` | Web `2026.11.17.5`, extensión `1.9.0`. |
+| `version.json` | Web `2026.11.17.6`, extensión `1.9.1`. |
 | `extension-*/electude-core.js` | Nuevo protocolo, validación de respuestas, rangos y temporizador cancelable. |
 | `extension-*/electude.js` | Controles ON/OFF, inventario de opciones/campos, rellenado y protección frente a respuestas antiguas. |
 | `extension-*/background.js` | Prompt, captura, selección de modelos, límites y manejo de errores. |
@@ -52,7 +61,7 @@ El autocompletado selecciona controles y escribe valores. **Comprovar sigue sien
 
 ## Validación y límites
 
-Se ejecutaron 19 pruebas automáticas con Node y se comprobó la sintaxis de los scripts. Se usan proveedores simulados: no se ha utilizado una clave real ni se ha medido un porcentaje de acierto de la IA.
+Se ejecutaron 28 pruebas automáticas con Node y se comprobó la sintaxis de los scripts. Se usan proveedores simulados: no se ha utilizado una clave real ni se ha medido un porcentaje de acierto de la IA.
 
 La vista previa del entorno no estaba disponible, por lo que la prueba visual queda pendiente. Se incluye una página de integración local para probar los controles con respuestas simuladas. No se ha accedido a una sesión real de Electude.
 

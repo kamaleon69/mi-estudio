@@ -1,0 +1,22 @@
+Mi Estudio · Sincronizar (extensión para Chrome y Edge)
+
+Instalar (una sola vez):
+1. Descomprime este zip en una carpeta que no vayas a borrar (por ejemplo Documentos\mi-estudio-extension).
+2. Abre chrome://extensions (en Edge: edge://extensions).
+3. Activa «Modo de desarrollador» (arriba a la derecha; en Edge, abajo a la izquierda).
+4. Pulsa «Cargar descomprimida» y elige la carpeta.
+5. Abre Mi Estudio y pulsa ↻ Actualizar. ¡Listo!
+
+La extensión solo tiene permiso para moodle4.net.fje.edu, classroom.google.com, electude.eu, la web de Mi Estudio y las APIs de Gemini y Claude (para la ayuda 💡 en Electude, con tu propia clave).
+No guarda ni envía contraseñas: lee tus tareas con tu sesión y se las pasa a la app en tu navegador.
+
+
+Electude · versión 1.9.1
+1. Abre Mi Estudio con tu clave de Gemini o Claude guardada para sincronizarla.
+2. En Electude abre el panel 💡. Autocompletar viene en OFF.
+3. Activa «Autocompletar: ON»: se selecciona Preciso y se deshabilita Rápido. Al terminar la espera, hace clic en la respuesta de Electude. Si falla Preciso, no se rellena con una respuesta rápida.
+4. Cambia Mínimo y Máximo; el valor inicial es 7–15 segundos. Puedes poner 0–3600 s, decimales, o el mismo valor en ambos para una espera fija.
+5. La espera empieza al llegar la respuesta final de la IA. Puedes Cancelar o apagarlo durante la cuenta atrás.
+6. Revisa lo rellenado y pulsa tú Comprovar. Los dibujos y arrastres se responden manualmente.
+
+Actualizar: sustituye los archivos, recarga la extensión y recarga Mi Estudio y Electude. En Firefox/Zen debes volver a firmar el ZIP para una instalación permanente.
