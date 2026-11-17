@@ -104,7 +104,13 @@ La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.e
 1. Ábrelo: sale un panel lateral **Ayuda IA**.
 2. Pulsa **🔍 Analizar la pregunta**. La IA lee el enunciado y te muestra la **opción sugerida** con la explicación. Además, la opción se **marca en verde** en la página.
 3. Léete la explicación y marca tú la respuesta. La extensión no pulsa nada por ti, y la IA puede equivocarse.
-- Para que la IA vea también las imágenes (esquemas, fotos, gráficas), pulsa **una vez** el icono de la extensión estando en Electude: así se abre el panel y queda permitida la captura de esa pestaña.
+- Sabe responder:
+  - **Tipo test:** resalta en verde la opción correcta.
+  - **Verdadero/falso (✗ / ✓):** marca cada afirmación con su botón, verde ✓ o rojo ✗.
+  - **Hacer clic o localizar piezas en el dibujo:** pone un círculo verde con el nombre de la pieza donde hay que hacer clic.
+- Para las preguntas del dibujo, la IA tiene que **ver la pantalla**. La primera vez el panel te ofrece **«Permitir que vea la pantalla de Electude»**: acéptalo una vez y ya funciona siempre. Si prefieres no darlo, pulsa el icono de la extensión en la pestaña de Electude cada vez que la abras.
+- **Automático (interruptor del panel):** si lo activas, el 💡 se abre y analiza solo cada vez que cambias de ejercicio, sin pulsar nada. El botón 💡 muestra una «A» verde mientras está activado. Se recuerda aunque cierres Electude; para apagarlo, vuelve a pulsar el interruptor.
+- **⚡ IA de tu ordenador (opcional):** si tu Chrome trae la IA integrada (Gemini Nano), el panel muestra este botón. Al pulsarlo te pregunta si aceptas usar la potencia de tu ordenador; la primera vez descarga el modelo. Es menos precisa: si falla, o si la pregunta es del dibujo, se usa la IA en la nube.
 - Necesita una clave de IA en **Ajustes → Asistentes IA** (la de Gemini es gratis). Con la app abierta y la extensión instalada, la clave se pasa sola a la extensión y solo se guarda en tu navegador.
 
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
