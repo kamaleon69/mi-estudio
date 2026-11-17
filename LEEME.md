@@ -98,7 +98,7 @@ En Moodle, el marcador revisa cada tarea de tus cursos y tarda unos segundos (ve
 
 ## 4. Electude
 
-La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. En el ordenador se abre en una ventana lateral para usarlo junto a la app.
+La pestaña **Electude** es solo un acceso directo a `https://clotfje.electude.eu/srestore`, que se cambia en Ajustes → Tus plataformas. Se abre en una pestaña nueva del navegador.
 
 **📸 Preguntar a la IA:** abre el enunciado en Electude y pulsa este botón. La captura se envía al asistente, que te dice cuál es la opción correcta y por qué. Las respuestas las marcas tú en Electude.
 - **Con la extensión (lo más rápido):** estando en la pestaña de Electude, pulsa el icono 🧩 de «Mi Estudio · Sincronizar». La captura llega sola al asistente.

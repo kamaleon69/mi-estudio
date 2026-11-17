@@ -313,7 +313,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
           <li><b>Electude:</b> copia la dirección de la página donde inicias sesión. En Jesuïtes El Clot es <code>https://clotfje.electude.eu/srestore</code>.</li>
           <li>Pulsa <b>Guardar</b> y comprueba con los enlaces «Abrir ↗» que cada uno lleva a su sitio.</li>
         </ol>
-        <div class="tip">La pestaña <b>Electude</b> es un acceso directo a esta dirección. En el ordenador se abre en una ventana lateral para usarlo junto a la app.</div>
+        <div class="tip">La pestaña <b>Electude</b> es un acceso directo a esta dirección. Se abre en una pestaña nueva del navegador.</div>
       </div></details>
     </div>
 
@@ -1497,25 +1497,10 @@ document.addEventListener('click', e => {
   const a = e.target.closest('a[target=_blank][href]'); if(!a || a.dataset.noToast !== undefined) return;
   let u; try{ u = new URL(a.href); }catch(_){ return; }
   if(!/^https?:/.test(u.protocol) || a.getAttribute('href') === '#') return;
-  if(/(^|\.)electude\./i.test(u.hostname) && !isTouch()) return; // ya avisa la ventana lateral
   if(a.id === 'updMoodle' || a.id === 'updClass') return;
   const name = /moodle/i.test(u.hostname) ? 'Moodle' : /classroom\.google/i.test(u.hostname) ? 'Classroom' : /electude/i.test(u.hostname) ? 'Electude' : /drive\.google|docs\.google/i.test(u.hostname) ? 'Google Drive' : u.hostname.replace(/^www\./, '');
   toast('↗ Abriendo ' + name + '…');
 }, true);
-
-/* ---------- Electude en ventana lateral (PC) ----------
-   Electude no permite abrirse dentro de otra web, así que en el PC se abre
-   en una ventana pegada a la derecha para trabajar con las dos a la vez. */
-document.addEventListener('click', e => {
-  const a = e.target.closest('a[href]');
-  if(!a || isTouch() || e.ctrlKey || e.metaKey || e.shiftKey) return;
-  let u; try{ u = new URL(a.href); }catch(_){ return; }
-  if(!/(^|\.)electude\./i.test(u.hostname)) return;
-  e.preventDefault();
-  const W = screen.availWidth, H = screen.availHeight, w = Math.max(700, Math.round(W * 0.6));
-  const win = window.open(a.href, 'electude', `popup,width=${w},height=${H},left=${(screen.availLeft || 0) + W - w},top=${screen.availTop || 0}`);
-  if(win){ win.focus(); toast('Electude abierto en una ventana lateral'); } else window.open(a.href, '_blank', 'noopener');
-});
 
 /* ---------- extensión «Mi Estudio · Sincronizar» (1 clic en el ordenador) ---------- */
 let extVersion = null, extBusy = false, extNotes = [];
