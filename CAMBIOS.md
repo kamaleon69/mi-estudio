@@ -1,5 +1,66 @@
 # Análisis y cambios
 
+## 2.1.0 · 22 de noviembre de 2026
+
+- Conserva Electude de la versión anterior e incorpora el asistente Lens del ZIP aportado, con selección mediante puntero, recorte local y la API elegida en Ajustes.
+- Sincronización por plataforma en pestañas de fondo, con acceso a la sesión, cancelación y conservación de listas anteriores ante fallos parciales.
+- Borradores en castellano o català a partir de PDF, DOCX, texto o imágenes. Revisión humana antes de la entrega.
+- Análisis de Electude sin apertura automática del panel. Captura reservada para ejercicios visuales y protección de respuestas parciales del usuario.
+- Guía de activación con primera prueba para Chrome, Edge, Firefox y Zen.
+
+
+## Versión 1.15.0 · web 2026.11.18.2
+
+- Preparación de permisos al instalar/actualizar si hace falta, con un botón de concesión que conserva el gesto de usuario. Captura y escritura en el portapapeles se solicitan al principio. Los enlaces anteriores de permisos llevan a esa preparación.
+- Comprobación previa en las rutas de consulta IA, captura, verificación, sincronización y configuración local. Comprobación adicional antes de rellenar. Retirar permisos cancela solicitudes, cuentas y avance. El estado inicial se refleja también en la web. No se han añadido permisos de lectura del portapapeles.
+- Botón para informar de fallos en el panel: pausa la respuesta y el avance antes de abrir otro documento y guarda el estado del problema, incluida la respuesta original previa a validación, sin consultar otra vez la IA.
+- Informe revisable con tipo de fallo, notas y respuesta esperada. Descarga de JSON, copia de texto y compartir mediante el sistema cuando está disponible. La imagen del análisis se incluye solo si se marca su casilla. Se aclara que no es necesariamente la captura de la corrección posterior.
+- Exclusión de claves guardadas, cabeceras y credenciales; ocultación de correos y parámetros de direcciones. Borrador local único, apertura limitada a 24 horas, con respaldo sin imagen si falta espacio. No hay envío automático de informes ni un servidor de recepción.
+- Historial acotado de eventos, mensajes del rellenado y errores, agrupando ticks repetidos. Datos de contexto y controles para reproducir lecturas y clics incorrectos.
+- 232 pruebas aprobadas, 35 nuevas. Sintaxis, referencias y copias verificadas. No se ha probado en una instalación real de navegador, sesión real de Electude ni con claves reales. Los archivos de Firefox/Zen continúan sin firma de Mozilla.
+
+Referencias: [permisos en Chrome](https://developer.chrome.com/docs/extensions/reference/api/permissions), [permisos en Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/request) e [instalación del complemento](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled).
+
+## Versión 1.14.0 · web 2026.11.18.1
+
+- Lectura de controles fuera de pantalla, exclusión de iframes ocultos y carruseles recortados, selección de teoría relevante y separación del contexto por documento/módulo.
+- Vista de lectura y botón para releer sin API. Analizar manual vuelve a consultar; caché renovada, acotada a siete días y sin guardar resultados incompletos o de baja fiabilidad.
+- Clic centrado con puntero/mouse en controles dibujados, activación nativa en inputs y desplazamiento de controles fuera de la vista. Espera de confirmación hasta un segundo y verificación visual local de selección cuando no hay estado DOM. No se repite el clic ante una selección incierta.
+- Identidad basada en el contenido y la navegación; recrear un nodo, rellenar un campo o bloquearlo no equivale a cambiar de pregunta. Cancelaciones solo por intervención en la respuesta. Mantiene cambio de pregunta, ON/OFF, 7–15 s configurables, Preciso/Rápido y paso tras Correcte a los 0,50 s.
+- Parser compatible con varios IDs en una línea, formatos numerados, CERT/FALS, TRUE/FALSE y valores entre comillas. Bloqueo de autocompletado ante fiabilidad media explícita. Estados finales de Gemini, Claude y OpenAI verificados antes de aceptar texto.
+- Resaltados sin temporizadores de parpadeo; retirarlos conserva cambios de estilo posteriores hechos por Electude.
+- Deshacer autocompletado en las tareas web con protección de las ediciones posteriores.
+- Guía de Zen con carga temporal directa del ZIP y firma permanente por Mozilla, solución de errores, página de privacidad y manifiesto con declaración de datos y versiones mínimas compatibles. Se conserva el ID. No se incluye ni se promete una firma de Mozilla.
+- Opciones de la extensión con estado de instalación, permisos y API. Empaquetado que sincroniza el código compartido entre navegadores antes de generar los ZIP.
+- 197 pruebas aprobadas con controles y APIs simulados; validación de 49 scripts y comprobaciones de HTML, recursos y paquetes. Prueba manual de navegador ampliada. Pendiente validación en una sesión real de Electude y en Zen; no se han usado tokens reales ni se ha firmado/publicado en Mozilla.
+
+Fuentes: [Zen](https://docs.zen-browser.app/user-manual/extensions), [instalación temporal de Firefox](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/), [firma y distribución](https://www.extensionworkshop.com/documentation/publish/signing-and-distribution-overview/) y [datos y consentimiento](https://www.extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/).
+
+## Versión 1.13.0 · web 2026.11.17.11
+
+- Autocompletar dentro del detalle de las tareas, con selector persistente Castellano/Català, enunciado editable y captura opcional. Usa la API seleccionada y admite texto en línea de Moodle o borradores para copiar. Conserva el texto existente; cancela por edición, cambio de idioma o cierre y descarta respuestas antiguas. No entrega la tarea.
+- Web Push real con service worker y servicio Cloudflare incluido: alarmas persistentes ocho horas antes de las tareas pendientes, una programación por tarea y fecha, cambio/cancelación al sincronizar y apertura directa de la tarea desde el aviso. Si ya faltan menos de ocho horas, se avisa en el siguiente envío.
+- Activación por dispositivo desde Ajustes, permiso solicitado al pulsar, prueba de envío, sincronización, desactivación y guía de configuración adaptable a móvil dentro de la «i».
+- GitHub Pages sigue alojando la web. El servicio push requiere publicación y URL por parte del propietario; no está desplegado en esta entrega. Usa las tareas sincronizadas, sin acceso al Moodle/Classroom cerrado. En iPhone/iPad requiere la app añadida a pantalla de inicio.
+- Claves VAPID generadas y conservadas en el servicio, cifrado RFC 8291 y firma RFC 8292 sin dependencias. Token distinto por dispositivo en IndexedDB, exclusión de borradores y claves de IA, caducidad de mensajes, reintentos acotados por fecha y limpieza de suscripciones caducadas. Las solicitudes simultáneas y las renovaciones de endpoints no recuperan estados anteriores.
+- Caché de la web actualizada con todos los módulos y la guía. Extensiones sincronizadas y empaquetadas como 1.13.0.
+- 171 pruebas aprobadas: 128 anteriores y 43 nuevas sobre programación, estado del cliente, eventos del service worker, borradores, APIs e idiomas. Cifrado contrastado con el vector del RFC y descifrado independiente. No se ha publicado el Worker ni probado la recepción en un móvil real o con tokens reales de IA.
+
+Referencias: [Web Push en WebKit](https://webkit.org/blog/13878/), [alarmas persistentes de Cloudflare](https://developers.cloudflare.com/durable-objects/api/alarms/), [disponibilidad y límites del almacenamiento SQLite](https://developers.cloudflare.com/durable-objects/platform/pricing/), [RFC 8291](https://www.rfc-editor.org/rfc/rfc8291) y [RFC 8292](https://www.rfc-editor.org/rfc/rfc8292).
+
+## Versión 1.12.0 · web 2026.11.17.10
+
+- Corregido el ámbito de cierto/falso: no basta con recoger la lista, el recuadro debe incluir la pregunta común. Se limpian los textos de las filas sin incluir las etiquetas de los botones.
+- Enunciado, negaciones, comparaciones y sujeto explícitos en el prompt. Se prohíbe forzar reparto V/F o convertir ausencia de evidencia en Falso.
+- Contexto de lección con párrafos completos relevantes y lectura vertical fuera de pantalla, excluyendo bloques ocultos. Citas y confianza por fila, comprobadas localmente antes de autocompletar.
+- Parejas de controles con resolución por etiquetas; referencias contradictorias se rechazan. Se escoge el control de clic completo y se confirma la selección por estado o captura local, sin una segunda consulta al proveedor de IA.
+- Resúmenes agregados de corrección detectados para evitar reanálisis y permitir avance solo con todas correctas.
+- Nuevo motor local Ollama, descarga de modelo con progreso, prueba obligatoria antes de activar, diagnóstico de permisos y origen. Gemini Nano se mantiene como opción de texto. Rápido local admite Autocompletar ON; Preciso conserva la API. Fallos locales visibles sin cambio silencioso a la nube.
+- Cinco ilustraciones ampliables en la información de instalación de Chrome/Edge y Firefox/Zen, incluidas en la caché de la web.
+- 128 pruebas automáticas aprobadas con controles y servidores simulados. Lectura visual comprobada sobre la captura aportada e ilustraciones revisadas renderizadas. No se mide un porcentaje de acierto académico ni se ha utilizado una sesión real de Electude o una descarga real de modelo.
+
+Fuentes: [API local de Ollama](https://docs.ollama.com/api/chat), [descarga de modelos](https://docs.ollama.com/api/pull), [configuración local](https://docs.ollama.com/faq), [Gemma 3](https://ollama.com/library/gemma3), [instalación en Chrome](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) e [instalación temporal en Firefox](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
+
 ## Versión 1.11.1 · web 2026.11.17.9
 
 - Autocompletar permite Preciso y Rápido, conserva el modo elegido al activar ON y deja ambos botones disponibles.

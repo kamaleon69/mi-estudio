@@ -19,9 +19,9 @@
 @media (prefers-color-scheme:dark){:root{--bg:#11151b;--card:#1a2029;--ink:#e6e9ef;--muted:#98a2b3;--line:#2a323e;--brand:#9ab8e8;--accent:#6ea0ff}}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px env(safe-area-inset-top);display:flex;align-items:center;gap:12px}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:12px}
 header h1{font-size:18px;margin:0;flex:1;color:var(--brand)}
-nav{display:flex;gap:4px;padding:8px 16px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:49px;z-index:4}
+nav{display:flex;gap:4px;padding:8px 16px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:var(--header-height,49px);z-index:4}
 nav button{border:0;background:none;padding:8px 14px;border-radius:999px;color:var(--muted);font:inherit;cursor:pointer;white-space:nowrap}
 nav button.on{background:var(--brand);color:var(--bg)}
 main{max-width:900px;margin:0 auto;padding:16px 16px 80px}
@@ -93,7 +93,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #ai .ai-h strong{flex:1}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .seg button{white-space:nowrap;border:0;background:none;color:var(--muted);padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
-.seg button.on[data-p=claude]{background:#d97757;color:#fff}.seg button.on[data-p=gemini]{background:#4b7bec;color:#fff}
+.seg button.on[data-p=claude]{background:#d97757;color:#fff}.seg button.on[data-p=gemini]{background:#4b7bec;color:#fff}.seg button.on[data-p=openai]{background:#047857;color:#fff}
 #aiMode{font-size:12px;color:var(--muted);padding:6px 14px;border-bottom:1px solid var(--line)}
 #aiCtx:empty,#aiAtt:empty{display:none}
 #aiCtx{padding:8px 14px 0}
@@ -151,6 +151,32 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.err{background:#b3261e}
 #lensBusy{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:50;color:#fff;font-weight:600}
+
+/* Controles que caben en pantallas pequeñas y en el teclado del móvil. */
+html{scroll-padding-top:calc(var(--header-height,49px) + 70px)}
+main,.card,.row>*{min-width:0}.card,.intro,.meta{overflow-wrap:anywhere}
+button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#ai{position:fixed;top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh);max-height:var(--visual-height,100dvh)}
+#ai .ai-h{flex-wrap:wrap;flex-shrink:0}#aiSeg{order:3;width:100%;max-width:100%;overflow-x:auto;flex-shrink:0;border-radius:10px}
+#aiSeg button{flex:1;min-height:40px;flex-shrink:0}.seg button.on[data-p=groq]{background:#c2410c;color:#fff}.seg button.on[data-p=openrouter]{background:#6d28d9;color:#fff}
+.aiProviderMobile{display:none}#aiMsgs{min-height:0;overscroll-behavior:contain}#aiInput{min-width:0;width:0;flex:1 1 0}#ai .ai-f{flex-shrink:0}
+#lensBar{max-width:96vw;flex-wrap:wrap;justify-content:center;border-radius:18px}
+@media (max-width:600px){
+  body{font-size:16px}header{gap:6px;padding-left:10px;padding-right:10px}header h1{min-width:0;font-size:16px}header .btn{min-height:44px;flex-shrink:0}
+  nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:6px 8px;overflow:visible}nav button{min-width:0;min-height:44px;padding:5px 3px;white-space:normal;font-size:13px;line-height:1.2;border-radius:10px}
+  main{padding:12px 10px calc(92px + env(safe-area-inset-bottom))}.card{padding:14px 12px}.btn,.chip{min-height:44px;display:inline-flex;align-items:center;justify-content:center}.btn.small{min-height:40px}
+  input,select,textarea{font-size:16px;min-height:44px}input[type=checkbox],input[type=radio]{min-height:0}.check input{width:22px;height:22px;flex-shrink:0}
+  .row>.btn{max-width:100%}.task{gap:8px}.task .t{overflow-wrap:anywhere}.due{white-space:normal;max-width:8em;font-size:12px}
+  #elecOpen,#elecAsk{width:100%;max-width:100%}#elecUrlTxt{overflow-wrap:anywhere}
+  dialog{width:100%;max-width:100vw;max-height:calc(100dvh - 16px);margin:auto;border-radius:12px}.dlg-h{padding:12px;flex-wrap:wrap}.dlg-b{padding:12px;overflow-x:auto}
+  #ai{margin:0;border-radius:0}#ai .ai-h strong{display:block}#aiSeg{display:none}.aiProviderMobile{display:block;order:3;flex-basis:100%;margin:0;font-size:12px}.aiProviderMobile select{margin-top:3px}
+  #ai .ai-f{padding-left:8px;padding-right:8px;gap:6px}#aiMsgs{padding:12px}#aiMode{overflow-wrap:anywhere}.bub{max-width:97%}.bub-actions{flex-wrap:wrap}.bub-actions button{min-height:40px}.att button{width:28px;height:28px;line-height:28px}.att{padding-right:30px}
+  #lensHint{max-width:94vw;white-space:normal;text-align:center}#lensBar{width:max-content;max-width:96vw}#lensBar button{min-height:44px}
+  .views button{padding:8px 4px;font-size:12.5px;line-height:1.25}.views button .n{display:block;width:max-content;margin:3px auto 0}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.spin{animation-duration:2s}}
+.installFigure{margin:18px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card)}.installFigure img{display:block;width:100%;height:auto;border-radius:8px}.installFigure figcaption{font-size:14px;line-height:1.5;margin-top:10px}.installFigure figcaption a{display:inline-block;padding:8px 0;min-height:36px}
+.taskAuto{padding:14px;margin:14px 0;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.taskAuto details{margin:10px 0}.taskAuto textarea{min-height:110px}.taskLanguageLabel{margin:0 0 0 auto;min-width:140px}.taskLanguageLabel select{margin-top:4px}#taskGenerateStatus{margin-top:10px;white-space:pre-wrap}#dlg{max-height:calc(var(--visual-height,100dvh) - 12px)}@media(max-width:600px){.taskAuto{padding:12px}.taskAuto .row>.btn{flex:1}.taskLanguageLabel{min-width:0;width:100%;margin-top:8px}}
 </style>
 </head>
 <body>
@@ -195,18 +221,28 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
       <p class="meta small" id="elecUrlTxt"></p>
       <a class="btn primary" id="elecOpen" target="_blank" rel="noopener" style="font-size:17px;padding:13px 26px;margin-top:8px">Abrir Electude ↗</a>
       <div style="margin-top:14px"><button class="btn" id="elecAsk" type="button" style="font-size:16px;padding:12px 20px">📸 Preguntar a la IA por la pantalla de Electude</button></div>
-      <p class="meta small" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
-      <div class="msg info" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (con la extensión v1.3):</b> en la página de Electude aparece un botón 💡 abajo a la derecha. Ábrelo y pulsa <b>🔍 Analizar la pregunta</b>: se abre un panel lateral con la opción sugerida y la explicación, y la opción se marca en verde en la página. Para que la IA vea también las imágenes, pulsa una vez el icono de la extensión estando en Electude. Necesita una clave de Gemini (gratis) o de Claude en Ajustes → Asistentes IA.</div>
+      <p class="meta small" id="elecCaptureHelp" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
+      <div class="msg info" id="elecMobileNotice" hidden style="text-align:left;margin-top:12px" role="note"><b>El ayudante integrado de Electude no funciona en móvil.</b> El panel lateral, las marcas sobre el dibujo, el automático y Autocompletar requieren la extensión en un ordenador. En este móvil puedes abrir Electude y consultar una captura con el chat de Mi Estudio.</div>
+      <div class="msg info" id="elecDesktopHelp" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (extensión v2.1.0):</b> abre el botón 💡 y pulsa <b>🔍 Analizar la pregunta</b> para ver la sugerencia y la explicación. Activa <b>Autocompletar: ON</b> para usar el modo elegido, <b>Preciso o Rápido</b>, y hacer clic en las opciones, verdadero/falso y campos compatibles. Puedes cambiar de modo con Autocompletar activado. El cambio cancela la respuesta pendiente y vuelve a analizar con el modo elegido. Ajusta el mínimo y el máximo: por defecto espera <b>entre 7 y 15 segundos</b> después de recibir la respuesta final de la IA. Puedes apagarlo o cancelar la respuesta durante la cuenta atrás. Después pulsa tú <b>Comprovar</b>; en los dibujos, sigue las marcas y haz clic tú. Puedes usar una clave de Gemini, Groq, OpenRouter Free, Claude u OpenAI en Ajustes → Asistentes IA, o configurar IA local en Rápido desde el panel. Para ver imágenes, pulsa el icono de la extensión estando en Electude o acepta el permiso de captura.</div>
     </div>
   </section>
 
   <section id="cfg">
+    <div class="card" id="reminderCard">
+      <strong>🔔 Avisos de tareas · 8 horas antes</strong>
+      <p class="small">Actívalos en el móvil donde quieras recibirlos. Los avisos se envían según las tareas pendientes y fechas sincronizadas en ese dispositivo, incluso con la app cerrada.</p>
+      <p class="small" id="reminderInstall"></p>
+      <div id="reminderStatus" class="msg info" role="status" aria-live="polite">Comprobando el servicio de avisos…</div>
+      <div class="row"><button class="btn primary" id="reminderEnable" disabled>Activar en este dispositivo</button><button class="btn" id="reminderTest" disabled>Enviar aviso de prueba</button><button class="btn" id="reminderSync" disabled>Actualizar avisos</button><button class="btn" id="reminderDisable" disabled>Desactivar</button></div>
+      <p class="meta small">No se avisa de tareas sin fecha, vencidas, entregadas o eliminadas. Si activas una tarea con menos de 8 horas, recibirás un único aviso próximo. Actualiza Mi Estudio después de entregar en Moodle o Classroom.</p>
+      <details class="help"><summary><span class="i">i</span> Configurar el servicio de avisos (una vez)</summary><div class="hb"><p>GitHub Pages no ejecuta los envíos. El paquete incluye un servicio push para Cloudflare que hay que publicar una vez; no necesita recibir contraseñas ni claves de IA.</p><label for="reminderService">Dirección del servicio de avisos</label><input id="reminderService" type="url" placeholder="https://mi-estudio-avisos.tu-cuenta.workers.dev" autocomplete="off" autocapitalize="none"><button class="btn" id="reminderSave">Guardar y comprobar servicio</button><p><a href="notificaciones/configurar.html" target="_blank" rel="noopener">Abrir instrucciones de configuración ↗</a></p><p class="small">Al activarlo se envían al servicio el título y la fecha de tus tareas pendientes, junto con la suscripción de este navegador. No se envían textos de tus borradores ni claves de API.</p></div></details>
+    </div>
     <div class="card" id="extCard" style="border-color:var(--ok)">
       <strong>🧩 Sincronizar con 1 clic (extensión para Chrome, Edge, Zen y Firefox)</strong>
-      <div id="extBox"></div>
-      <details class="help" id="extHelp"><summary><span class="i">i</span> Cómo instalarla (2 minutos, solo en el ordenador)</summary><div class="hb">
+      <div id="extBox"></div><p><a class="btn small" href="ayuda/activar-extension.html">Guía de instalación, permisos y primera prueba</a></p>
+      <details class="help" id="extHelp"><summary><span class="i">i</span> Cómo instalarla · guía con imágenes (ordenador)</summary><div class="hb">
         <div id="extHelpChrome">
-        <p><b>Chrome / Edge</b></p>
+        <p><b>Chrome / Edge</b></p><p class="small">Pulsa cualquier imagen para ampliarla. Son ilustraciones orientativas; la posición o los textos pueden variar según el navegador.</p><figure class="installFigure"><a href="ayuda/01-descomprimir.svg" target="_blank" rel="noopener" title="Ampliar imagen"><img src="ayuda/01-descomprimir.svg" loading="lazy" width="900" height="470" alt="Del ZIP mi-estudio-extension.zip se extrae una carpeta que contiene manifest.json, background.js y electude.js."></a><figcaption>Paso 1. Extrae el ZIP y conserva la carpeta. <a href="ayuda/01-descomprimir.svg" target="_blank" rel="noopener">Ampliar imagen ↗</a></figcaption></figure><figure class="installFigure"><a href="ayuda/02-desarrollador.svg" target="_blank" rel="noopener" title="Ampliar imagen"><img src="ayuda/02-desarrollador.svg" loading="lazy" width="900" height="470" alt="En chrome://extensions activa Modo desarrollador. En Edge usa edge://extensions."></a><figcaption>Paso 2. Escribe la dirección en una pestaña nueva y activa el modo desarrollador. <a href="ayuda/02-desarrollador.svg" target="_blank" rel="noopener">Ampliar imagen ↗</a></figcaption></figure><figure class="installFigure"><a href="ayuda/03-cargar-carpeta.svg" target="_blank" rel="noopener" title="Ampliar imagen"><img src="ayuda/03-cargar-carpeta.svg" loading="lazy" width="900" height="470" alt="Pulsa Cargar descomprimida y selecciona la carpeta mi-estudio-extension."></a><figcaption>Paso 3. Elige la carpeta que contiene manifest.json; después recarga Mi Estudio. <a href="ayuda/03-cargar-carpeta.svg" target="_blank" rel="noopener">Ampliar imagen ↗</a></figcaption></figure>
         <ol>
           <li>Pulsa <a href="mi-estudio-extension.zip" download>⬇ Descargar para Chrome/Edge</a> y <b>descomprime</b> el zip en una carpeta que no vayas a borrar (por ejemplo <i>Documentos\mi-estudio-extension</i>).</li>
           <li>Abre una pestaña nueva y escribe <code>chrome://extensions</code> (en Edge: <code>edge://extensions</code>). <button class="btn small" id="copyExtUrl" type="button">Copiar</button></li>
@@ -215,18 +251,18 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
           <li>Vuelve aquí y <b>recarga la página</b>: verás «✅ Extensión instalada».</li>
         </ol>
         </div>
-        <div id="extHelpFx">
-        <p><b>Zen / Firefox</b>: Zen y Firefox solo instalan de forma permanente extensiones <b>firmadas por Mozilla</b>. Firmarla es gratis y se hace una vez:</p>
+        <div id="extHelpFx"><div class="msg info"><b>¿Zen rechaza el ZIP?</b> Puedes cargarlo temporalmente desde about:debugging. Para instalarlo de forma permanente necesitas el XPI firmado. <p><a class="btn primary small" href="ayuda/instalar-zen.html" target="_blank" rel="noopener">Guía de Zen y solución de errores ↗</a></p></div>
+        <figure class="installFigure"><a href="ayuda/05-firefox-permanente.svg" target="_blank" rel="noopener" title="Ampliar imagen"><img src="ayuda/05-firefox-permanente.svg" loading="lazy" width="900" height="470" alt="Firma el ZIP para Firefox con Mozilla y elige el XPI firmado desde Instalar complemento desde archivo en about:addons."></a><figcaption>Para instalarla permanentemente necesitas el XPI firmado. <a href="ayuda/05-firefox-permanente.svg" target="_blank" rel="noopener">Ampliar imagen ↗</a></figcaption></figure><p><b>Zen / Firefox</b>: Zen y Firefox solo instalan de forma permanente extensiones <b>firmadas por Mozilla</b>. El propietario debe firmar cada versión; después puede compartir ese XPI:</p>
         <ol>
           <li>Pulsa <a href="mi-estudio-extension-firefox.zip" download>⬇ Descargar para Zen/Firefox</a> (no lo descomprimas).</li>
-          <li>Entra en <a href="https://addons.mozilla.org/developers/addon/submit/distribution" target="_blank" rel="noopener">addons.mozilla.org → Enviar complemento</a> con una cuenta de Mozilla (gratis).</li>
-          <li>Elige <b>«On your own» / «Por tu cuenta»</b> (no se publica), sube el zip y acepta. En unos minutos te deja descargar el archivo <b>.xpi firmado</b>.</li>
+          <li>Entra en <a href="https://addons.mozilla.org/developers/addon/submit/distribution" target="_blank" rel="noopener">addons.mozilla.org → Enviar complemento</a> con una cuenta de Mozilla.</li>
+          <li>Elige <b>«On your own» / «Por tu cuenta»</b> (no se publica), sube el zip y acepta. Cuando termine la firma, descarga el archivo <b>.xpi firmado</b>.</li>
           <li>En Zen abre <code>about:addons</code> → ⚙ → <b>«Instalar complemento desde archivo…»</b> → elige el .xpi y acepta los permisos.</li>
           <li>Recarga esta página: verás «✅ Extensión instalada».</li>
         </ol>
-        <p class="small"><b>Para probarla ya (temporal):</b> descomprime el zip, abre <code>about:debugging#/runtime/this-firefox</code> → <b>«Cargar complemento temporal…»</b> → elige el archivo <i>manifest.json</i>. Se quita al cerrar el navegador.</p>
+        <figure class="installFigure"><a href="ayuda/04-firefox-temporal.svg" target="_blank" rel="noopener" title="Ampliar imagen"><img src="ayuda/04-firefox-temporal.svg" loading="lazy" width="900" height="470" alt="En about:debugging#/runtime/this-firefox pulsa Cargar complemento temporal y elige manifest.json."></a><figcaption>Prueba temporal: elige manifest.json. Se elimina al cerrar Firefox/Zen. <a href="ayuda/04-firefox-temporal.svg" target="_blank" rel="noopener">Ampliar imagen ↗</a></figcaption></figure><p class="small"><b>Para probarla ya (temporal):</b> descomprime el zip, abre <code>about:debugging#/runtime/this-firefox</code> → <b>«Cargar complemento temporal…»</b> → elige el archivo <i>manifest.json</i>. Se quita al cerrar el navegador.</p>
         </div>
-        <div class="tip">La extensión solo puede acceder a tu Moodle, a Classroom y a esta web. Abre una ventanita con Moodle y Classroom unos segundos, lee tus tareas con tu sesión (como el marcador) y la cierra. No guarda ni envía contraseñas. Si la sesión ha caducado, inicia sesión en esa ventanita y continúa sola.</div>
+        <div class="tip">La extensión lee Moodle y Classroom en pestañas de fondo y usa tu sesión abierta. Si necesitas iniciar sesión, abre la plataforma desde «Actualizar».</div>
       </div></details>
     </div>
 
@@ -319,15 +355,20 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
     </div>
 
     <div class="card">
-      <strong>Asistentes IA (Claude y Gemini)</strong>
-      <p class="meta small"><b>Sin claves</b>, la app usa tu cuenta normal: abre claude.ai o Gemini con tu pregunta ya escrita y la imagen copiada (en el móvil, a través del menú «Compartir»).<br>
+      <strong>Asistentes IA (Claude, Gemini y OpenAI / ChatGPT)</strong>
+      <p class="meta small"><b>Sin claves</b>, la app usa tu cuenta normal: abre Claude, Gemini o ChatGPT con tu pregunta ya escrita y la imagen copiada (en el móvil, a través del menú «Compartir»).<br>
       <b>Con una clave de API</b>, el chat funciona dentro de la app.</p>
       <label>Clave de API de Claude (console.anthropic.com · se paga por uso, aparte de Claude Pro)</label>
-      <input id="cKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <input id="cKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="sk-ant-…" autocomplete="off">
       <label>Modelo de Claude</label>
       <select id="cModel"><option value="claude-sonnet-5-5">Claude Sonnet 5.5 (recomendado)</option><option value="claude-opus-5-5">Claude Opus 5.5 (más potente)</option><option value="claude-haiku-5-5">Claude Haiku 5.5 (más rápido y barato)</option></select>
       <label>Clave de API de Gemini (aistudio.google.com · tiene nivel gratuito)</label>
-      <input id="gKey" type="password" placeholder="AIza…" autocomplete="off">
+      <input id="gKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="AIza…" autocomplete="off">
+      <label for="gKey2">Clave alternativa de Gemini (opcional, de otro proyecto autorizado)</label>
+      <input id="gKey2" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="AIza…" autocomplete="off">
+      <label for="gSlot">Clave de Gemini activa</label>
+      <select id="gSlot"><option value="primary">Principal</option><option value="secondary">Alternativa</option></select>
+      <p class="meta small">Puedes guardar otra clave de una cuenta tuya. Google aplica la cuota por proyecto: dos claves del mismo proyecto comparten el límite. El cambio de clave es manual; no hay rotación automática.</p>
       <label>Modelo de Gemini</label>
       <select id="gModel">
         <option value="gemini-3.5-flash-lite">Rápido · gemini-3.5-flash-lite (recomendado, ~1 s)</option>
@@ -336,6 +377,23 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
         <option value="gemini-3.5-flash">Más potente · gemini-3.5-flash (puede tardar más de 1 min)</option>
       </select>
       <p class="meta small">Si el modelo elegido tarda más de 15 s o está saturado, la app pasa sola a uno rápido.</p>
+      <label for="oKey">Clave de API de OpenAI / ChatGPT</label>
+      <input id="oKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="sk-…" autocomplete="off">
+      <label for="oModel">Modelo de OpenAI</label>
+      <input id="oModel" type="text" value="gpt-5.5" placeholder="gpt-5.5" autocomplete="off">
+      <p class="meta small">Crea tu clave en <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI Platform → API keys</a>. La API necesita facturación o créditos disponibles en tu cuenta; entrar en ChatGPT no proporciona una clave de API.</p>
+      <label for="qKey">Clave de API de Groq · nivel gratuito</label>
+      <input id="qKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="gsk_…" autocomplete="off">
+      <label for="qModel">Modelo de Groq</label>
+      <select id="qModel"><option value="qwen/qwen3.8-27b">Qwen 3.8 27B · texto e imágenes</option><option value="openai/gpt-oss-120b">GPT OSS 120B · solo texto</option></select>
+      <p class="meta small">Obtén tu token en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq → API keys</a>. Usa el plan Free; tiene <a href="https://console.groq.com/docs/rate-limits" target="_blank" rel="noopener">límites por modelo</a>. Si activas el plan Developer, Groq cobra según sus tarifas. Para dibujos elige Qwen con visión.</p>
+      <label for="rKey">Clave de API de OpenRouter Free</label>
+      <input id="rKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="sk-or-v1-…" autocomplete="off">
+      <label for="rModel">Modelo gratuito de OpenRouter</label>
+      <input id="rModel" type="text" value="openrouter/free" placeholder="openrouter/free o proveedor/modelo:free" autocomplete="off">
+      <p class="meta small">Crea un token en <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener">OpenRouter → Keys</a>. <b>openrouter/free</b> elige un modelo gratuito compatible con la pregunta, también con imágenes. Puedes usar otro ID de la <a href="https://openrouter.ai/collections/free-models/" target="_blank" rel="noopener">lista de modelos gratuitos</a> terminado en <b>:free</b>. No se aceptan modelos de pago en esta opción. La cuota y la disponibilidad son limitadas.</p>
+      <label for="aiProviderCfg">Proveedor para el asistente y Electude</label>
+      <select id="aiProviderCfg"><option value="claude">Claude</option><option value="gemini">Gemini (clave activa)</option><option value="openai">OpenAI / ChatGPT</option><option value="groq">Groq · nivel gratuito</option><option value="openrouter">OpenRouter Free</option></select>
       <label>Cómo quieres que te ayude (instrucciones para la IA)</label>
       <textarea id="aiSys" style="min-height:90px"></textarea>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="aiSave">Guardar</button><span id="aiSaved" class="meta small"></span></div>
@@ -430,7 +488,8 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 <dialog id="ai">
   <div class="ai-h">
     <strong>Asistente</strong>
-    <div class="seg" id="aiSeg"><button data-p="claude">✳ Claude</button><button data-p="gemini">✦ Gemini</button></div>
+    <label class="aiProviderMobile" for="aiProviderQuick">API del chat<select id="aiProviderQuick"><option value="claude">Claude</option><option value="gemini">Gemini</option><option value="openai">OpenAI / ChatGPT</option><option value="groq">Groq · nivel gratuito</option><option value="openrouter">OpenRouter Free</option></select></label>
+    <div class="seg" id="aiSeg"><button data-p="claude">✳ Claude</button><button data-p="gemini">✦ Gemini</button><button data-p="openai">◉ ChatGPT</button><button data-p="groq">⚡ Groq</button><button data-p="openrouter">◇ Free</button></div>
     <button class="btn small" id="aiNew" title="Nueva conversación">＋</button>
     <button class="btn small" id="aiClose">✕</button>
   </div>
@@ -454,17 +513,37 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
     <button id="lensPhoto">📷 Foto</button>
     <button id="lensCancel">Cancelar</button>
     <button class="cl" id="lensClaude" disabled>✳ Claude</button>
-    <button class="ge" id="lensGemini" disabled>✦ Gemini</button>
+    <button class="ge" id="lensGemini" disabled>✦ Gemini</button><button class="cl" id="lensOpenai" disabled>◉ ChatGPT</button><button class="cl" id="lensGroq" disabled>⚡ Groq</button><button class="cl" id="lensFree" disabled>◇ Free</button>
   </div>
 </dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="lensBusy"><span><span class="spin"></span> Capturando…</span></div>
 
+<script src="ai-providers.js"></script>
+<script src="device.js"></script>
+<script src="task-document.js"></script>
+<script src="task-autofill.js"></script>
+<script src="reminders-core.js"></script>
+<script src="reminders-store.js"></script>
+<script src="reminders-client.js"></script>
 <script>
 "use strict";
+const Providers = globalThis.MiEstudioAI;
 /* ---------- utilidades ---------- */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
+function updateViewport(){
+  const header = document.querySelector('header');
+  if(header) document.documentElement.style.setProperty('--header-height', header.getBoundingClientRect().height + 'px');
+  const viewport = window.visualViewport;
+  document.documentElement.style.setProperty('--visual-height', (viewport ? viewport.height : window.innerHeight) + 'px');
+  document.documentElement.style.setProperty('--visual-top', (viewport ? viewport.offsetTop : 0) + 'px');
+}
+updateViewport();
+if(typeof ResizeObserver !== 'undefined') new ResizeObserver(updateViewport).observe(document.querySelector('header'));
+window.addEventListener('resize', updateViewport);
+if(window.visualViewport){ visualViewport.addEventListener('resize', updateViewport); visualViewport.addEventListener('scroll', updateViewport); }
+
 const store = {
   get(k, d){ try{ const v = localStorage.getItem('me_'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem('me_'+k, JSON.stringify(v)); }catch(e){} },
@@ -479,7 +558,7 @@ const DEFAULT_SYS = 'Eres un tutor para un estudiante de Formación Profesional.
   'Explica el razonamiento paso a paso para que el estudiante entienda la materia, no solo el resultado. ' +
   'Si te envían una imagen o un texto seleccionado, primero di brevemente qué ves y después ayuda con ello.';
 let cfg = Object.assign({moodleUrl:'https://moodle4.net.fje.edu', classroomUrl:'https://classroom.google.com', classroomEmail:'', syncFrom:'2026-09-01', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://clotfje.electude.eu/srestore',
-  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash-lite', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
+  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiKey2:'', geminiSlot:'primary', openaiKey:'', openaiModel:'gpt-5.5', groqKey:'', groqModel:'qwen/qwen3.8-27b', openrouterKey:'', openrouterModel:'openrouter/free', geminiModel:'gemini-3.5-flash-lite', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
 const saveCfg = () => store.set('cfg', cfg);
 // La conexión directa (usuario/contraseña/token de Moodle, Client ID de Google) se ha retirado: se borran restos guardados.
 if(cfg.moodleToken || cfg.googleClientId || cfg.moodleUser){ cfg.moodleToken = ''; cfg.moodleUser = ''; cfg.googleClientId = ''; store.set('cfg', cfg); }
@@ -862,7 +941,7 @@ function openDlg(t){
   $('#dlg').showModal();
 }
 $('#dlgClose').onclick = () => $('#dlg').close();
-$('#dlg').addEventListener('close', () => renderPending());
+$('#dlg').addEventListener('close', () => { cancelTaskAutofill(); renderPending(); });
 
 function draftBox(t, label = 'Tu borrador (se guarda en este dispositivo)'){
   return `<label>${label}</label><textarea id="draft">${esc(store.get('draft_' + t.id, ''))}</textarea>
@@ -874,16 +953,70 @@ function wireDraft(t){
   $('#copyDraft').onclick = async () => { try{ await navigator.clipboard.writeText(ta.value); $('#draftSaved').textContent = 'Copiado ✓'; toast('✅ Texto copiado'); }catch(e){ ta.select(); toast('Selecciona el texto y cópialo a mano', 'err'); } };
 }
 
+let taskOpenSequence=0;
 async function openTask(t){
   if(!t) return;
-  await openTaskInner(t);
+  const sequence=++taskOpenSequence; cancelTaskAutofill();
+  if($('#dlg').open) $('#dlg').close();
+  await openTaskInner(t,sequence);
+  if(sequence!==taskOpenSequence||!$('#dlg').open)return;
+  mountTaskAutofill(t);
   const st = statusOf(t), bar = document.createElement('div');
   bar.className = 'row'; bar.style.cssText = 'margin-top:14px;padding-top:12px;border-top:1px solid var(--line)';
   bar.innerHTML = (t.manual ? '' : (t.overridden ? '<button class="btn" type="button" data-a="unmark">↩ Quitar «entregada»</button>' : (['pending', 'missing'].includes(st) ? '<button class="btn" type="button" data-a="mark">✓ Marcar como entregada</button>' : ''))) + '<button class="btn" type="button" data-a="del" style="color:var(--danger)">🗑 Eliminar tarea</button>';
   $('#dlgBody').appendChild(bar);
   bar.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { const a = b.dataset.a; if(a === 'del') deleteTask(t.id); else { $('#dlg').close(); a === 'mark' ? markDone(t.id) : unmarkDone(t.id); } });
 }
-async function openTaskInner(t){
+let taskAutofillJob=null;
+function cancelTaskAutofill(){ if(taskAutofillJob){taskAutofillJob.controller.abort();taskAutofillJob=null;} }
+function mountTaskAutofill(task){
+  const editor=$('#draft')||$('#mText');
+  if(!editor||!['pending','missing'].includes(statusOf(task)))return;
+  const panel=document.createElement('div');panel.className='taskAuto';
+  const initial=store.get('statement_'+task.id,[...$('#dlgBody').querySelectorAll('.intro')].map(el=>htmlToText(el.innerHTML)).join('\n\n')||task.desc||task.description||task.note||'');
+  panel.innerHTML=`<div class="row"><strong>✨ Autocompletar tarea</strong><label class="taskLanguageLabel" for="taskLanguage">Idioma<select id="taskLanguage"><option value="es">Castellano</option><option value="ca">Català</option></select></label></div><details ${initial?'':'open'}><summary>Enunciado de la tarea</summary><textarea id="taskStatement" placeholder="Pega aquí el enunciado o adjunta una captura. Las tareas importadas por QR pueden no incluirlo.">${esc(initial)}</textarea><label for="taskImage">Adjuntar documento o captura</label><input id="taskImage" type="file" accept="image/*,.pdf,.docx,.txt,.md,.csv"><p id="taskImageStatus" class="meta small" role="status">PDF, Word (.docx), texto o imagen. El material usado se envía a la API elegida al generar.</p></details><div class="row"><button class="btn primary" id="taskGenerate" type="button">✨ Autocompletar</button><button class="btn" id="taskCancel" type="button" hidden>Cancelar</button><button class="btn" id="taskUndo" type="button" hidden>Deshacer autocompletado</button><span class="meta small" id="taskProvider"></span></div><p class="meta small">Se añade texto al borrador conservando lo escrito. Revisa la respuesta antes de copiarla o entregarla.</p><div class="small" id="taskGenerateStatus" role="status" aria-live="polite"></div>`;
+  editor.before(panel);const language=panel.querySelector('#taskLanguage'),statement=panel.querySelector('#taskStatement'),button=panel.querySelector('#taskGenerate'),cancel=panel.querySelector('#taskCancel'),status=panel.querySelector('#taskGenerateStatus');let images=[],attachment=null,attachmentError=false,imageSequence=0,imageLoading=false,activeJob=null,lastAddition=null;const undo=panel.querySelector('#taskUndo');
+  language.value=store.get('taskLanguage','es')==='ca'?'ca':'es';
+  const stop=message=>{cancelTaskAutofill();activeJob=null;button.disabled=imageLoading;cancel.hidden=true;status.textContent=message;};
+  language.onchange=()=>{store.set('taskLanguage',language.value);if(taskAutofillJob)stop('Idioma cambiado. Vuelve a pulsar Autocompletar.');};
+  statement.oninput=()=>{store.set('statement_'+task.id,statement.value);if(taskAutofillJob)stop('Enunciado cambiado. Se ha cancelado la generación anterior.');};
+  editor.addEventListener('input',()=>{if(taskAutofillJob)stop('Has editado el borrador. Se ha cancelado la respuesta pendiente.');});
+  cancel.onclick=()=>stop('Autocompletado cancelado. Tu borrador se conserva.');
+  undo.onclick=()=>{if(!lastAddition)return;if(editor.value!==lastAddition.after){undo.hidden=true;status.textContent='El borrador ha cambiado. Se conserva tu edición.';return;}stop('Autocompletado deshecho. Se conserva el borrador anterior.');editor.value=lastAddition.before;lastAddition=null;undo.hidden=true;editor.dispatchEvent(new Event('input',{bubbles:true}));store.set('draft_'+task.id,editor.value);};
+  panel.querySelector('#taskImage').onchange=async event=>{
+    if(taskAutofillJob)stop('Imagen cambiada. Vuelve a generar la respuesta.');
+    const sequence=++imageSequence,file=event.target.files?.[0],imageStatus=panel.querySelector('#taskImageStatus');images=[];attachment=null;attachmentError=false;imageLoading=!!file;button.disabled=imageLoading;
+    if(!file){imageStatus.textContent='';return;}
+    try{
+      imageStatus.textContent='Preparando archivo…';
+      const isImage=file.type?.startsWith('image/')||/\.(png|jpe?g|webp|gif)$/i.test(file.name||'');
+      const data=isImage?await shrinkImage(file):await MiEstudioDocument.read(file);
+      if(sequence!==imageSequence)return;
+      if(isImage)images=[data];else attachment=data;
+      imageStatus.textContent=isImage?'Imagen preparada.':data.name+(data.pdf?' · PDF preparado.':' · Texto extraído. Si hay diagramas, usa PDF o una captura.');
+    }catch(error){
+      if(sequence===imageSequence){attachmentError=true;imageStatus.textContent=error.message||'No se pudo leer el archivo.';event.target.value='';}
+    }
+    finally{if(sequence===imageSequence){imageLoading=false;button.disabled=!!activeJob;}}
+  };
+  button.onclick=async()=>{
+    if(imageLoading||activeJob)return;
+    if(ai.busy){status.textContent='Espera a que termine la respuesta del chat.';return;}
+    if(attachmentError){status.textContent='Selecciona un archivo compatible antes de generar.';return;}
+    if(!statement.value.trim()&&!images.length&&!attachment){status.textContent='Pega el enunciado o adjunta un documento o una imagen para no generar una respuesta solo con el título.';panel.querySelector('details').open=true;statement.focus();return;}
+    const snapshot={editor,draft:editor.value,language:language.value,taskId:task.id},controller=new AbortController(),job={controller,snapshot};taskAutofillJob=activeJob=job;
+    const config={...cfg},provider=MiEstudioTaskAI.selectedProvider(config);panel.querySelector('#taskProvider').textContent=Providers.NAMES[provider]||provider;
+    button.disabled=true;cancel.hidden=false;status.textContent='Redactando en '+MiEstudioTaskAI.languageName(language.value)+'…';
+    try{
+      const result=await new MiEstudioTaskAI.Composer().generate({config,language:language.value,task,statement:statement.value,draft:snapshot.draft,images,attachment,signal:controller.signal});
+      if(taskAutofillJob!==job||!editor.isConnected||!$('#dlg').open||editor.value!==snapshot.draft||language.value!==snapshot.language)return;
+      taskAutofillJob=null;editor.value=MiEstudioTaskAI.append(snapshot.draft,result);lastAddition={before:snapshot.draft,after:editor.value};undo.hidden=false;editor.dispatchEvent(new Event('input',{bubbles:true}));
+      store.set('draft_'+task.id,editor.value);status.textContent='Texto añadido y guardado en '+MiEstudioTaskAI.languageName(language.value)+'. Revísalo antes de entregar.';
+    }catch(error){if(taskAutofillJob===job)status.textContent=error.message||'No se pudo generar el texto.';}
+    finally{if(taskAutofillJob===job)taskAutofillJob=null;if(activeJob===job){activeJob=null;button.disabled=imageLoading;cancel.hidden=true;}}
+  };
+}
+async function openTaskInner(t,sequence){
   openDlg(t); const body = $('#dlgBody');
   if(t.src === 'classroom'){
     const mats = t.materials || [];
@@ -916,7 +1049,8 @@ async function openTaskInner(t){
   const a = assignById[t.instance] || {};
   let st;
   try{ st = await moodle('mod_assign_get_submission_status', {assignid: t.instance}); }
-  catch(e){ body.innerHTML = `<div class="msg err">${esc(e.message)}</div>${openBtn}`; return; }
+  catch(e){ if(sequence===taskOpenSequence&&$('#dlg').open)body.innerHTML = `<div class="msg err">${esc(e.message)}</div>${openBtn}`; return; }
+  if(sequence!==taskOpenSequence||!$('#dlg').open)return;
   const la = st.lastattempt || {};
   const sub = la.submission || la.teamsubmission || {};
   const plugOn = p => (a.configs || []).some(c => c.plugin === p && c.subtype === 'assignsubmission' && c.name === 'enabled' && c.value === '1');
@@ -936,7 +1070,7 @@ async function openTaskInner(t){
     <h2>Tu entrega</h2><p>Estado: <b>${esc(statusTxt)}</b></p>${fb}
     ${curFiles.length ? `<p class="small">Archivos ya subidos:</p><ul class="mods">${curFiles.map(f => `<li>📎 <a href="${esc(tokUrl(f.fileurl))}" target="_blank" rel="noopener">${esc(f.filename)}</a></li>`).join('')}</ul>` : ''}
     ${!canEdit ? `<div class="msg info">Esta entrega ya no se puede modificar desde aquí.</div>${openBtn}` : `
-      ${hasText ? `<label>Texto en línea</label><textarea id="mText">${esc(localDraft ?? htmlToText(curText))}</textarea><div class="meta small" id="draftSaved"></div>` : ''}
+      ${hasText ? `<label>Texto en línea</label><textarea id="mText">${esc(localDraft ?? htmlToText(curText))}</textarea><div class="meta small" id="draftSaved"></div>` : draftBox(t, 'Borrador para preparar tu respuesta (se guarda en este dispositivo)')}
       ${hasFile ? `<label>Archivos${curFiles.length ? ' (si eliges archivos nuevos, sustituyen a los ya subidos)' : ''}</label><input type="file" id="mFiles" multiple>` : ''}
       ${!hasText && !hasFile ? '<p class="meta">Esta tarea no tiene texto ni archivos que entregar desde aquí.</p>' : ''}
       ${a.requiresubmissionstatement ? `<label class="check"><input type="checkbox" id="mStmt"> <span>${a.submissionstatement ? safeHtml(a.submissionstatement) : 'Confirmo que este trabajo es mío.'}</span></label>` : ''}
@@ -946,6 +1080,7 @@ async function openTaskInner(t){
         ${la.cansubmit || hasText || hasFile ? '<button class="btn primary" id="mSubmit">Entregar</button>' : ''}
         ${openBtn}
       </div>`}`;
+  wireDraft(t);
   const ta = $('#mText');
   if(ta) ta.oninput = () => { store.set('draft_' + t.id, ta.value); $('#draftSaved').textContent = 'Borrador guardado en el dispositivo'; };
   const out = $('#mOut');
@@ -1024,8 +1159,8 @@ function renderStudy(){
 /* ---------- Electude ---------- */
 const ELEC_Q = 'Este es un enunciado de Electude. Dime cuál es la opción correcta (o la respuesta) y explícame brevemente por qué, para que lo entienda.';
 async function askElectude(){
-  if(isTouch() || !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
-    toast(extVersion ? 'Elige una captura del enunciado (o pulsa el icono 🧩 de la extensión estando en Electude)' : 'Elige una captura o foto del enunciado'); photoFor = '__elec'; $('#photoIn').click(); return;
+  if(MiEstudioDevice.isMobile() || isTouch() || !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
+    toast(extVersion && !MiEstudioDevice.isMobile() ? 'Elige una captura del enunciado (o pulsa el icono 🧩 de la extensión estando en Electude)' : 'Elige una captura o foto del enunciado'); photoFor = '__elec'; $('#photoIn').click(); return;
   }
   try{
     toast('Elige la pestaña o ventana de Electude');
@@ -1042,6 +1177,10 @@ function askWithImage(url){
   if(hasKey(cfg.aiProvider)) setTimeout(() => aiSend(), 150); else toast('✅ Captura lista: pulsa ➤ para enviarla');
 }
 function renderElec(){
+  const mobile = MiEstudioDevice.isMobile();
+  $('#elecMobileNotice').hidden = !mobile; $('#elecDesktopHelp').hidden = mobile;
+  $('#elecAsk').textContent = mobile ? '📸 Consultar una captura de Electude' : '📸 Preguntar a la IA por la pantalla de Electude';
+  $('#elecCaptureHelp').textContent = mobile ? 'Haz una captura del enunciado y súbela aquí. La IA te dará una sugerencia; tendrás que marcar tú la respuesta en Electude.' : 'Abre el enunciado en Electude y pulsa el botón para consultar la captura con la IA.';
   $('#elecOpen').href = cfg.electudeUrl;
   $('#elecUrlTxt').textContent = cfg.electudeUrl.replace(/^https:\/\//, '');
   $('#elecAsk').onclick = askElectude;
@@ -1075,14 +1214,16 @@ $('#pSave').onclick = () => {
   cfg.classroomEmail = em; cfg.syncFrom = $('#pFrom').value || '2026-09-01';
   saveCfg(); renderAll(); $('#pSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#pSaved').textContent = '', 2500); toast('✅ Direcciones guardadas');
 };
-$('#wipe').onclick = () => { if(!confirm('¿Borrar tokens, borradores y tareas guardadas en este dispositivo?')) return; Object.keys(localStorage).filter(k => k.startsWith('me_')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); try{ sessionStorage.setItem('me_wiped', '1'); }catch(e){} location.reload(); };
+$('#wipe').onclick = async () => { if(!confirm('¿Borrar tokens, borradores y tareas guardadas en este dispositivo?')) return; await reminderClient?.disable().catch(()=>{}); Object.keys(localStorage).filter(k => k.startsWith('me_')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); try{ sessionStorage.setItem('me_wiped', '1'); }catch(e){} location.reload(); };
 
 /* ======================================================================
    ASISTENTE IA (Claude / Gemini)
    ====================================================================== */
-const AI_NAME = {claude: 'Claude', gemini: 'Gemini'};
+const AI_NAME = {claude: 'Claude', gemini: 'Gemini', openai: 'OpenAI / ChatGPT', groq: 'Groq', openrouter: 'OpenRouter Free'};
+const AI_COLOR = {claude:'#d97757', gemini:'#4b7bec', openai:'#047857', groq:'#c2410c', openrouter:'#6d28d9'};
+const AI_ICON = {claude:'✳', gemini:'✦', openai:'◉', groq:'⚡', openrouter:'◇'};
 const ai = {msgs: [], att: [], ctx: null, busy: false};
-const hasKey = p => !!(p === 'claude' ? cfg.claudeKey : cfg.geminiKey);
+const hasKey = p => Providers.hasKey(cfg, p);
 const isTouch = () => matchMedia('(pointer:coarse)').matches;
 
 function md(s){
@@ -1107,7 +1248,8 @@ function draftTarget(){ return $('#dlg').open ? ($('#mText') || $('#draft')) : n
 
 function renderAI(){
   const p = cfg.aiProvider;
-  $$('#aiSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  $$('#aiSeg button').forEach(b => { b.classList.toggle('on', b.dataset.p === p); b.setAttribute('aria-pressed', String(b.dataset.p === p)); });
+  $('#aiProviderQuick').value = p;
   $('#aiMode').innerHTML = hasKey(p)
     ? `Chat dentro de la app con tu clave de API de ${AI_NAME[p]}.`
     : `Sin clave de API: escribe y envía; podrás abrirlo en ${AI_NAME[p]} con tu cuenta o añadir una clave gratis de Gemini para chatear aquí. <a href="#" id="aiCfgLink">Configurar chat integrado</a>`;
@@ -1130,7 +1272,7 @@ function renderMsgs(){
   const tgt = draftTarget();
   box.innerHTML = ai.msgs.map((m, i) => m.role === 'user'
     ? `<div class="bub u">${(m.images || []).map(im => `<img src="${im.url}" alt="">`).join('')}${esc(m.text).replace(/\n/g, '<br>')}${m.hasExtra ? '<div class="small" style="opacity:.8;margin-top:4px">📎 + texto de la selección</div>' : ''}</div>`
-    : m.choice ? `<div class="bub a"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
+    : m.choice ? `<div class="bub a"><div class="who" style="color:${AI_COLOR[m.provider]}">${AI_ICON[m.provider] + ' ' + AI_NAME[m.provider]}</div>
         <p>Para que te responda <b>aquí dentro</b> hace falta una clave de API. ¿Cómo lo envío?</p>
         <div class="bub-actions" style="flex-direction:column;align-items:stretch">
           <button data-ext="${i}">↗ Enviar con mi cuenta de ${AI_NAME[m.provider]} (abre su app o web)</button>
@@ -1145,7 +1287,7 @@ function renderMsgs(){
           <input id="keyIn${i}" placeholder="AIza…" autocomplete="off">
           <div class="bub-actions"><button data-keysave="${i}">Guardar y enviar</button></div>
         </div></div>`
-    : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
+    : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${AI_COLOR[m.provider]}">${AI_ICON[m.provider] + ' ' + AI_NAME[m.provider]}</div>
         <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${!m.text && ai.busy && i === ai.msgs.length - 1 ? `<span class="meta"><span class="spin"></span> Pensando… ${Math.round((Date.now() - (m.t0 || Date.now())) / 1000)} s${m.switched ? '<br><i>' + esc(m.switched) + '</i>' : ''}</span>` : md(m.text)}</div>
         ${(!m.note || m.copyable) && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
   $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; toast('✅ Respuesta copiada'); }catch(e){ toast('No se pudo copiar', 'err'); } });
@@ -1154,7 +1296,7 @@ function renderMsgs(){
   $$('#aiMsgs [data-keysave]').forEach(b => b.onclick = () => {
     const i = +b.dataset.keysave, v = $('#keyIn' + i).value.trim();
     if(!/^AIza[0-9A-Za-z_\-]{20,}$/.test(v)){ toast('Esa clave no parece de Gemini (empieza por AIza…)', 'err'); return; }
-    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); pushKeys(); renderAICfg(); renderAIBtn();
+    cfg.geminiKey = v; cfg.geminiSlot = 'primary'; cfg.aiProvider = 'gemini'; saveCfg(); pushKeys(true); renderAICfg(); renderAIBtn();
     ai.msgs.splice(i, 1); toast('✅ Clave guardada: enviando a Gemini');
     aiRun('gemini');
   });
@@ -1168,7 +1310,7 @@ function renderMsgs(){
 function aiNote(text, provider = cfg.aiProvider){ ai.msgs.push({role: 'assistant', provider, text, note: true}); renderAI(); }
 
 function openAI(opts = {}){
-  if(opts.provider){ cfg.aiProvider = opts.provider; saveCfg(); }
+  if(opts.provider && opts.provider !== cfg.aiProvider){ cfg.aiProvider = opts.provider; saveCfg(); pushKeys(true); }
   if(opts.ctx !== undefined) ai.ctx = opts.ctx;
   if(opts.att) ai.att.push(...opts.att);
   if(opts.text != null) $('#aiInput').value = opts.text;
@@ -1179,7 +1321,7 @@ function openAI(opts = {}){
 function taskContext(){
   const title = $('#dlgTitle').textContent, meta = $('#dlgMeta').textContent;
   const clone = $('#dlgBody').cloneNode(true);
-  clone.querySelectorAll('textarea,input,button,.btn,script').forEach(e => e.remove());
+  clone.querySelectorAll('.taskAuto,textarea,input,button,.btn,script').forEach(e => e.remove());
   const statement = clone.innerText.replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
   const draft = (draftTarget() || {}).value || '';
   return {label: title, text: `Tarea: ${title}\n${meta}\n\nEnunciado y materiales:\n${statement}` + (draft ? `\n\nLo que el estudiante lleva escrito:\n${draft.slice(0, 4000)}` : '')};
@@ -1214,7 +1356,13 @@ async function* sse(resp){
     }
   }
 }
-async function apiError(r){ let m = 'Error ' + r.status; try{ const j = await r.json(); m = (j.error && (j.error.message || j.error.status)) || m; }catch(e){} return new Error(m); }
+async function apiError(response, provider, model){
+  const json = await response.json().catch(() => ({}));
+  const quota = Providers.quota(json, response.status, {provider: provider || cfg.aiProvider, model: model || '', retryAfter: response.headers.get('retry-after')});
+  const error = new Error(quota ? quota.error + (quota.retryAt ? ' Reintento: ' + new Date(quota.retryAt).toLocaleString('es-ES') + '.' : '') : json.error && (json.error.message || json.error.status) || 'Error ' + response.status);
+  if(quota) Object.assign(error, quota);
+  error.status = response.status; return error;
+}
 async function* claudeStream(){
   const messages = buildTurns().map(t => ({role: t.role, content: [
     ...t.images.map(im => ({type: 'image', source: {type: 'base64', media_type: im.mime, data: im.data}})),
@@ -1228,13 +1376,47 @@ async function* claudeStream(){
     if(ev.type === 'error') throw new Error((ev.error && ev.error.message) || 'Error de Claude');
   }
 }
+async function* openaiStream(){
+  const body = Providers.openaiBody(buildTurns(), {model: cfg.openaiModel || 'gpt-5.5', instructions: sysPrompt(), stream: true});
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 60000);
+  try{
+    const response = await fetch('https://api.openai.com/v1/responses', {method: 'POST', signal: controller.signal, headers: {'content-type': 'application/json', Authorization: 'Bearer ' + cfg.openaiKey}, body: JSON.stringify(body)});
+    if(!response.ok) throw await apiError(response, 'openai', cfg.openaiModel);
+    for await (const event of sse(response)){
+      if(event.type === 'response.output_text.delta') yield event.delta || '';
+      if(event.type === 'error' || event.type === 'response.failed') throw new Error(event.message || event.response && event.response.error && event.response.error.message || 'Error de OpenAI');
+      if(event.type === 'response.incomplete') throw new Error('OpenAI no terminó la respuesta. Vuelve a enviarla.');
+    }
+  }finally{ clearTimeout(timeout); }
+}
+async function* freeStream(provider){
+  const config = Providers.chatConfig(cfg, provider), turns = buildTurns();
+  if(provider === 'groq' && /gpt-oss/.test(config.model) && turns.some(t => t.images.length)) throw new Error('Ese modelo de Groq solo admite texto. Elige Qwen con visión en Ajustes.');
+  const body = Providers.chatBody(turns, {model: config.model, instructions: sysPrompt(), maxOutputTokens: provider === 'groq' ? 1536 : 4096, stream: true});
+  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 60000);
+  try{
+    const response = await fetch(config.url, {method: 'POST', signal: controller.signal, headers: {'content-type': 'application/json', Authorization: 'Bearer ' + config.key}, body: JSON.stringify(body)});
+    if(!response.ok) throw await apiError(response, provider, config.model);
+    let finished = false;
+    for await (const event of sse(response)){
+      if(event.error) throw new Error(event.error.message || 'Error del proveedor');
+      const choice = event.choices && event.choices[0];
+      if(choice && choice.delta && typeof choice.delta.content === 'string') yield choice.delta.content;
+      if(choice && choice.finish_reason){
+        if(choice.finish_reason !== 'stop') throw new Error('El modelo no terminó la respuesta. No la tomes como completa.');
+        finished = true;
+      }
+    }
+    if(!finished) throw new Error('La conexión terminó antes de completar la respuesta.');
+  }finally{ clearTimeout(timer); }
+}
 async function* geminiOne(model, contents, firstTimeout){
   const ac = new AbortController(); let timer = setTimeout(() => ac.abort(), firstTimeout);
   try{
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {method: 'POST', signal: ac.signal,
-      headers: {'content-type': 'application/json', 'x-goog-api-key': cfg.geminiKey},
+      headers: {'content-type': 'application/json', 'x-goog-api-key': Providers.geminiKey(cfg)},
       body: JSON.stringify({systemInstruction: {parts: [{text: sysPrompt()}]}, contents})});
-    if(!r.ok){ const e = await apiError(r); e.status = r.status; throw e; }
+    if(!r.ok){ const e = await apiError(r, 'gemini', model); e.status = r.status; throw e; }
     for await (const ev of sse(r)){
       if(ev.error) throw new Error(ev.error.message);
       const parts = (ev.candidates && ev.candidates[0] && ev.candidates[0].content && ev.candidates[0].content.parts) || [];
@@ -1255,7 +1437,7 @@ async function* geminiStream(out){
       for await (const chunk of geminiOne(chain[i], contents, i === 0 ? 15000 : 20000)){ got = true; if(out) out.model = chain[i]; yield chunk; }
       if(got) return;
     }catch(e){
-      if(got) throw e;                       // ya había empezado a responder: no cambiar a mitad
+      if(got || e.quota) throw e;             // no repetir automáticamente una cuota agotada
       const retriable = e.slow || [404, 429, 500, 503].includes(e.status) || /demand|overloaded|unavailable|no longer available/i.test(e.message);
       lastErr = e; if(!retriable) throw e;
       if(i + 1 < chain.length && out){ out.switched = `${chain[i]} ${e.slow ? 'tardaba demasiado' : 'estaba saturado'}: respondo con ${chain[i + 1]}`; }
@@ -1290,7 +1472,7 @@ async function aiRun(p){
   const tick = setInterval(() => { if(!out.text) renderMsgs(); }, 1000);
   let raf = 0;
   try{
-    for await (const chunk of (p === 'claude' ? claudeStream() : geminiStream(out))){
+    for await (const chunk of (p === 'claude' ? claudeStream() : p === 'openai' ? openaiStream() : p === 'groq' || p === 'openrouter' ? freeStream(p) : geminiStream(out))){
       out.text += chunk;
       if(!raf) raf = requestAnimationFrame(() => { raf = 0; renderMsgs(); });
     }
@@ -1317,13 +1499,14 @@ async function toPngBlob(url){
   return new Promise(r => c.toBlob(r, 'image/png'));
 }
 async function aiExternal(p, text, images){
+  if(p === 'groq' || p === 'openrouter'){ $('#ai').close(); $('nav button[data-tab=cfg]').click(); $('#qKey').scrollIntoView({block: 'center'}); toast('Añade tu token de API y pulsa Guardar para usar este proveedor.'); return; }
   const img = images[0];
-  const name = p === 'claude' ? 'Claude' : 'Gemini';
+  const name = AI_NAME[p];
   // 1) Copiar al portapapeles: la imagen si la hay; si no, el texto (para Gemini, que no admite pregunta en el enlace)
   let copied = '';
   try{
     if(img){ await navigator.clipboard.write([new ClipboardItem({'image/png': toPngBlob(img.url)})]); copied = 'img'; }
-    else if(p === 'gemini'){ await navigator.clipboard.writeText(text); copied = 'txt'; }
+    else if(p !== 'claude'){ await navigator.clipboard.writeText(text); copied = 'txt'; }
   }catch(e){ console.warn(e); }
   // 2) Si hay imagen y no se pudo copiar (algunos móviles), último recurso: menú Compartir
   if(img && !copied && navigator.share){
@@ -1336,15 +1519,15 @@ async function aiExternal(p, text, images){
     }
   }
   // 3) Abrir la app/web con la cuenta del usuario (en el móvil abre su app si está instalada)
-  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(text.slice(0, 7000)) : 'https://gemini.google.com/app';
+  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(text.slice(0, 7000)) : p === 'openai' ? 'https://chatgpt.com/' : 'https://gemini.google.com/app';
   window.open(url, '_blank', 'noopener');
   toast('↗ Abriendo ' + name + ' con tu pregunta…');
   let note = `He abierto **${name}** con tu cuenta.`;
   if(p === 'claude') note += ' Tu pregunta ya está escrita: solo pulsa enviar allí.';
   if(copied === 'txt') note += ' Tu pregunta está **copiada**: pégala allí y envía.';
-  if(copied === 'img') note += ' La **imagen está copiada**: pégala allí (mantén pulsado → Pegar, o Ctrl+V).' + (p === 'gemini' ? ' Después copia el texto de abajo y pégalo.' : '');
+  if(copied === 'img') note += ' La **imagen está copiada**: pégala allí (mantén pulsado → Pegar, o Ctrl+V).' + (p !== 'claude' ? ' Después copia el texto de abajo y pégalo.' : '');
   ai.msgs.push({role: 'assistant', provider: p, text: note, note: true});
-  if(p === 'gemini' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text, note: true, copyable: true});
+  if(p !== 'claude' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text, note: true, copyable: true});
   renderAI();
 }
 
@@ -1388,7 +1571,7 @@ function lensStart(fromAI){
   lensReturnToAI = !!fromAI;
   if(fromAI) $('#ai').close();
   sel = null; $('#lensSel').hidden = true; $('#lens').classList.remove('has');
-  $('#lensHint').hidden = false; $('#lensClaude').disabled = $('#lensGemini').disabled = true;
+  $('#lensHint').hidden = false; $('#lensClaude').disabled = $('#lensGemini').disabled = $('#lensGroq').disabled = $('#lensFree').disabled = $('#lensOpenai').disabled = true;
   $('#lens').showModal();
   loadH2C().catch(() => {});
 }
@@ -1410,7 +1593,7 @@ function lensCancel(){ $('#lens').close(); toast('Lens cancelado'); if(lensRetur
     if(!drag) return; drag = null;
     const ok = sel && sel.w > 12 && sel.h > 12;
     if(!ok){ sel = null; box.hidden = true; L.classList.remove('has'); $('#lensHint').hidden = false; }
-    $('#lensClaude').disabled = $('#lensGemini').disabled = !ok;
+    $('#lensClaude').disabled = $('#lensGemini').disabled = $('#lensGroq').disabled = $('#lensFree').disabled = $('#lensOpenai').disabled = !ok;
   };
   L.addEventListener('pointerup', end); L.addEventListener('pointercancel', end);
   L.addEventListener('cancel', e => { e.preventDefault(); lensCancel(); });
@@ -1469,8 +1652,8 @@ async function lensSend(p){
 }
 
 /* --- botones --- */
-const bestProvider = () => hasKey(cfg.aiProvider) ? cfg.aiProvider : hasKey('gemini') ? 'gemini' : hasKey('claude') ? 'claude' : cfg.aiProvider;
-function renderAIBtn(){ const p = bestProvider(), b = $('#aiBtn'); if(!b) return; b.querySelector('.ic').textContent = p === 'gemini' ? '✦' : '✳'; b.querySelector('.lbl').textContent = AI_NAME[p]; b.style.background = p === 'gemini' ? '#4b7bec' : '#d97757'; }
+const bestProvider = () => Providers.provider(cfg);
+function renderAIBtn(){ const p = bestProvider(), b = $('#aiBtn'); if(!b) return; b.querySelector('.ic').textContent = AI_ICON[p]; b.querySelector('.lbl').textContent = AI_NAME[p]; b.style.background = AI_COLOR[p]; }
 $('#aiBtn').onclick = () => openAI({provider: bestProvider()});
 $('#lensBtn').onclick = () => lensStart(false);
 $('#dlgAI').onclick = () => openAI({ctx: taskContext(), provider: bestProvider()});
@@ -1481,22 +1664,33 @@ $('#lensPhoto').onclick = () => { $('#lens').close(); photoFor = null; $('#photo
 $('#lensCancel').onclick = lensCancel;
 $('#lensClaude').onclick = () => lensSend('claude');
 $('#lensGemini').onclick = () => lensSend('gemini');
+$('#lensOpenai').onclick = () => lensSend('openai');
+$('#lensGroq').onclick = () => lensSend('groq');
+$('#lensFree').onclick = () => lensSend('openrouter');
 $('#aiClose').onclick = () => $('#ai').close();
 $('#aiNew').onclick = () => { if(ai.busy) return toast('Espera a que termine la respuesta', 'err'); ai.msgs = []; ai.att = []; renderAI(); toast('✅ Nueva conversación'); };
-$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); pushKeys(); renderAI(); toast('Usando ' + AI_NAME[b.dataset.p]); });
+function selectChatProvider(provider){ cfg.aiProvider = provider; saveCfg(); pushKeys(true); renderAI(); renderAIBtn(); toast('Usando ' + AI_NAME[provider]); }
+$$('#aiSeg button').forEach(b => b.onclick = () => selectChatProvider(b.dataset.p));
+$('#aiProviderQuick').onchange = e => selectChatProvider(e.target.value);
 $('#aiSend').onclick = aiSend;
-$('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch()){ e.preventDefault(); aiSend(); } });
+$('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch() && !MiEstudioDevice.isMobile()){ e.preventDefault(); aiSend(); } });
 $('#aiInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px'; });
 $('#ai').addEventListener('click', e => { if(e.target === $('#ai')) $('#ai').close(); });
 $('#aiSave').onclick = () => {
+  if($('#gSlot').value === 'secondary' && !$('#gKey2').value.trim()){ toast('Añade la clave alternativa antes de activarla', 'err'); return; }
+  try{ Providers.chatConfig({openrouterModel: $('#rModel').value}, 'openrouter'); }catch(e){ toast(e.message, 'err'); return; }
   cfg.claudeKey = $('#cKey').value.trim(); cfg.claudeModel = $('#cModel').value;
+  cfg.geminiKey2 = $('#gKey2').value.trim(); cfg.geminiSlot = $('#gSlot').value;
+  cfg.groqKey = $('#qKey').value.trim(); cfg.groqModel = $('#qModel').value;
+  cfg.openrouterKey = $('#rKey').value.trim(); cfg.openrouterModel = $('#rModel').value.trim() || 'openrouter/free';
+  cfg.openaiKey = $('#oKey').value.trim(); cfg.openaiModel = $('#oModel').value.trim() || 'gpt-5.5'; cfg.aiProvider = $('#aiProviderCfg').value;
   cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value || 'gemini-3.5-flash-lite'; cfg.geminiModelChosen = true;
-  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg(); pushKeys();
+  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg(); pushKeys(true);
   $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000); toast('✅ Ajustes de IA guardados'); renderAIBtn();
 };
-function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
+function renderAICfg(){ $('#qKey').value = cfg.groqKey || ''; $('#qModel').value = cfg.groqModel || 'qwen/qwen3.8-27b'; $('#rKey').value = cfg.openrouterKey || ''; $('#rModel').value = cfg.openrouterModel || 'openrouter/free'; $('#gKey2').value = cfg.geminiKey2 || ''; $('#gSlot').value = cfg.geminiSlot || 'primary'; $('#oKey').value = cfg.openaiKey || ''; $('#oModel').value = cfg.openaiModel || 'gpt-5.5'; $('#aiProviderCfg').value = cfg.aiProvider; $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
 
-function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); renderAIBtn(); renderPhoneBits(); renderExt(); const pr = $('#pasteRow'); if(pr) pr.hidden = !isTouch() || !hasMarkerData(); }
+function renderAll(){ queueTaskReminders(); renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); renderAIBtn(); renderPhoneBits(); renderExt(); const pr = $('#pasteRow'); if(pr) pr.hidden = !isTouch() || !hasMarkerData(); }
 
 /* ---------- aviso al abrir cualquier enlace externo ---------- */
 document.addEventListener('click', e => {
@@ -1508,42 +1702,116 @@ document.addEventListener('click', e => {
   toast('↗ Abriendo ' + name + '…');
 }, true);
 
+/* ---------- avisos de tareas en el dispositivo ---------- */
+let reminderClient=null;
+function queueTaskReminders(){reminderClient?.queueSync();}
+function renderReminderState(state){
+  const mobile=MiEstudioDevice.isMobile(),ios=platform()==='ios',standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  $('#reminderInstall').textContent=ios&&!standalone?'En iPhone/iPad añade Mi Estudio a la pantalla de inicio y ábrela desde su icono para activar los avisos.':!mobile?'Para recibirlos en el móvil, abre Mi Estudio allí y activa los avisos desde ese dispositivo.':'';
+  if(document.activeElement!==$('#reminderService'))$('#reminderService').value=state.serviceUrl;
+  $('#reminderEnable').disabled=state.enabled||!state.ready||!state.supported;
+  $('#reminderDisable').disabled=!state.enabled;$('#reminderTest').disabled=$('#reminderSync').disabled=!state.enabled;
+  $('#reminderStatus').textContent=state.error||(state.enabled?'Avisos activados en este dispositivo · '+state.scheduled+' tareas programadas.'+(state.lastSync?' Actualizados: '+new Date(state.lastSync).toLocaleString('es-ES')+'.':''):!state.supported?'Este navegador no ofrece notificaciones push. En iPhone usa la app añadida a la pantalla de inicio.':!state.serviceUrl?'Falta configurar el servicio de envío. Abre la i de configuración para recibir avisos con la app cerrada.':'Servicio listo. Pulsa Activar en este dispositivo.');
+}
+let reminderBusy=false;
+function reminderAction(action){return async()=>{if(reminderBusy)return;reminderBusy=true;$$('#reminderCard button').forEach(button=>button.disabled=true);try{await action();}catch(error){$('#reminderStatus').textContent=error.message;}finally{reminderBusy=false;const message=$('#reminderStatus').textContent;reminderClient.state();$('#reminderStatus').textContent=message;$('#reminderSave').disabled=false;}};}
+async function initTaskReminders(){
+ try{
+  reminderClient=new MiEstudioReminderClient.Client({getTasks:()=>allTasks(),onState:renderReminderState});
+  $('#reminderEnable').onclick=reminderAction(()=>reminderClient.enable());
+  $('#reminderDisable').onclick=reminderAction(()=>reminderClient.disable());
+  $('#reminderSave').onclick=reminderAction(()=>reminderClient.setService($('#reminderService').value));
+  $('#reminderSync').onclick=reminderAction(()=>reminderClient.syncNow());
+  $('#reminderTest').onclick=reminderAction(async()=>{await reminderClient.test();$('#reminderStatus').textContent='Prueba enviada. Comprueba las notificaciones de este dispositivo.';});
+  await reminderClient.init();
+ }catch(error){$('#reminderStatus').textContent='No se pudieron preparar los avisos: '+error.message;}
+}
+function openReminderTask(taskId){
+ const task=allItems().find(item=>String(item.id)===String(taskId));
+ if(!task){$('nav button[data-tab=pend]').click();toast('Actualiza tus tareas para abrir el aviso.');return;}
+ openTask(task);
+}
+function reminderFromHash(){if(!location.hash.startsWith('#tarea='))return;try{openReminderTask(decodeURIComponent(location.hash.slice(7)));}catch{}}
+window.addEventListener('hashchange',reminderFromHash);
+if('serviceWorker'in navigator)navigator.serviceWorker.addEventListener('message',event=>{if(event.data?.type==='OPEN_REMINDER_TASK')openReminderTask(event.data.taskId);});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueTaskReminders();});
 /* ---------- extensión «Mi Estudio · Sincronizar» (1 clic en el ordenador) ---------- */
-let extVersion = null, extBusy = false, extNotes = [];
+let extVersion = null, extBusy = false, extNotes = [],extPermissions=null,silentSync=false,syncTimeout;
 // pasa tus claves de IA a tu extensión (se guardan solo en tu navegador) para la ayuda dentro de Electude
-function pushKeys(){ if(!extVersion) return; window.postMessage({type: 'MS_EXT_KEYS', claudeKey: cfg.claudeKey || '', claudeModel: cfg.claudeModel || '', geminiKey: cfg.geminiKey || '', geminiModel: cfg.geminiModel || '', aiProvider: cfg.aiProvider || ''}, location.origin); }
+function pushKeys(selectionExplicit = false){ if(!extVersion) return; window.postMessage({type: 'MS_EXT_KEYS', selectionExplicit, ...Providers.cleanKeys(cfg)}, location.origin); }
 window.addEventListener('message', e => {
   if(e.source !== window || !e.data || typeof e.data.type !== 'string') return;
   const m = e.data;
-  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ pushKeys(); renderUpdBanner(); } if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
+  if(m.type==='MS_EXT_PERMISSIONS'||m.type==='MS_PERMISSIONS_STATE'){extPermissions=m.ready===true;renderExt();}
+  if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ pushKeys(); renderUpdBanner(); } if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false && extPermissions!==false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => extSync(true), 1200); } } }
+  if(m.type === 'MS_EXT_AI_PREFS' && Object.hasOwn(Providers.NAMES, m.provider)){ cfg.aiProvider = m.provider; cfg.geminiSlot = m.geminiSlot || 'primary'; saveCfg(); renderAICfg(); renderAIBtn(); if(!ai.busy) renderAI(); }
   if(m.type === 'MS_EXT_START') extSync();
   if(m.type === 'MS_EXT_IMAGE' && typeof m.dataUrl === 'string' && /^data:image\/(jpeg|png);base64,/.test(m.dataUrl)){ $$('dialog[open]').forEach(d => { if(d.id !== 'ai') d.close(); }); askWithImage(m.dataUrl); }
   if(m.type === 'MS_EXT_ELEC_OPENED') toast(m.existing ? '↗ Electude ya estaba abierto: te llevo a esa pestaña' : '↗ Abriendo Electude…');
   if(m.type === 'MS_EXT_CAPERR') toast(m.text || 'Abre Electude con el enunciado y vuelve a probar', 'err');
-  if(m.type === 'MS_EXT_PROGRESS'){ msg('<span class="spin"></span> ' + esc(m.text), m.login ? 'err' : 'info'); if($('#updProg')) $('#updProg').innerHTML = '<span class="spin"></span> ' + esc(m.text); if(m.login) toast(m.text, 'err'); }
+  if(m.type==='MS_EXT_SETUP_REQUIRED'){extNotes.push('⚠️ '+m.text);}
+  if(m.type==='MS_EXT_SYNC_FAILED'){
+    clearTimeout(syncTimeout);
+    extBusy=false;$('#syncBtn').textContent='↻ Actualizar';renderUpd();
+    msg('La extensión no respondió. Recarga Mi Estudio y vuelve a sincronizar.','err');
+  }
+  if(m.type === 'MS_EXT_PROGRESS'){
+    if(!extBusy)return;
+    const text=esc(m.text);
+    if(m.login&&['moodle','classroom'].includes(m.source)){
+      const id='syncLogin_'+m.source, area=$('#updProg');
+      if(!area.querySelector('[data-login="'+m.source+'"]')){
+        const line=document.createElement('div');line.dataset.login=m.source;
+        line.innerHTML=text+' <button class="btn small" type="button" id="'+id+'">Abrir '+esc(SRC[m.source])+'</button>';
+        line.querySelector('button').onclick=()=>window.postMessage({type:'MS_EXT_SYNC_LOGIN',source:m.source},location.origin);
+        area.append(line);
+      }
+      if(!$('#updDlg').open)msg(text+' <button class="btn small" type="button" id="showSyncLogin">Ver sincronización</button>','info');
+      const show=$('#showSyncLogin');if(show)show.onclick=()=>$('#syncBtn').click();
+    }else{
+      $('#updProg').querySelector('[data-login="'+(m.source==='moodle'?'moodle':'classroom')+'"]')?.remove();
+      const progress=$('#syncProgressText');if(progress)progress.textContent=m.text;
+      if(!silentSync&&!$('#showSyncLogin'))msg(text,'info');
+    }
+  }
   if(m.type === 'MS_EXT_RESULT'){
     const r = m.result || {};
+    if(['moodle','classroom'].includes(r.src))$('#updProg').querySelector('[data-login="'+r.src+'"]')?.remove();
     if(r.error){ extNotes.push('⚠️ ' + (r.src ? SRC[r.src] + ': ' : '') + r.error.replace(/^Mi Estudio: /, '')); }
-    else if(importData(r)){ extNotes.push(syncNote.replace(/ <button[\s\S]*$/, '')); renderAll(); if($('#updDlg').open) renderUpd(); }
+    else if(importData(r)){ if(r.partial)extNotes.push('⚠️ '+SRC[r.src]+' solo pudo leerse en parte. Se conservan las tareas anteriores.'); extNotes.push(syncNote.replace(/ <button[\s\S]*$/, '')); renderAll(); if($('#updDlg').open) renderUpd(); }
   }
   if(m.type === 'MS_EXT_DONE'){
+    clearTimeout(syncTimeout);
     extBusy = false; $('#syncBtn').textContent = '↻ Actualizar';
-    if($('#updDlg').open){ renderUpd(); $('#updProg').innerHTML = extNotes.map(n => esc(n.replace(/<[^>]+>/g, ''))).join('<br>'); }
+    if($('#updDlg').open)renderUpd();
+    $('#updProg').innerHTML = extNotes.map(n => esc(n)).join('<br>');
+    if(m.cancelled){
+      $('#updProg').textContent='Sincronización cancelada.';
+      msg('Sincronización cancelada. Se conservan las listas ya recibidas.','info');
+      return;
+    }
     const ok = extNotes.some(n => n.startsWith('✅'));
     stickyMsg = true;
-    msg(extNotes.join('<br>') + (ok && !isTouch() ? ' <button class="btn small primary" type="button" onclick="showQR()">📱 Pasar al móvil</button>' : ''), ok ? 'ok' : 'err');
-    toast(ok ? '✅ Sincronización terminada' : 'No se pudo sincronizar', ok ? 'ok' : 'err');
+    if(!silentSync||extNotes.some(note=>note.startsWith('⚠')))msg(extNotes.map(note=>esc(note)).join('<br>') + (ok && !isTouch() ? ' <button class="btn small primary" type="button" onclick="showQR()">📱 Pasar al móvil</button>' : ''), ok ? 'ok' : 'err');
+    if(!silentSync)toast(ok ? '✅ Sincronización terminada' : 'No se pudo sincronizar', ok ? 'ok' : 'err');
     extNotes = [];
   }
 });
 window.postMessage({type: 'MS_EXT_PING'}, '*');
-function extSync(){
+function extSync(silent=false){
   if(!extVersion) return false;
+  if(extPermissions===false){window.postMessage({type:'MS_EXT_OPEN_SETUP'},location.origin);toast('Completa primero los permisos iniciales de la extensión.');return true;}
   if(extBusy){ toast('Ya se está sincronizando…', 'err'); return true; }
-  extBusy = true; extNotes = [];
+  extBusy = true; extNotes = [];silentSync=silent===true;
+  syncTimeout=setTimeout(()=>{
+    extBusy=false;$('#syncBtn').textContent='↻ Actualizar';renderUpd();
+    $('#updProg').textContent='La sincronización tardó demasiado. Vuelve a intentarlo.';
+  },285000);
+  $('#updProg').innerHTML='<p id="syncProgressText" role="status">Preparando Moodle y Classroom…</p><button id="cancelSync" class="btn small" type="button">Cancelar sincronización</button>';
+  $('#cancelSync').onclick=()=>{ $('#cancelSync').disabled=true;window.postMessage({type:'MS_EXT_SYNC_CANCEL'},location.origin); };
+  if($('#updDlg').open)renderUpd();
   $('#syncBtn').innerHTML = '<span class="spin"></span> Sincronizando';
-  msg('<span class="spin"></span> Sincronizando Moodle y Classroom… se abrirá una ventanita unos segundos.', 'info');
-  toast('⚡ Sincronizando…');
+  if(!silentSync)msg('Sincronizando Moodle y Classroom en segundo plano.','info');
   window.postMessage({type: 'MS_EXT_SYNC', what: ['moodle', 'classroom'], moodleUrl: cfg.moodleUrl, classroomBase: classroomBase(), classroomUrl: classroomPend(), from: fromTs()}, '*');
   return true;
 }
@@ -1713,9 +1981,17 @@ function importData(d){
   const okUrl = u => typeof u === 'string' && /^https:\/\//.test(u) ? u : '';
   const FROMTS = fromTs();
   if(d.src === 'classroom' && typeof d.account === 'string' && !cfg.classroomEmail && /@/.test(d.account) && !/@(gmail|googlemail)\.com$/i.test(d.account)){ cfg.classroomEmail = d.account.slice(0, 120); saveCfg(); }
+  const previous=data[d.src];
   data[d.src] = {via: 'marcador', at: d.at || Date.now(),
-    tasks: d.tasks.slice(0, 300).filter(t => !(typeof t.due === 'number' && FROMTS && t.due < FROMTS)).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', status: ['pending', 'missing', 'submitted', 'graded'].includes(t.status) ? t.status : undefined, grade: typeof t.grade === 'string' ? t.grade.slice(0, 20) : '', late: !!t.late && (t.status === 'missing' || (typeof t.due === 'number' && t.due < Date.now()))})),
+    tasks: d.tasks.slice(0, 300).filter(t => !(typeof t.due === 'number' && FROMTS && t.due < FROMTS)).map(t => ({id: d.src[0] + 's' + clean(String(t.id)), src: d.src, title: clean(t.title) || '(sin título)', desc: typeof t.desc==='string'?t.desc.slice(0,12000):'', course: clean(t.course) || '', due: typeof t.due === 'number' ? t.due : null, dueText: clean(t.dueText) || '', url: okUrl(t.url), kind: clean(t.kind) || '', action: clean(t.action) || '', status: ['pending', 'missing', 'submitted', 'graded'].includes(t.status) ? t.status : undefined, grade: typeof t.grade === 'string' ? t.grade.slice(0, 20) : '', late: !!t.late && (t.status === 'missing' || (typeof t.due === 'number' && t.due < Date.now()))})),
     courses: (d.courses || []).slice(0, 100).map(c => ({id: clean(String(c.id)), name: clean(c.name), url: okUrl(c.url)}))};
+  if(d.partial===true&&previous?.via==='marcador'){
+    for(const list of ['tasks','courses']){
+      const items=new Map((previous[list]||[]).map(item=>[item.id,item]));
+      for(const item of data[d.src][list])items.set(item.id,{...item,...(list==='tasks'&&!item.desc&&items.get(item.id)?.desc?{desc:items.get(item.id).desc}:{})});
+      data[d.src][list]=[...items.values()];
+    }
+  }
   if(d.src === 'moodle' && okUrl(d.site) && !cfg.moodleUrl){ cfg.moodleUrl = d.site; saveCfg(); }
   data.at = Date.now(); store.set('cache', data);
   const cnt = {pending: 0, missing: 0, done: 0}; data[d.src].tasks.forEach(t => { const st = statusOf(t); cnt[st === 'graded' || st === 'submitted' ? 'done' : st]++; });
@@ -1730,8 +2006,8 @@ window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 const isGecko = () => /Firefox\//.test(navigator.userAgent);
 const extZip = () => isGecko() ? 'mi-estudio-extension-firefox.zip' : 'mi-estudio-extension.zip';
 /* ---------- avisos de versión nueva (lee version.json de GitHub) ---------- */
-const APP_VERSION = '2026.11.19.1';
-let LATEST = {app: APP_VERSION, extension: '2.0.0'};
+const APP_VERSION = '2026.11.22.1';
+let LATEST = {app: APP_VERSION, extension: '2.1.0'};
 const vLess = (a, b) => String(a || '0').localeCompare(String(b || '0'), undefined, {numeric: true}) < 0;
 const extOutdated = () => !!extVersion && vLess(extVersion, LATEST.extension);
 async function checkVersions(){
@@ -1763,7 +2039,7 @@ function showExtUpdate(){
       <li>Abre <code>${page}</code> (cópialo y pégalo en la barra de direcciones: <button class="btn small" id="extUpdCopy" type="button">📋 Copiar</button>) y pulsa <b>↻</b> en la tarjeta «Mi Estudio · Sincronizar». Debe poner <b>${esc(LATEST.extension)}</b>.</li>`}
       <li>Recarga esta página y la de Electude (F5).</li>
     </ol>
-    <p class="meta small">¿No recuerdas la carpeta? En <code>${page}</code>, en la tarjeta de la extensión, pulsa «Detalles» y mira «Cargada desde».</p>`;
+    <p class="meta small">${fx?'Si el ZIP no se instala, abre la <a href="ayuda/instalar-zen.html" target="_blank" rel="noopener">guía de Zen</a>. El ZIP fuente se carga temporalmente; la instalación permanente exige un XPI firmado.':'¿No recuerdas la carpeta? En <code>'+page+'</code>, pulsa «Detalles» y mira «Cargada desde». '}</p>`;
   const c = $('#extUpdCopy'); if(c) c.onclick = async () => { try{ await navigator.clipboard.writeText(page); toast('📋 Copiado: pégalo en la barra de direcciones'); }catch(e){ toast(page); } };
   $('#extUpdDl').onclick = () => toast('⬇ Descargando la v' + LATEST.extension);
   $('#extUpd').showModal();
@@ -1773,8 +2049,9 @@ function renderExt(){
   card.hidden = isTouch() && !extVersion && !(isGecko() && platform() === 'android');
   const oldExt = extOutdated();
   if(oldExt){ box.innerHTML = `<div class="msg err">Tienes la extensión v${esc(extVersion)} y hay una nueva (v${esc(LATEST.extension)}). <button class="btn small primary" id="extOldBtn" type="button">Cómo actualizarla</button></div>`; $('#extOldBtn').onclick = showExtUpdate; return; }
-  if(extVersion){ box.innerHTML = `<div class="msg ok">✅ Extensión instalada (v${esc(extVersion)}). Pulsa <b>↻ Actualizar</b> arriba para sincronizar Moodle y Classroom con un clic.</div><div class="row"><button class="btn primary" id="extSyncNow" type="button">⚡ Sincronizar ahora</button></div><label class="check" style="margin-top:10px"><input type="checkbox" id="autoSyncChk" ${cfg.autoSync !== false ? 'checked' : ''}> <span>Actualizar automáticamente al abrir la app (si hace más de 1 hora)</span></label>`; $('#extSyncNow').onclick = () => extSync(); $('#autoSyncChk').onchange = e => { cfg.autoSync = e.target.checked; saveCfg(); toast(e.target.checked ? '✅ Se actualizará al abrir la app' : 'Actualización automática desactivada'); }; $('#extHelp').open = false; }
-  else { box.innerHTML = `<p class="meta small">Con ella, <b>↻ Actualizar</b> trae Moodle y Classroom solo, sin marcadores. Recomendado en el ordenador.</p><div class="row"><a class="btn primary" href="${extZip()}" download id="extDl">⬇ Descargar la extensión para ${isGecko() ? 'Zen / Firefox' : 'Chrome / Edge'}</a></div>`; $('#extHelpChrome').hidden = isGecko(); $('#extHelpFx').hidden = !isGecko(); $('#extHelp').open = true; $('#extDl').onclick = () => toast('⬇ Descargando: descomprímela y sigue los pasos'); }
+  if(extVersion&&extPermissions===false){box.innerHTML=`<div class="msg info">Extensión v${esc(extVersion)} instalada. Antes de usarla, completa los permisos iniciales.</div><button class="btn primary" id="extPrepare" type="button">Preparar permisos y comenzar</button>`;$('#extPrepare').onclick=()=>window.postMessage({type:'MS_EXT_OPEN_SETUP'},location.origin);return;}
+  if(extVersion){ box.innerHTML = `<div class="msg ok">✅ Extensión instalada (v${esc(extVersion)}). Pulsa <b>↻ Actualizar</b> arriba para sincronizar Moodle y Classroom con un clic.</div><div class="row"><button class="btn primary" id="extSyncNow" type="button">⚡ Sincronizar ahora</button></div><p class="small">Los permisos se preparan al instalar, antes de actuar. Puedes revisarlos en Mi Estudio → Opciones. En el panel de Electude, «Informar de un fallo» prepara un archivo para adjuntarlo al chat.</p><label class="check" style="margin-top:10px"><input type="checkbox" id="autoSyncChk" ${cfg.autoSync !== false ? 'checked' : ''}> <span>Actualizar automáticamente al abrir la app (si hace más de 1 hora)</span></label>`; $('#extSyncNow').onclick = () => extSync(); $('#autoSyncChk').onchange = e => { cfg.autoSync = e.target.checked; saveCfg(); toast(e.target.checked ? '✅ Se actualizará al abrir la app' : 'Actualización automática desactivada'); }; $('#extHelp').open = false; }
+  else { box.innerHTML = `<p class="meta small">Con ella, <b>↻ Actualizar</b> trae Moodle y Classroom solo, sin marcadores. Recomendado en el ordenador.</p><div class="row"><a class="btn primary" href="${extZip()}" download id="extDl">⬇ Descargar la extensión para ${isGecko() ? 'Zen / Firefox' : 'Chrome / Edge'}</a></div>`; $('#extHelpChrome').hidden = isGecko(); $('#extHelpFx').hidden = !isGecko(); $('#extHelp').open = true; $('#extDl').onclick = () => toast(isGecko()?'⬇ ZIP para Zen: carga temporal o firma de Mozilla. Abre la guía.':'⬇ Descargando: descomprímela y sigue los pasos'); }
 }
 $('#copyExtUrl').onclick = async () => { try{ await navigator.clipboard.writeText(/Edg\//.test(navigator.userAgent) ? 'edge://extensions' : 'chrome://extensions'); toast('✅ Copiado: pégalo en una pestaña nueva'); }catch(e){ toast('Escríbelo a mano en una pestaña nueva', 'err'); } };
 
@@ -2054,6 +2331,8 @@ importXfer() || importSync();
 renderAll();
 window.addEventListener('load', () => sync(false));
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
+initTaskReminders();
+setTimeout(reminderFromHash,0);
 if(location.hash === '#cfg-ai'){ history.replaceState(null, '', location.pathname); $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'cfg')); $$('main section').forEach(x => x.classList.toggle('on', x.id === 'cfg')); const k = $('#gKey'); if(k) setTimeout(() => { k.scrollIntoView({block: 'center'}); k.focus(); }, 300); }
 // Electude: si ya está abierto, ir a esa pestaña en vez de abrir otra (abrir otra sesión hace que la anterior «caduque»)
 document.addEventListener('click', e => {
