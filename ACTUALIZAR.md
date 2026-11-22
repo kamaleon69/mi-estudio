@@ -1,10 +1,16 @@
 # Actualizar Mi Estudio y la extensión
 
-Web **2026.11.22.1** · Extensión **2.1.0**
+Web **2026.11.22.2** · Extensión **2.1.1**
 
 Si ya configuraste los avisos al móvil, conserva la URL `serviceUrl` de tu archivo `notifications-config.json` al sustituir los archivos.
 
-## Novedades de la versión 2.1.0
+## Corrección 2.1.1
+
+Electude reconoce los recuadros con botón «Ok», aunque esté desactivado. Cuando el cuestionario muestra una pregunta pero sus controles son opacos, se pide a la IA una sugerencia de texto con las opciones visibles y, si está disponible, la captura. La sugerencia se muestra debajo de «Analizar la pregunta». Ese caso se responde a mano.
+
+240 pruebas automáticas aprobadas, incluidas la detección del recuadro catalán y la consulta simulada a Gemini.
+
+## Novedades de la versión 2.1.1
 
 - **Sincronización.** Moodle y Classroom se leen a la vez en pestañas de fondo. Si se necesita iniciar sesión, «Actualizar» muestra un botón para abrir la plataforma. Puedes cancelar la lectura. Si falla una plataforma, se conserva su lista anterior y se pueden importar los resultados de la otra. Las lecturas parciales conservan entradas anteriores.
 - **Lens en otras webs.** Pulsa el icono de Mi Estudio en una página web o usa el menú contextual. Selecciona una zona con la lupa y revisa el recorte antes de preguntar. Se envía la pregunta y el recorte al proveedor configurado. El navegador restringe la inyección en páginas internas y en algunos visores.
@@ -100,7 +106,7 @@ Publicar la web no actualiza por sí solo una extensión instalada manualmente.
 
 1. Descomprime `mi-estudio-extension.zip` en la misma carpeta que ya cargaste como extensión, reemplazando los archivos. También puedes usar directamente `extension-chrome`.
 2. Abre `chrome://extensions` o `edge://extensions` y pulsa el botón de recarga de Mi Estudio.
-3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v2.1.0**. Si no aparece, ese panel todavía es de una versión anterior.
+3. Recarga Mi Estudio y Electude. En el encabezado del panel de Electude debe aparecer **v2.1.1**. Si no aparece, ese panel todavía es de una versión anterior.
 4. Abre Mi Estudio y guarda los ajustes de IA para sincronizar las claves de Gemini, Groq, OpenRouter Free, Claude u OpenAI con la extensión. El navegador puede pedir permiso para los nuevos dominios `api.groq.com` y `openrouter.ai`.
 
 ## Actualizar Firefox o Zen
