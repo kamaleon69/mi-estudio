@@ -19,9 +19,9 @@
 @media (prefers-color-scheme:dark){:root{--bg:#11151b;--card:#1a2029;--ink:#e6e9ef;--muted:#98a2b3;--line:#2a323e;--brand:#9ab8e8;--accent:#6ea0ff}}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:12px}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px env(safe-area-inset-top);display:flex;align-items:center;gap:12px}
 header h1{font-size:18px;margin:0;flex:1;color:var(--brand)}
-nav{display:flex;gap:4px;padding:8px 16px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:var(--header-height,49px);z-index:4}
+nav{display:flex;gap:4px;padding:8px 16px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:49px;z-index:4}
 nav button{border:0;background:none;padding:8px 14px;border-radius:999px;color:var(--muted);font:inherit;cursor:pointer;white-space:nowrap}
 nav button.on{background:var(--brand);color:var(--bg)}
 main{max-width:900px;margin:0 auto;padding:16px 16px 80px}
@@ -93,7 +93,7 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #ai .ai-h strong{flex:1}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .seg button{white-space:nowrap;border:0;background:none;color:var(--muted);padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
-.seg button.on[data-p=claude]{background:#d97757;color:#fff}.seg button.on[data-p=gemini]{background:#4b7bec;color:#fff}.seg button.on[data-p=openai]{background:#047857;color:#fff}
+.seg button.on[data-p=claude]{background:#d97757;color:#fff}.seg button.on[data-p=gemini]{background:#4b7bec;color:#fff}
 #aiMode{font-size:12px;color:var(--muted);padding:6px 14px;border-bottom:1px solid var(--line)}
 #aiCtx:empty,#aiAtt:empty{display:none}
 #aiCtx{padding:8px 14px 0}
@@ -151,30 +151,6 @@ details.help .tip{background:var(--card);border-left:3px solid var(--warn);paddi
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.err{background:#b3261e}
 #lensBusy{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:50;color:#fff;font-weight:600}
-
-/* Controles que caben en pantallas pequeñas y en el teclado del móvil. */
-html{scroll-padding-top:calc(var(--header-height,49px) + 70px)}
-main,.card,.row>*{min-width:0}.card,.intro,.meta{overflow-wrap:anywhere}
-button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-#ai{position:fixed;top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh);max-height:var(--visual-height,100dvh)}
-#ai .ai-h{flex-wrap:wrap;flex-shrink:0}#aiSeg{order:3;width:100%;max-width:100%;overflow-x:auto;flex-shrink:0;border-radius:10px}
-#aiSeg button{flex:1;min-height:40px;flex-shrink:0}.seg button.on[data-p=groq]{background:#c2410c;color:#fff}.seg button.on[data-p=openrouter]{background:#6d28d9;color:#fff}
-.aiProviderMobile{display:none}#aiMsgs{min-height:0;overscroll-behavior:contain}#aiInput{min-width:0;width:0;flex:1 1 0}#ai .ai-f{flex-shrink:0}
-#lensBar{max-width:96vw;flex-wrap:wrap;justify-content:center;border-radius:18px}
-@media (max-width:600px){
-  body{font-size:16px}header{gap:6px;padding-left:10px;padding-right:10px}header h1{min-width:0;font-size:16px}header .btn{min-height:44px;flex-shrink:0}
-  nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:6px 8px;overflow:visible}nav button{min-width:0;min-height:44px;padding:5px 3px;white-space:normal;font-size:13px;line-height:1.2;border-radius:10px}
-  main{padding:12px 10px calc(92px + env(safe-area-inset-bottom))}.card{padding:14px 12px}.btn,.chip{min-height:44px;display:inline-flex;align-items:center;justify-content:center}.btn.small{min-height:40px}
-  input,select,textarea{font-size:16px;min-height:44px}input[type=checkbox],input[type=radio]{min-height:0}.check input{width:22px;height:22px;flex-shrink:0}
-  .row>.btn{max-width:100%}.task{gap:8px}.task .t{overflow-wrap:anywhere}.due{white-space:normal;max-width:8em;font-size:12px}
-  #elecOpen,#elecAsk{width:100%;max-width:100%}#elecUrlTxt{overflow-wrap:anywhere}
-  dialog{width:100%;max-width:100vw;max-height:calc(100dvh - 16px);margin:auto;border-radius:12px}.dlg-h{padding:12px;flex-wrap:wrap}.dlg-b{padding:12px;overflow-x:auto}
-  #ai{margin:0;border-radius:0}#ai .ai-h strong{display:block}#aiSeg{display:none}.aiProviderMobile{display:block;order:3;flex-basis:100%;margin:0;font-size:12px}.aiProviderMobile select{margin-top:3px}
-  #ai .ai-f{padding-left:8px;padding-right:8px;gap:6px}#aiMsgs{padding:12px}#aiMode{overflow-wrap:anywhere}.bub{max-width:97%}.bub-actions{flex-wrap:wrap}.bub-actions button{min-height:40px}.att button{width:28px;height:28px;line-height:28px}.att{padding-right:30px}
-  #lensHint{max-width:94vw;white-space:normal;text-align:center}#lensBar{width:max-content;max-width:96vw}#lensBar button{min-height:44px}
-  .views button{padding:8px 4px;font-size:12.5px;line-height:1.25}.views button .n{display:block;width:max-content;margin:3px auto 0}
-}
-@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.spin{animation-duration:2s}}
 </style>
 </head>
 <body>
@@ -219,9 +195,8 @@ button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visi
       <p class="meta small" id="elecUrlTxt"></p>
       <a class="btn primary" id="elecOpen" target="_blank" rel="noopener" style="font-size:17px;padding:13px 26px;margin-top:8px">Abrir Electude ↗</a>
       <div style="margin-top:14px"><button class="btn" id="elecAsk" type="button" style="font-size:16px;padding:12px 20px">📸 Preguntar a la IA por la pantalla de Electude</button></div>
-      <p class="meta small" id="elecCaptureHelp" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
-      <div class="msg info" id="elecMobileNotice" hidden style="text-align:left;margin-top:12px" role="note"><b>El ayudante integrado de Electude no funciona en móvil.</b> El panel lateral, las marcas sobre el dibujo, el automático y Autocompletar requieren la extensión en un ordenador. En este móvil puedes abrir Electude y consultar una captura con el chat de Mi Estudio.</div>
-      <div class="msg info" id="elecDesktopHelp" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (extensión v1.11.1):</b> abre el botón 💡 y pulsa <b>🔍 Analizar la pregunta</b> para ver la sugerencia y la explicación. Activa <b>Autocompletar: ON</b> para usar el modo elegido, <b>Preciso o Rápido</b>, y hacer clic en las opciones, verdadero/falso y campos compatibles. Puedes cambiar de modo con Autocompletar activado. El cambio cancela la respuesta pendiente y vuelve a analizar con el modo elegido. Ajusta el mínimo y el máximo: por defecto espera <b>entre 7 y 15 segundos</b> después de recibir la respuesta final de la IA. Puedes apagarlo o cancelar la respuesta durante la cuenta atrás. Después pulsa tú <b>Comprovar</b>; en los dibujos, sigue las marcas y haz clic tú. Necesita una clave de Gemini, Groq, OpenRouter Free, Claude u OpenAI en Ajustes → Asistentes IA. Para ver imágenes, pulsa el icono de la extensión estando en Electude o acepta el permiso de captura.</div>
+      <p class="meta small" style="margin-top:8px">Abre el enunciado en Electude y pulsa el botón: la IA te dirá la opción correcta y por qué.</p>
+      <div class="msg info" style="text-align:left;margin-top:12px"><b>💡 Ayuda dentro de Electude (con la extensión v1.3):</b> en la página de Electude aparece un botón 💡 abajo a la derecha. Ábrelo y pulsa <b>🔍 Analizar la pregunta</b>: se abre un panel lateral con la opción sugerida y la explicación, y la opción se marca en verde en la página. Para que la IA vea también las imágenes, pulsa una vez el icono de la extensión estando en Electude. Necesita una clave de Gemini (gratis) o de Claude en Ajustes → Asistentes IA.</div>
     </div>
   </section>
 
@@ -344,20 +319,15 @@ button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visi
     </div>
 
     <div class="card">
-      <strong>Asistentes IA (Claude, Gemini y OpenAI / ChatGPT)</strong>
-      <p class="meta small"><b>Sin claves</b>, la app usa tu cuenta normal: abre Claude, Gemini o ChatGPT con tu pregunta ya escrita y la imagen copiada (en el móvil, a través del menú «Compartir»).<br>
+      <strong>Asistentes IA (Claude y Gemini)</strong>
+      <p class="meta small"><b>Sin claves</b>, la app usa tu cuenta normal: abre claude.ai o Gemini con tu pregunta ya escrita y la imagen copiada (en el móvil, a través del menú «Compartir»).<br>
       <b>Con una clave de API</b>, el chat funciona dentro de la app.</p>
       <label>Clave de API de Claude (console.anthropic.com · se paga por uso, aparte de Claude Pro)</label>
-      <input id="cKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="sk-ant-…" autocomplete="off">
+      <input id="cKey" type="password" placeholder="sk-ant-…" autocomplete="off">
       <label>Modelo de Claude</label>
       <select id="cModel"><option value="claude-sonnet-5-5">Claude Sonnet 5.5 (recomendado)</option><option value="claude-opus-5-5">Claude Opus 5.5 (más potente)</option><option value="claude-haiku-5-5">Claude Haiku 5.5 (más rápido y barato)</option></select>
       <label>Clave de API de Gemini (aistudio.google.com · tiene nivel gratuito)</label>
-      <input id="gKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="AIza…" autocomplete="off">
-      <label for="gKey2">Clave alternativa de Gemini (opcional, de otro proyecto autorizado)</label>
-      <input id="gKey2" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="AIza…" autocomplete="off">
-      <label for="gSlot">Clave de Gemini activa</label>
-      <select id="gSlot"><option value="primary">Principal</option><option value="secondary">Alternativa</option></select>
-      <p class="meta small">Puedes guardar otra clave de una cuenta tuya. Google aplica la cuota por proyecto: dos claves del mismo proyecto comparten el límite. El cambio de clave es manual; no hay rotación automática.</p>
+      <input id="gKey" type="password" placeholder="AIza…" autocomplete="off">
       <label>Modelo de Gemini</label>
       <select id="gModel">
         <option value="gemini-3.5-flash-lite">Rápido · gemini-3.5-flash-lite (recomendado, ~1 s)</option>
@@ -366,23 +336,6 @@ button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visi
         <option value="gemini-3.5-flash">Más potente · gemini-3.5-flash (puede tardar más de 1 min)</option>
       </select>
       <p class="meta small">Si el modelo elegido tarda más de 15 s o está saturado, la app pasa sola a uno rápido.</p>
-      <label for="oKey">Clave de API de OpenAI / ChatGPT</label>
-      <input id="oKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="sk-…" autocomplete="off">
-      <label for="oModel">Modelo de OpenAI</label>
-      <input id="oModel" type="text" value="gpt-5.5" placeholder="gpt-5.5" autocomplete="off">
-      <p class="meta small">Crea tu clave en <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI Platform → API keys</a>. La API necesita facturación o créditos disponibles en tu cuenta; entrar en ChatGPT no proporciona una clave de API.</p>
-      <label for="qKey">Clave de API de Groq · nivel gratuito</label>
-      <input id="qKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="gsk_…" autocomplete="off">
-      <label for="qModel">Modelo de Groq</label>
-      <select id="qModel"><option value="qwen/qwen3.8-27b">Qwen 3.8 27B · texto e imágenes</option><option value="openai/gpt-oss-120b">GPT OSS 120B · solo texto</option></select>
-      <p class="meta small">Obtén tu token en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq → API keys</a>. Usa el plan Free; tiene <a href="https://console.groq.com/docs/rate-limits" target="_blank" rel="noopener">límites por modelo</a>. Si activas el plan Developer, Groq cobra según sus tarifas. Para dibujos elige Qwen con visión.</p>
-      <label for="rKey">Clave de API de OpenRouter Free</label>
-      <input id="rKey" type="password" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="sk-or-v1-…" autocomplete="off">
-      <label for="rModel">Modelo gratuito de OpenRouter</label>
-      <input id="rModel" type="text" value="openrouter/free" placeholder="openrouter/free o proveedor/modelo:free" autocomplete="off">
-      <p class="meta small">Crea un token en <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener">OpenRouter → Keys</a>. <b>openrouter/free</b> elige un modelo gratuito compatible con la pregunta, también con imágenes. Puedes usar otro ID de la <a href="https://openrouter.ai/collections/free-models/" target="_blank" rel="noopener">lista de modelos gratuitos</a> terminado en <b>:free</b>. No se aceptan modelos de pago en esta opción. La cuota y la disponibilidad son limitadas.</p>
-      <label for="aiProviderCfg">Proveedor para el asistente y Electude</label>
-      <select id="aiProviderCfg"><option value="claude">Claude</option><option value="gemini">Gemini (clave activa)</option><option value="openai">OpenAI / ChatGPT</option><option value="groq">Groq · nivel gratuito</option><option value="openrouter">OpenRouter Free</option></select>
       <label>Cómo quieres que te ayude (instrucciones para la IA)</label>
       <textarea id="aiSys" style="min-height:90px"></textarea>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="aiSave">Guardar</button><span id="aiSaved" class="meta small"></span></div>
@@ -477,8 +430,7 @@ button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visi
 <dialog id="ai">
   <div class="ai-h">
     <strong>Asistente</strong>
-    <label class="aiProviderMobile" for="aiProviderQuick">API del chat<select id="aiProviderQuick"><option value="claude">Claude</option><option value="gemini">Gemini</option><option value="openai">OpenAI / ChatGPT</option><option value="groq">Groq · nivel gratuito</option><option value="openrouter">OpenRouter Free</option></select></label>
-    <div class="seg" id="aiSeg"><button data-p="claude">✳ Claude</button><button data-p="gemini">✦ Gemini</button><button data-p="openai">◉ ChatGPT</button><button data-p="groq">⚡ Groq</button><button data-p="openrouter">◇ Free</button></div>
+    <div class="seg" id="aiSeg"><button data-p="claude">✳ Claude</button><button data-p="gemini">✦ Gemini</button></div>
     <button class="btn small" id="aiNew" title="Nueva conversación">＋</button>
     <button class="btn small" id="aiClose">✕</button>
   </div>
@@ -502,32 +454,17 @@ button,a.btn,summary{touch-action:manipulation}button:focus-visible,a:focus-visi
     <button id="lensPhoto">📷 Foto</button>
     <button id="lensCancel">Cancelar</button>
     <button class="cl" id="lensClaude" disabled>✳ Claude</button>
-    <button class="ge" id="lensGemini" disabled>✦ Gemini</button><button class="cl" id="lensOpenai" disabled>◉ ChatGPT</button><button class="cl" id="lensGroq" disabled>⚡ Groq</button><button class="cl" id="lensFree" disabled>◇ Free</button>
+    <button class="ge" id="lensGemini" disabled>✦ Gemini</button>
   </div>
 </dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="lensBusy"><span><span class="spin"></span> Capturando…</span></div>
 
-<script src="ai-providers.js"></script>
-<script src="device.js"></script>
 <script>
 "use strict";
-const Providers = globalThis.MiEstudioAI;
 /* ---------- utilidades ---------- */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-function updateViewport(){
-  const header = document.querySelector('header');
-  if(header) document.documentElement.style.setProperty('--header-height', header.getBoundingClientRect().height + 'px');
-  const viewport = window.visualViewport;
-  document.documentElement.style.setProperty('--visual-height', (viewport ? viewport.height : window.innerHeight) + 'px');
-  document.documentElement.style.setProperty('--visual-top', (viewport ? viewport.offsetTop : 0) + 'px');
-}
-updateViewport();
-if(typeof ResizeObserver !== 'undefined') new ResizeObserver(updateViewport).observe(document.querySelector('header'));
-window.addEventListener('resize', updateViewport);
-if(window.visualViewport){ visualViewport.addEventListener('resize', updateViewport); visualViewport.addEventListener('scroll', updateViewport); }
-
 const store = {
   get(k, d){ try{ const v = localStorage.getItem('me_'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem('me_'+k, JSON.stringify(v)); }catch(e){} },
@@ -542,7 +479,7 @@ const DEFAULT_SYS = 'Eres un tutor para un estudiante de Formación Profesional.
   'Explica el razonamiento paso a paso para que el estudiante entienda la materia, no solo el resultado. ' +
   'Si te envían una imagen o un texto seleccionado, primero di brevemente qué ves y después ayuda con ello.';
 let cfg = Object.assign({moodleUrl:'https://moodle4.net.fje.edu', classroomUrl:'https://classroom.google.com', classroomEmail:'', syncFrom:'2026-09-01', moodleToken:'', moodleUser:'', googleClientId:'', electudeUrl:'https://clotfje.electude.eu/srestore',
-  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiKey2:'', geminiSlot:'primary', openaiKey:'', openaiModel:'gpt-5.5', groqKey:'', groqModel:'qwen/qwen3.8-27b', openrouterKey:'', openrouterModel:'openrouter/free', geminiModel:'gemini-3.5-flash-lite', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
+  claudeKey:'', claudeModel:'claude-sonnet-5-5', geminiKey:'', geminiModel:'gemini-3.5-flash-lite', aiProvider:'claude', aiSystem:DEFAULT_SYS}, store.get('cfg', {}));
 const saveCfg = () => store.set('cfg', cfg);
 // La conexión directa (usuario/contraseña/token de Moodle, Client ID de Google) se ha retirado: se borran restos guardados.
 if(cfg.moodleToken || cfg.googleClientId || cfg.moodleUser){ cfg.moodleToken = ''; cfg.moodleUser = ''; cfg.googleClientId = ''; store.set('cfg', cfg); }
@@ -1087,8 +1024,8 @@ function renderStudy(){
 /* ---------- Electude ---------- */
 const ELEC_Q = 'Este es un enunciado de Electude. Dime cuál es la opción correcta (o la respuesta) y explícame brevemente por qué, para que lo entienda.';
 async function askElectude(){
-  if(MiEstudioDevice.isMobile() || isTouch() || !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
-    toast(extVersion && !MiEstudioDevice.isMobile() ? 'Elige una captura del enunciado (o pulsa el icono 🧩 de la extensión estando en Electude)' : 'Elige una captura o foto del enunciado'); photoFor = '__elec'; $('#photoIn').click(); return;
+  if(isTouch() || !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
+    toast(extVersion ? 'Elige una captura del enunciado (o pulsa el icono 🧩 de la extensión estando en Electude)' : 'Elige una captura o foto del enunciado'); photoFor = '__elec'; $('#photoIn').click(); return;
   }
   try{
     toast('Elige la pestaña o ventana de Electude');
@@ -1105,10 +1042,6 @@ function askWithImage(url){
   if(hasKey(cfg.aiProvider)) setTimeout(() => aiSend(), 150); else toast('✅ Captura lista: pulsa ➤ para enviarla');
 }
 function renderElec(){
-  const mobile = MiEstudioDevice.isMobile();
-  $('#elecMobileNotice').hidden = !mobile; $('#elecDesktopHelp').hidden = mobile;
-  $('#elecAsk').textContent = mobile ? '📸 Consultar una captura de Electude' : '📸 Preguntar a la IA por la pantalla de Electude';
-  $('#elecCaptureHelp').textContent = mobile ? 'Haz una captura del enunciado y súbela aquí. La IA te dará una sugerencia; tendrás que marcar tú la respuesta en Electude.' : 'Abre el enunciado en Electude y pulsa el botón para consultar la captura con la IA.';
   $('#elecOpen').href = cfg.electudeUrl;
   $('#elecUrlTxt').textContent = cfg.electudeUrl.replace(/^https:\/\//, '');
   $('#elecAsk').onclick = askElectude;
@@ -1147,11 +1080,9 @@ $('#wipe').onclick = () => { if(!confirm('¿Borrar tokens, borradores y tareas g
 /* ======================================================================
    ASISTENTE IA (Claude / Gemini)
    ====================================================================== */
-const AI_NAME = {claude: 'Claude', gemini: 'Gemini', openai: 'OpenAI / ChatGPT', groq: 'Groq', openrouter: 'OpenRouter Free'};
-const AI_COLOR = {claude:'#d97757', gemini:'#4b7bec', openai:'#047857', groq:'#c2410c', openrouter:'#6d28d9'};
-const AI_ICON = {claude:'✳', gemini:'✦', openai:'◉', groq:'⚡', openrouter:'◇'};
+const AI_NAME = {claude: 'Claude', gemini: 'Gemini'};
 const ai = {msgs: [], att: [], ctx: null, busy: false};
-const hasKey = p => Providers.hasKey(cfg, p);
+const hasKey = p => !!(p === 'claude' ? cfg.claudeKey : cfg.geminiKey);
 const isTouch = () => matchMedia('(pointer:coarse)').matches;
 
 function md(s){
@@ -1176,8 +1107,7 @@ function draftTarget(){ return $('#dlg').open ? ($('#mText') || $('#draft')) : n
 
 function renderAI(){
   const p = cfg.aiProvider;
-  $$('#aiSeg button').forEach(b => { b.classList.toggle('on', b.dataset.p === p); b.setAttribute('aria-pressed', String(b.dataset.p === p)); });
-  $('#aiProviderQuick').value = p;
+  $$('#aiSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   $('#aiMode').innerHTML = hasKey(p)
     ? `Chat dentro de la app con tu clave de API de ${AI_NAME[p]}.`
     : `Sin clave de API: escribe y envía; podrás abrirlo en ${AI_NAME[p]} con tu cuenta o añadir una clave gratis de Gemini para chatear aquí. <a href="#" id="aiCfgLink">Configurar chat integrado</a>`;
@@ -1200,7 +1130,7 @@ function renderMsgs(){
   const tgt = draftTarget();
   box.innerHTML = ai.msgs.map((m, i) => m.role === 'user'
     ? `<div class="bub u">${(m.images || []).map(im => `<img src="${im.url}" alt="">`).join('')}${esc(m.text).replace(/\n/g, '<br>')}${m.hasExtra ? '<div class="small" style="opacity:.8;margin-top:4px">📎 + texto de la selección</div>' : ''}</div>`
-    : m.choice ? `<div class="bub a"><div class="who" style="color:${AI_COLOR[m.provider]}">${AI_ICON[m.provider] + ' ' + AI_NAME[m.provider]}</div>
+    : m.choice ? `<div class="bub a"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
         <p>Para que te responda <b>aquí dentro</b> hace falta una clave de API. ¿Cómo lo envío?</p>
         <div class="bub-actions" style="flex-direction:column;align-items:stretch">
           <button data-ext="${i}">↗ Enviar con mi cuenta de ${AI_NAME[m.provider]} (abre su app o web)</button>
@@ -1215,7 +1145,7 @@ function renderMsgs(){
           <input id="keyIn${i}" placeholder="AIza…" autocomplete="off">
           <div class="bub-actions"><button data-keysave="${i}">Guardar y enviar</button></div>
         </div></div>`
-    : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${AI_COLOR[m.provider]}">${AI_ICON[m.provider] + ' ' + AI_NAME[m.provider]}</div>
+    : `<div class="bub a${m.error ? ' err' : ''}"><div class="who" style="color:${m.provider === 'gemini' ? '#4b7bec' : '#d97757'}">${m.provider === 'gemini' ? '✦ Gemini' : '✳ Claude'}</div>
         <div class="${ai.busy && i === ai.msgs.length - 1 ? 'typing' : ''}">${!m.text && ai.busy && i === ai.msgs.length - 1 ? `<span class="meta"><span class="spin"></span> Pensando… ${Math.round((Date.now() - (m.t0 || Date.now())) / 1000)} s${m.switched ? '<br><i>' + esc(m.switched) + '</i>' : ''}</span>` : md(m.text)}</div>
         ${(!m.note || m.copyable) && !(ai.busy && i === ai.msgs.length - 1) && m.text ? `<div class="bub-actions"><button data-copy="${i}">Copiar</button>${tgt ? `<button data-ins="${i}">Pegar en mi borrador</button>` : ''}</div>` : ''}</div>`).join('');
   $$('#aiMsgs [data-copy]').forEach(b => b.onclick = async () => { try{ await navigator.clipboard.writeText(ai.msgs[+b.dataset.copy].text); b.textContent = 'Copiado ✓'; toast('✅ Respuesta copiada'); }catch(e){ toast('No se pudo copiar', 'err'); } });
@@ -1224,7 +1154,7 @@ function renderMsgs(){
   $$('#aiMsgs [data-keysave]').forEach(b => b.onclick = () => {
     const i = +b.dataset.keysave, v = $('#keyIn' + i).value.trim();
     if(!/^AIza[0-9A-Za-z_\-]{20,}$/.test(v)){ toast('Esa clave no parece de Gemini (empieza por AIza…)', 'err'); return; }
-    cfg.geminiKey = v; cfg.geminiSlot = 'primary'; cfg.aiProvider = 'gemini'; saveCfg(); pushKeys(true); renderAICfg(); renderAIBtn();
+    cfg.geminiKey = v; cfg.aiProvider = 'gemini'; saveCfg(); pushKeys(); renderAICfg(); renderAIBtn();
     ai.msgs.splice(i, 1); toast('✅ Clave guardada: enviando a Gemini');
     aiRun('gemini');
   });
@@ -1238,7 +1168,7 @@ function renderMsgs(){
 function aiNote(text, provider = cfg.aiProvider){ ai.msgs.push({role: 'assistant', provider, text, note: true}); renderAI(); }
 
 function openAI(opts = {}){
-  if(opts.provider && opts.provider !== cfg.aiProvider){ cfg.aiProvider = opts.provider; saveCfg(); pushKeys(true); }
+  if(opts.provider){ cfg.aiProvider = opts.provider; saveCfg(); }
   if(opts.ctx !== undefined) ai.ctx = opts.ctx;
   if(opts.att) ai.att.push(...opts.att);
   if(opts.text != null) $('#aiInput').value = opts.text;
@@ -1284,13 +1214,7 @@ async function* sse(resp){
     }
   }
 }
-async function apiError(response, provider, model){
-  const json = await response.json().catch(() => ({}));
-  const quota = Providers.quota(json, response.status, {provider: provider || cfg.aiProvider, model: model || '', retryAfter: response.headers.get('retry-after')});
-  const error = new Error(quota ? quota.error + (quota.retryAt ? ' Reintento: ' + new Date(quota.retryAt).toLocaleString('es-ES') + '.' : '') : json.error && (json.error.message || json.error.status) || 'Error ' + response.status);
-  if(quota) Object.assign(error, quota);
-  error.status = response.status; return error;
-}
+async function apiError(r){ let m = 'Error ' + r.status; try{ const j = await r.json(); m = (j.error && (j.error.message || j.error.status)) || m; }catch(e){} return new Error(m); }
 async function* claudeStream(){
   const messages = buildTurns().map(t => ({role: t.role, content: [
     ...t.images.map(im => ({type: 'image', source: {type: 'base64', media_type: im.mime, data: im.data}})),
@@ -1304,47 +1228,13 @@ async function* claudeStream(){
     if(ev.type === 'error') throw new Error((ev.error && ev.error.message) || 'Error de Claude');
   }
 }
-async function* openaiStream(){
-  const body = Providers.openaiBody(buildTurns(), {model: cfg.openaiModel || 'gpt-5.5', instructions: sysPrompt(), stream: true});
-  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 60000);
-  try{
-    const response = await fetch('https://api.openai.com/v1/responses', {method: 'POST', signal: controller.signal, headers: {'content-type': 'application/json', Authorization: 'Bearer ' + cfg.openaiKey}, body: JSON.stringify(body)});
-    if(!response.ok) throw await apiError(response, 'openai', cfg.openaiModel);
-    for await (const event of sse(response)){
-      if(event.type === 'response.output_text.delta') yield event.delta || '';
-      if(event.type === 'error' || event.type === 'response.failed') throw new Error(event.message || event.response && event.response.error && event.response.error.message || 'Error de OpenAI');
-      if(event.type === 'response.incomplete') throw new Error('OpenAI no terminó la respuesta. Vuelve a enviarla.');
-    }
-  }finally{ clearTimeout(timeout); }
-}
-async function* freeStream(provider){
-  const config = Providers.chatConfig(cfg, provider), turns = buildTurns();
-  if(provider === 'groq' && /gpt-oss/.test(config.model) && turns.some(t => t.images.length)) throw new Error('Ese modelo de Groq solo admite texto. Elige Qwen con visión en Ajustes.');
-  const body = Providers.chatBody(turns, {model: config.model, instructions: sysPrompt(), maxOutputTokens: provider === 'groq' ? 1536 : 4096, stream: true});
-  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 60000);
-  try{
-    const response = await fetch(config.url, {method: 'POST', signal: controller.signal, headers: {'content-type': 'application/json', Authorization: 'Bearer ' + config.key}, body: JSON.stringify(body)});
-    if(!response.ok) throw await apiError(response, provider, config.model);
-    let finished = false;
-    for await (const event of sse(response)){
-      if(event.error) throw new Error(event.error.message || 'Error del proveedor');
-      const choice = event.choices && event.choices[0];
-      if(choice && choice.delta && typeof choice.delta.content === 'string') yield choice.delta.content;
-      if(choice && choice.finish_reason){
-        if(choice.finish_reason !== 'stop') throw new Error('El modelo no terminó la respuesta. No la tomes como completa.');
-        finished = true;
-      }
-    }
-    if(!finished) throw new Error('La conexión terminó antes de completar la respuesta.');
-  }finally{ clearTimeout(timer); }
-}
 async function* geminiOne(model, contents, firstTimeout){
   const ac = new AbortController(); let timer = setTimeout(() => ac.abort(), firstTimeout);
   try{
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {method: 'POST', signal: ac.signal,
-      headers: {'content-type': 'application/json', 'x-goog-api-key': Providers.geminiKey(cfg)},
+      headers: {'content-type': 'application/json', 'x-goog-api-key': cfg.geminiKey},
       body: JSON.stringify({systemInstruction: {parts: [{text: sysPrompt()}]}, contents})});
-    if(!r.ok){ const e = await apiError(r, 'gemini', model); e.status = r.status; throw e; }
+    if(!r.ok){ const e = await apiError(r); e.status = r.status; throw e; }
     for await (const ev of sse(r)){
       if(ev.error) throw new Error(ev.error.message);
       const parts = (ev.candidates && ev.candidates[0] && ev.candidates[0].content && ev.candidates[0].content.parts) || [];
@@ -1365,7 +1255,7 @@ async function* geminiStream(out){
       for await (const chunk of geminiOne(chain[i], contents, i === 0 ? 15000 : 20000)){ got = true; if(out) out.model = chain[i]; yield chunk; }
       if(got) return;
     }catch(e){
-      if(got || e.quota) throw e;             // no repetir automáticamente una cuota agotada
+      if(got) throw e;                       // ya había empezado a responder: no cambiar a mitad
       const retriable = e.slow || [404, 429, 500, 503].includes(e.status) || /demand|overloaded|unavailable|no longer available/i.test(e.message);
       lastErr = e; if(!retriable) throw e;
       if(i + 1 < chain.length && out){ out.switched = `${chain[i]} ${e.slow ? 'tardaba demasiado' : 'estaba saturado'}: respondo con ${chain[i + 1]}`; }
@@ -1400,7 +1290,7 @@ async function aiRun(p){
   const tick = setInterval(() => { if(!out.text) renderMsgs(); }, 1000);
   let raf = 0;
   try{
-    for await (const chunk of (p === 'claude' ? claudeStream() : p === 'openai' ? openaiStream() : p === 'groq' || p === 'openrouter' ? freeStream(p) : geminiStream(out))){
+    for await (const chunk of (p === 'claude' ? claudeStream() : geminiStream(out))){
       out.text += chunk;
       if(!raf) raf = requestAnimationFrame(() => { raf = 0; renderMsgs(); });
     }
@@ -1427,14 +1317,13 @@ async function toPngBlob(url){
   return new Promise(r => c.toBlob(r, 'image/png'));
 }
 async function aiExternal(p, text, images){
-  if(p === 'groq' || p === 'openrouter'){ $('#ai').close(); $('nav button[data-tab=cfg]').click(); $('#qKey').scrollIntoView({block: 'center'}); toast('Añade tu token de API y pulsa Guardar para usar este proveedor.'); return; }
   const img = images[0];
-  const name = AI_NAME[p];
+  const name = p === 'claude' ? 'Claude' : 'Gemini';
   // 1) Copiar al portapapeles: la imagen si la hay; si no, el texto (para Gemini, que no admite pregunta en el enlace)
   let copied = '';
   try{
     if(img){ await navigator.clipboard.write([new ClipboardItem({'image/png': toPngBlob(img.url)})]); copied = 'img'; }
-    else if(p !== 'claude'){ await navigator.clipboard.writeText(text); copied = 'txt'; }
+    else if(p === 'gemini'){ await navigator.clipboard.writeText(text); copied = 'txt'; }
   }catch(e){ console.warn(e); }
   // 2) Si hay imagen y no se pudo copiar (algunos móviles), último recurso: menú Compartir
   if(img && !copied && navigator.share){
@@ -1447,15 +1336,15 @@ async function aiExternal(p, text, images){
     }
   }
   // 3) Abrir la app/web con la cuenta del usuario (en el móvil abre su app si está instalada)
-  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(text.slice(0, 7000)) : p === 'openai' ? 'https://chatgpt.com/' : 'https://gemini.google.com/app';
+  const url = p === 'claude' ? 'https://claude.ai/new?q=' + encodeURIComponent(text.slice(0, 7000)) : 'https://gemini.google.com/app';
   window.open(url, '_blank', 'noopener');
   toast('↗ Abriendo ' + name + ' con tu pregunta…');
   let note = `He abierto **${name}** con tu cuenta.`;
   if(p === 'claude') note += ' Tu pregunta ya está escrita: solo pulsa enviar allí.';
   if(copied === 'txt') note += ' Tu pregunta está **copiada**: pégala allí y envía.';
-  if(copied === 'img') note += ' La **imagen está copiada**: pégala allí (mantén pulsado → Pegar, o Ctrl+V).' + (p !== 'claude' ? ' Después copia el texto de abajo y pégalo.' : '');
+  if(copied === 'img') note += ' La **imagen está copiada**: pégala allí (mantén pulsado → Pegar, o Ctrl+V).' + (p === 'gemini' ? ' Después copia el texto de abajo y pégalo.' : '');
   ai.msgs.push({role: 'assistant', provider: p, text: note, note: true});
-  if(p !== 'claude' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text, note: true, copyable: true});
+  if(p === 'gemini' && copied === 'img') ai.msgs.push({role: 'assistant', provider: p, text, note: true, copyable: true});
   renderAI();
 }
 
@@ -1499,7 +1388,7 @@ function lensStart(fromAI){
   lensReturnToAI = !!fromAI;
   if(fromAI) $('#ai').close();
   sel = null; $('#lensSel').hidden = true; $('#lens').classList.remove('has');
-  $('#lensHint').hidden = false; $('#lensClaude').disabled = $('#lensGemini').disabled = $('#lensGroq').disabled = $('#lensFree').disabled = $('#lensOpenai').disabled = true;
+  $('#lensHint').hidden = false; $('#lensClaude').disabled = $('#lensGemini').disabled = true;
   $('#lens').showModal();
   loadH2C().catch(() => {});
 }
@@ -1521,7 +1410,7 @@ function lensCancel(){ $('#lens').close(); toast('Lens cancelado'); if(lensRetur
     if(!drag) return; drag = null;
     const ok = sel && sel.w > 12 && sel.h > 12;
     if(!ok){ sel = null; box.hidden = true; L.classList.remove('has'); $('#lensHint').hidden = false; }
-    $('#lensClaude').disabled = $('#lensGemini').disabled = $('#lensGroq').disabled = $('#lensFree').disabled = $('#lensOpenai').disabled = !ok;
+    $('#lensClaude').disabled = $('#lensGemini').disabled = !ok;
   };
   L.addEventListener('pointerup', end); L.addEventListener('pointercancel', end);
   L.addEventListener('cancel', e => { e.preventDefault(); lensCancel(); });
@@ -1580,8 +1469,8 @@ async function lensSend(p){
 }
 
 /* --- botones --- */
-const bestProvider = () => Providers.provider(cfg);
-function renderAIBtn(){ const p = bestProvider(), b = $('#aiBtn'); if(!b) return; b.querySelector('.ic').textContent = AI_ICON[p]; b.querySelector('.lbl').textContent = AI_NAME[p]; b.style.background = AI_COLOR[p]; }
+const bestProvider = () => hasKey(cfg.aiProvider) ? cfg.aiProvider : hasKey('gemini') ? 'gemini' : hasKey('claude') ? 'claude' : cfg.aiProvider;
+function renderAIBtn(){ const p = bestProvider(), b = $('#aiBtn'); if(!b) return; b.querySelector('.ic').textContent = p === 'gemini' ? '✦' : '✳'; b.querySelector('.lbl').textContent = AI_NAME[p]; b.style.background = p === 'gemini' ? '#4b7bec' : '#d97757'; }
 $('#aiBtn').onclick = () => openAI({provider: bestProvider()});
 $('#lensBtn').onclick = () => lensStart(false);
 $('#dlgAI').onclick = () => openAI({ctx: taskContext(), provider: bestProvider()});
@@ -1592,31 +1481,20 @@ $('#lensPhoto').onclick = () => { $('#lens').close(); photoFor = null; $('#photo
 $('#lensCancel').onclick = lensCancel;
 $('#lensClaude').onclick = () => lensSend('claude');
 $('#lensGemini').onclick = () => lensSend('gemini');
-$('#lensOpenai').onclick = () => lensSend('openai');
-$('#lensGroq').onclick = () => lensSend('groq');
-$('#lensFree').onclick = () => lensSend('openrouter');
 $('#aiClose').onclick = () => $('#ai').close();
 $('#aiNew').onclick = () => { if(ai.busy) return toast('Espera a que termine la respuesta', 'err'); ai.msgs = []; ai.att = []; renderAI(); toast('✅ Nueva conversación'); };
-function selectChatProvider(provider){ cfg.aiProvider = provider; saveCfg(); pushKeys(true); renderAI(); renderAIBtn(); toast('Usando ' + AI_NAME[provider]); }
-$$('#aiSeg button').forEach(b => b.onclick = () => selectChatProvider(b.dataset.p));
-$('#aiProviderQuick').onchange = e => selectChatProvider(e.target.value);
+$$('#aiSeg button').forEach(b => b.onclick = () => { cfg.aiProvider = b.dataset.p; saveCfg(); pushKeys(); renderAI(); toast('Usando ' + AI_NAME[b.dataset.p]); });
 $('#aiSend').onclick = aiSend;
-$('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch() && !MiEstudioDevice.isMobile()){ e.preventDefault(); aiSend(); } });
+$('#aiInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !isTouch()){ e.preventDefault(); aiSend(); } });
 $('#aiInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px'; });
 $('#ai').addEventListener('click', e => { if(e.target === $('#ai')) $('#ai').close(); });
 $('#aiSave').onclick = () => {
-  if($('#gSlot').value === 'secondary' && !$('#gKey2').value.trim()){ toast('Añade la clave alternativa antes de activarla', 'err'); return; }
-  try{ Providers.chatConfig({openrouterModel: $('#rModel').value}, 'openrouter'); }catch(e){ toast(e.message, 'err'); return; }
   cfg.claudeKey = $('#cKey').value.trim(); cfg.claudeModel = $('#cModel').value;
-  cfg.geminiKey2 = $('#gKey2').value.trim(); cfg.geminiSlot = $('#gSlot').value;
-  cfg.groqKey = $('#qKey').value.trim(); cfg.groqModel = $('#qModel').value;
-  cfg.openrouterKey = $('#rKey').value.trim(); cfg.openrouterModel = $('#rModel').value.trim() || 'openrouter/free';
-  cfg.openaiKey = $('#oKey').value.trim(); cfg.openaiModel = $('#oModel').value.trim() || 'gpt-5.5'; cfg.aiProvider = $('#aiProviderCfg').value;
   cfg.geminiKey = $('#gKey').value.trim(); cfg.geminiModel = $('#gModel').value || 'gemini-3.5-flash-lite'; cfg.geminiModelChosen = true;
-  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg(); pushKeys(true);
+  cfg.aiSystem = $('#aiSys').value.trim() || DEFAULT_SYS; saveCfg(); pushKeys();
   $('#aiSaved').textContent = 'Guardado ✓'; setTimeout(() => $('#aiSaved').textContent = '', 2000); toast('✅ Ajustes de IA guardados'); renderAIBtn();
 };
-function renderAICfg(){ $('#qKey').value = cfg.groqKey || ''; $('#qModel').value = cfg.groqModel || 'qwen/qwen3.8-27b'; $('#rKey').value = cfg.openrouterKey || ''; $('#rModel').value = cfg.openrouterModel || 'openrouter/free'; $('#gKey2').value = cfg.geminiKey2 || ''; $('#gSlot').value = cfg.geminiSlot || 'primary'; $('#oKey').value = cfg.openaiKey || ''; $('#oModel').value = cfg.openaiModel || 'gpt-5.5'; $('#aiProviderCfg').value = cfg.aiProvider; $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
+function renderAICfg(){ $('#cKey').value = cfg.claudeKey; $('#cModel').value = cfg.claudeModel; $('#gKey').value = cfg.geminiKey; $('#gModel').value = cfg.geminiModel; if(!$('#gModel').value) $('#gModel').value = 'gemini-3.5-flash-lite'; $('#aiSys').value = cfg.aiSystem; }
 
 function renderAll(){ renderPending(); renderStudy(); renderElec(); renderCfg(); renderAICfg(); renderBookmarklet(); renderInstall(); renderMobSync(); renderAIBtn(); renderPhoneBits(); renderExt(); const pr = $('#pasteRow'); if(pr) pr.hidden = !isTouch() || !hasMarkerData(); }
 
@@ -1633,12 +1511,11 @@ document.addEventListener('click', e => {
 /* ---------- extensión «Mi Estudio · Sincronizar» (1 clic en el ordenador) ---------- */
 let extVersion = null, extBusy = false, extNotes = [];
 // pasa tus claves de IA a tu extensión (se guardan solo en tu navegador) para la ayuda dentro de Electude
-function pushKeys(selectionExplicit = false){ if(!extVersion) return; window.postMessage({type: 'MS_EXT_KEYS', selectionExplicit, ...Providers.cleanKeys(cfg)}, location.origin); }
+function pushKeys(){ if(!extVersion) return; window.postMessage({type: 'MS_EXT_KEYS', claudeKey: cfg.claudeKey || '', claudeModel: cfg.claudeModel || '', geminiKey: cfg.geminiKey || '', geminiModel: cfg.geminiModel || '', aiProvider: cfg.aiProvider || ''}, location.origin); }
 window.addEventListener('message', e => {
   if(e.source !== window || !e.data || typeof e.data.type !== 'string') return;
   const m = e.data;
   if(m.type === 'MS_EXT_HERE'){ const first = !extVersion; extVersion = m.version || '1'; if(first){ pushKeys(); renderUpdBanner(); } if(first){ renderAll(); if(location.hash === '#autosync'){ history.replaceState(null, '', location.pathname); extSync(); } else if(cfg.autoSync !== false){ const last = Math.min(...['moodle', 'classroom'].map(k => (data[k] && data[k].via === 'marcador' && data[k].at) || 0)); if(Date.now() - last > 3600e3) setTimeout(() => { toast('⚡ Actualizando tus tareas…'); extSync(); }, 1200); } } }
-  if(m.type === 'MS_EXT_AI_PREFS' && Object.hasOwn(Providers.NAMES, m.provider)){ cfg.aiProvider = m.provider; cfg.geminiSlot = m.geminiSlot || 'primary'; saveCfg(); renderAICfg(); renderAIBtn(); if(!ai.busy) renderAI(); }
   if(m.type === 'MS_EXT_START') extSync();
   if(m.type === 'MS_EXT_IMAGE' && typeof m.dataUrl === 'string' && /^data:image\/(jpeg|png);base64,/.test(m.dataUrl)){ $$('dialog[open]').forEach(d => { if(d.id !== 'ai') d.close(); }); askWithImage(m.dataUrl); }
   if(m.type === 'MS_EXT_ELEC_OPENED') toast(m.existing ? '↗ Electude ya estaba abierto: te llevo a esa pestaña' : '↗ Abriendo Electude…');
@@ -1853,8 +1730,8 @@ window.addEventListener('hashchange', () => { if(importSync()) renderAll(); });
 const isGecko = () => /Firefox\//.test(navigator.userAgent);
 const extZip = () => isGecko() ? 'mi-estudio-extension-firefox.zip' : 'mi-estudio-extension.zip';
 /* ---------- avisos de versión nueva (lee version.json de GitHub) ---------- */
-const APP_VERSION = '2026.11.17.9';
-let LATEST = {app: APP_VERSION, extension: '1.11.1'};
+const APP_VERSION = '2026.11.19.1';
+let LATEST = {app: APP_VERSION, extension: '2.0.0'};
 const vLess = (a, b) => String(a || '0').localeCompare(String(b || '0'), undefined, {numeric: true}) < 0;
 const extOutdated = () => !!extVersion && vLess(extVersion, LATEST.extension);
 async function checkVersions(){
