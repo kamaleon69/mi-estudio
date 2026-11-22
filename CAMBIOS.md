@@ -1,11 +1,5 @@
 # Análisis y cambios
 
-## Corrección 2.1.1
-
-Electude reconoce los recuadros con botón «Ok», aunque esté desactivado. Cuando el cuestionario muestra una pregunta pero sus controles son opacos, se pide a la IA una sugerencia de texto con las opciones visibles y, si está disponible, la captura. La sugerencia se muestra debajo de «Analizar la pregunta». Ese caso se responde a mano.
-
-240 pruebas automáticas aprobadas, incluidas la detección del recuadro catalán y la consulta simulada a Gemini.
-
 ## 2.1.0 · 22 de noviembre de 2026
 
 - Conserva Electude de la versión anterior e incorpora el asistente Lens del ZIP aportado, con selección mediante puntero, recorte local y la API elegida en Ajustes.
