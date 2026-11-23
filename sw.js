@@ -1,6 +1,6 @@
 // Guarda solo la "carcasa" de la app para que abra rápido y sin conexión.
 // Nunca guarda llamadas a Moodle ni a Google.
-const CACHE = 'mi-estudio-v19';
+const CACHE = 'mi-estudio-v20';
 const SHELL = ['./', './index.html', './manifest.json', './ai-providers.js', './device.js', './ayuda/instalar-zen.html', './ayuda/activar-extension.html', './privacidad.html', './task-autofill.js', './task-document.js', './reminders-core.js', './reminders-store.js', './reminders-client.js', './notifications-config.json', './notificaciones/configurar.html', './ayuda/01-descomprimir.svg', './ayuda/02-desarrollador.svg', './ayuda/03-cargar-carpeta.svg', './ayuda/04-firefox-temporal.svg', './ayuda/05-firefox-permanente.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
